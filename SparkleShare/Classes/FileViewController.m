@@ -13,8 +13,6 @@
 @implementation FileViewController
 @synthesize filePreview = _filePreview;
 
-
-
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
 	[super didReceiveMemoryWarning];
@@ -60,6 +58,7 @@
 
 - (id <QLPreviewItem>)previewController: (QLPreviewController *) controller previewItemAtIndex: (NSInteger) index;
 {
+    //TODO: controller.editButtonItem
 	if (index == 0 && self.filePreview) {
 		return self.filePreview;
 	}

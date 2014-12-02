@@ -8,13 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		571F47D414739C9900D440FD /* SKFileTypeImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F47D314739C9900D440FD /* SKFileTypeImageLoader.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		571F4F991473C12A00D440FD /* PullToRefreshTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F4F831473C12A00D440FD /* PullToRefreshTableViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		571F4F9A1473C12A00D440FD /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F4F851473C12A00D440FD /* RootViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		571F4F9B1473C12A00D440FD /* EGORefreshTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F4F881473C12A00D440FD /* EGORefreshTableHeaderView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		571F4F9C1473C12A00D440FD /* blackArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8A1473C12A00D440FD /* blackArrow.png */; };
-		571F4F9D1473C12A00D440FD /* blueArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8B1473C12A00D440FD /* blueArrow.png */; };
-		571F4F9E1473C12A00D440FD /* blueArrow_new.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8C1473C12A00D440FD /* blueArrow_new.png */; };
-		571F4F9F1473C12A00D440FD /* whiteArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8D1473C12A00D440FD /* whiteArrow.png */; };
 		572920CD1471AB6100E4A3E8 /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 572920BC1471AB6000E4A3E8 /* SVProgressHUD.bundle */; };
 		572920CE1471AB6100E4A3E8 /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 572920BE1471AB6000E4A3E8 /* SVProgressHUD.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		572979331476BD81007A2947 /* app-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = 572979321476BD81007A2947 /* app-icon-iphone.png */; };
@@ -64,8 +58,6 @@
 		578528B514B1AC59003A1FFC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A975CF147203430043B4B3 /* main.m */; };
 		578528B614B1AC59003A1FFC /* UIImage+FileType.m in Sources */ = {isa = PBXBuildFile; fileRef = 57C777201472C5BC00F7CDC7 /* UIImage+FileType.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		578528B714B1AC59003A1FFC /* SKFileTypeImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F47D314739C9900D440FD /* SKFileTypeImageLoader.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		578528B814B1AC59003A1FFC /* PullToRefreshTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F4F831473C12A00D440FD /* PullToRefreshTableViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		578528B914B1AC59003A1FFC /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F4F851473C12A00D440FD /* RootViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		578528BA14B1AC59003A1FFC /* EGORefreshTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F4F881473C12A00D440FD /* EGORefreshTableHeaderView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		578528BC14B1AC59003A1FFC /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579EE16E147041280074B72B /* QuickLook.framework */; };
 		578528BD14B1AC59003A1FFC /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 57AD9CDC146D82CF00BED6A6 /* libiconv.dylib */; };
@@ -80,11 +72,6 @@
 		578528C614B1AC59003A1FFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579F9AA814678A4E00709C70 /* UIKit.framework */; };
 		578528C714B1AC59003A1FFC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579F9AAA14678A4E00709C70 /* Foundation.framework */; };
 		578528C814B1AC59003A1FFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579F9AAC14678A4E00709C70 /* CoreGraphics.framework */; };
-		578528C914B1AC59003A1FFC /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 57F73A691470D81A00276BF1 /* libzbar.a */; };
-		578528CB14B1AC59003A1FFC /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6B1470D81A00276BF1 /* zbar-back.png */; };
-		578528CC14B1AC59003A1FFC /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6C1470D81A00276BF1 /* zbar-help.html */; };
-		578528CD14B1AC59003A1FFC /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6D1470D81A00276BF1 /* zbar-helpicons.png */; };
-		578528CE14B1AC59003A1FFC /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6E1470D81A00276BF1 /* zbar-samples.png */; };
 		578528CF14B1AC59003A1FFC /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 572920BC1471AB6000E4A3E8 /* SVProgressHUD.bundle */; };
 		578528D014B1AC59003A1FFC /* sparkleshare-logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A975BA147203430043B4B3 /* sparkleshare-logo.png */; };
 		578528D114B1AC59003A1FFC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 57A975BC147203430043B4B3 /* InfoPlist.strings */; };
@@ -104,10 +91,6 @@
 		578528DF14B1AC59003A1FFC /* StartingViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57A975CD147203430043B4B3 /* StartingViewController_iPhone.xib */; };
 		578528E014B1AC59003A1FFC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 57A975D0147203430043B4B3 /* Settings.bundle */; };
 		578528E114B1AC59003A1FFC /* FileTypeIcons.plist in Resources */ = {isa = PBXBuildFile; fileRef = 57C770351472C56900F7CDC7 /* FileTypeIcons.plist */; };
-		578528E214B1AC59003A1FFC /* blackArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8A1473C12A00D440FD /* blackArrow.png */; };
-		578528E314B1AC59003A1FFC /* blueArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8B1473C12A00D440FD /* blueArrow.png */; };
-		578528E414B1AC59003A1FFC /* blueArrow_new.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8C1473C12A00D440FD /* blueArrow_new.png */; };
-		578528E514B1AC59003A1FFC /* whiteArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8D1473C12A00D440FD /* whiteArrow.png */; };
 		578528E614B1AC59003A1FFC /* app-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = 572979321476BD81007A2947 /* app-icon-iphone.png */; };
 		578528E714B1AC59003A1FFC /* app-icon-iphone-retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 572979361476C07E007A2947 /* app-icon-iphone-retina.png */; };
 		578528E814B1AC59003A1FFC /* app-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 572979381476C094007A2947 /* app-icon-ipad.png */; };
@@ -735,8 +718,6 @@
 		57852B5E14B1B582003A1FFC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A975CF147203430043B4B3 /* main.m */; };
 		57852B5F14B1B582003A1FFC /* UIImage+FileType.m in Sources */ = {isa = PBXBuildFile; fileRef = 57C777201472C5BC00F7CDC7 /* UIImage+FileType.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		57852B6014B1B582003A1FFC /* SKFileTypeImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F47D314739C9900D440FD /* SKFileTypeImageLoader.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57852B6114B1B582003A1FFC /* PullToRefreshTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F4F831473C12A00D440FD /* PullToRefreshTableViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57852B6214B1B582003A1FFC /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F4F851473C12A00D440FD /* RootViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		57852B6314B1B582003A1FFC /* EGORefreshTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 571F4F881473C12A00D440FD /* EGORefreshTableHeaderView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		57852B6514B1B582003A1FFC /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579EE16E147041280074B72B /* QuickLook.framework */; };
 		57852B6614B1B582003A1FFC /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 57AD9CDC146D82CF00BED6A6 /* libiconv.dylib */; };
@@ -751,11 +732,6 @@
 		57852B6F14B1B582003A1FFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579F9AA814678A4E00709C70 /* UIKit.framework */; };
 		57852B7014B1B582003A1FFC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579F9AAA14678A4E00709C70 /* Foundation.framework */; };
 		57852B7114B1B582003A1FFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579F9AAC14678A4E00709C70 /* CoreGraphics.framework */; };
-		57852B7214B1B582003A1FFC /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 57F73A691470D81A00276BF1 /* libzbar.a */; };
-		57852B7414B1B582003A1FFC /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6B1470D81A00276BF1 /* zbar-back.png */; };
-		57852B7514B1B582003A1FFC /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6C1470D81A00276BF1 /* zbar-help.html */; };
-		57852B7614B1B582003A1FFC /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6D1470D81A00276BF1 /* zbar-helpicons.png */; };
-		57852B7714B1B582003A1FFC /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6E1470D81A00276BF1 /* zbar-samples.png */; };
 		57852B7814B1B582003A1FFC /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 572920BC1471AB6000E4A3E8 /* SVProgressHUD.bundle */; };
 		57852B7914B1B582003A1FFC /* sparkleshare-logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A975BA147203430043B4B3 /* sparkleshare-logo.png */; };
 		57852B7A14B1B582003A1FFC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 57A975BC147203430043B4B3 /* InfoPlist.strings */; };
@@ -775,10 +751,6 @@
 		57852B8814B1B582003A1FFC /* StartingViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57A975CD147203430043B4B3 /* StartingViewController_iPhone.xib */; };
 		57852B8914B1B582003A1FFC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 57A975D0147203430043B4B3 /* Settings.bundle */; };
 		57852B8A14B1B582003A1FFC /* FileTypeIcons.plist in Resources */ = {isa = PBXBuildFile; fileRef = 57C770351472C56900F7CDC7 /* FileTypeIcons.plist */; };
-		57852B8B14B1B582003A1FFC /* blackArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8A1473C12A00D440FD /* blackArrow.png */; };
-		57852B8C14B1B582003A1FFC /* blueArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8B1473C12A00D440FD /* blueArrow.png */; };
-		57852B8D14B1B582003A1FFC /* blueArrow_new.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8C1473C12A00D440FD /* blueArrow_new.png */; };
-		57852B8E14B1B582003A1FFC /* whiteArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 571F4F8D1473C12A00D440FD /* whiteArrow.png */; };
 		57852B8F14B1B582003A1FFC /* app-icon-iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = 572979321476BD81007A2947 /* app-icon-iphone.png */; };
 		57852B9014B1B582003A1FFC /* app-icon-iphone-retina.png in Resources */ = {isa = PBXBuildFile; fileRef = 572979361476C07E007A2947 /* app-icon-iphone-retina.png */; };
 		57852B9114B1B582003A1FFC /* app-icon-ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 572979381476C094007A2947 /* app-icon-ipad.png */; };
@@ -1440,11 +1412,6 @@
 		57F73A451470D75D00276BF1 /* TTTOrdinalNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F91470D75C00276BF1 /* TTTOrdinalNumberFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		57F73A461470D75D00276BF1 /* TTTTimeIntervalFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739FC1470D75C00276BF1 /* TTTTimeIntervalFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		57F73A471470D75D00276BF1 /* TTTURLRequestFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739FF1470D75C00276BF1 /* TTTURLRequestFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57F73A6F1470D81A00276BF1 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 57F73A691470D81A00276BF1 /* libzbar.a */; };
-		57F73A701470D81A00276BF1 /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6B1470D81A00276BF1 /* zbar-back.png */; };
-		57F73A711470D81A00276BF1 /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6C1470D81A00276BF1 /* zbar-help.html */; };
-		57F73A721470D81A00276BF1 /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6D1470D81A00276BF1 /* zbar-helpicons.png */; };
-		57F73A731470D81A00276BF1 /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F73A6E1470D81A00276BF1 /* zbar-samples.png */; };
 		57F8907014795EE7008259A5 /* 40_application-7zip.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F88E2414795EE6008259A5 /* 40_application-7zip.png */; };
 		57F8907114795EE7008259A5 /* 40_application-atom+xml.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F88E2514795EE6008259A5 /* 40_application-atom+xml.png */; };
 		57F8907214795EE7008259A5 /* 40_application-illustrator.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F88E2614795EE6008259A5 /* 40_application-illustrator.png */; };
@@ -2025,6 +1992,37 @@
 		57F892B914795EE7008259A5 /* 80_x-office-presentation.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906D14795EE7008259A5 /* 80_x-office-presentation.png */; };
 		57F892BA14795EE7008259A5 /* 80_x-office-spreadsheet.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906E14795EE7008259A5 /* 80_x-office-spreadsheet.png */; };
 		57F892BB14795EE7008259A5 /* 80_zip.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906F14795EE7008259A5 /* 80_zip.png */; };
+		F847801C19548E82004BE6DB /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F847801B19548E82004BE6DB /* Default-568h@2x.png */; };
+		F847801D19548E82004BE6DB /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F847801B19548E82004BE6DB /* Default-568h@2x.png */; };
+		F847801E19548E82004BE6DB /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F847801B19548E82004BE6DB /* Default-568h@2x.png */; };
+		F85EF1EE1A2BD5C8004A6E24 /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E61A2BD5C8004A6E24 /* zbar-back.png */; };
+		F85EF1EF1A2BD5C8004A6E24 /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E61A2BD5C8004A6E24 /* zbar-back.png */; };
+		F85EF1F01A2BD5C8004A6E24 /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E61A2BD5C8004A6E24 /* zbar-back.png */; };
+		F85EF1F11A2BD5C8004A6E24 /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E61A2BD5C8004A6E24 /* zbar-back.png */; };
+		F85EF1F21A2BD5C8004A6E24 /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E71A2BD5C8004A6E24 /* zbar-help.html */; };
+		F85EF1F31A2BD5C8004A6E24 /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E71A2BD5C8004A6E24 /* zbar-help.html */; };
+		F85EF1F41A2BD5C8004A6E24 /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E71A2BD5C8004A6E24 /* zbar-help.html */; };
+		F85EF1F51A2BD5C8004A6E24 /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E71A2BD5C8004A6E24 /* zbar-help.html */; };
+		F85EF1F61A2BD5C8004A6E24 /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E81A2BD5C8004A6E24 /* zbar-helpicons.png */; };
+		F85EF1F71A2BD5C8004A6E24 /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E81A2BD5C8004A6E24 /* zbar-helpicons.png */; };
+		F85EF1F81A2BD5C8004A6E24 /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E81A2BD5C8004A6E24 /* zbar-helpicons.png */; };
+		F85EF1F91A2BD5C8004A6E24 /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E81A2BD5C8004A6E24 /* zbar-helpicons.png */; };
+		F85EF1FA1A2BD5C8004A6E24 /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E91A2BD5C8004A6E24 /* zbar-samples.png */; };
+		F85EF1FB1A2BD5C8004A6E24 /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E91A2BD5C8004A6E24 /* zbar-samples.png */; };
+		F85EF1FC1A2BD5C8004A6E24 /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E91A2BD5C8004A6E24 /* zbar-samples.png */; };
+		F85EF1FD1A2BD5C8004A6E24 /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E91A2BD5C8004A6E24 /* zbar-samples.png */; };
+		F85EF1FF1A2BD5F1004A6E24 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F85EF1FE1A2BD5F1004A6E24 /* libzbar.a */; };
+		F85EF2001A2BD5F1004A6E24 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F85EF1FE1A2BD5F1004A6E24 /* libzbar.a */; };
+		F85EF2011A2BD5F1004A6E24 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F85EF1FE1A2BD5F1004A6E24 /* libzbar.a */; };
+		F85EF2021A2BD5F1004A6E24 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F85EF1FE1A2BD5F1004A6E24 /* libzbar.a */; };
+		F8ED7A5B1A2D4FB0009A4043 /* blackArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = F8ED7A531A2D4FB0009A4043 /* blackArrow.png */; };
+		F8ED7A5C1A2D4FB0009A4043 /* blackArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F8ED7A541A2D4FB0009A4043 /* blackArrow@2x.png */; };
+		F8ED7A5D1A2D4FB0009A4043 /* blueArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = F8ED7A551A2D4FB0009A4043 /* blueArrow.png */; };
+		F8ED7A5E1A2D4FB0009A4043 /* blueArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F8ED7A561A2D4FB0009A4043 /* blueArrow@2x.png */; };
+		F8ED7A5F1A2D4FB0009A4043 /* grayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = F8ED7A571A2D4FB0009A4043 /* grayArrow.png */; };
+		F8ED7A601A2D4FB0009A4043 /* grayArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F8ED7A581A2D4FB0009A4043 /* grayArrow@2x.png */; };
+		F8ED7A611A2D4FB0009A4043 /* whiteArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = F8ED7A591A2D4FB0009A4043 /* whiteArrow.png */; };
+		F8ED7A621A2D4FB0009A4043 /* whiteArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F8ED7A5A1A2D4FB0009A4043 /* whiteArrow@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2040,16 +2038,8 @@
 /* Begin PBXFileReference section */
 		571F47D214739C9900D440FD /* SKFileTypeImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SKFileTypeImageLoader.h; sourceTree = "<group>"; };
 		571F47D314739C9900D440FD /* SKFileTypeImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SKFileTypeImageLoader.m; sourceTree = "<group>"; };
-		571F4F821473C12A00D440FD /* PullToRefreshTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PullToRefreshTableViewController.h; sourceTree = "<group>"; };
-		571F4F831473C12A00D440FD /* PullToRefreshTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PullToRefreshTableViewController.m; sourceTree = "<group>"; };
-		571F4F841473C12A00D440FD /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
-		571F4F851473C12A00D440FD /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		571F4F871473C12A00D440FD /* EGORefreshTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGORefreshTableHeaderView.h; sourceTree = "<group>"; };
 		571F4F881473C12A00D440FD /* EGORefreshTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGORefreshTableHeaderView.m; sourceTree = "<group>"; };
-		571F4F8A1473C12A00D440FD /* blackArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blackArrow.png; sourceTree = "<group>"; };
-		571F4F8B1473C12A00D440FD /* blueArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blueArrow.png; sourceTree = "<group>"; };
-		571F4F8C1473C12A00D440FD /* blueArrow_new.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blueArrow_new.png; sourceTree = "<group>"; };
-		571F4F8D1473C12A00D440FD /* whiteArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whiteArrow.png; sourceTree = "<group>"; };
 		572920BC1471AB6000E4A3E8 /* SVProgressHUD.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SVProgressHUD.bundle; sourceTree = "<group>"; };
 		572920BD1471AB6000E4A3E8 /* SVProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVProgressHUD.h; sourceTree = "<group>"; };
 		572920BE1471AB6000E4A3E8 /* SVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressHUD.m; sourceTree = "<group>"; };
@@ -2181,31 +2171,6 @@
 		57F739FC1470D75C00276BF1 /* TTTTimeIntervalFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTTimeIntervalFormatter.m; sourceTree = "<group>"; };
 		57F739FE1470D75C00276BF1 /* TTTURLRequestFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTURLRequestFormatter.h; sourceTree = "<group>"; };
 		57F739FF1470D75C00276BF1 /* TTTURLRequestFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTURLRequestFormatter.m; sourceTree = "<group>"; };
-		57F73A551470D81A00276BF1 /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decoder.h; sourceTree = "<group>"; };
-		57F73A561470D81A00276BF1 /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
-		57F73A571470D81A00276BF1 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
-		57F73A581470D81A00276BF1 /* ImageScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageScanner.h; sourceTree = "<group>"; };
-		57F73A591470D81A00276BF1 /* Processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Processor.h; sourceTree = "<group>"; };
-		57F73A5A1470D81A00276BF1 /* Scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scanner.h; sourceTree = "<group>"; };
-		57F73A5B1470D81A00276BF1 /* Symbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Symbol.h; sourceTree = "<group>"; };
-		57F73A5C1470D81A00276BF1 /* Video.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Video.h; sourceTree = "<group>"; };
-		57F73A5D1470D81A00276BF1 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
-		57F73A5E1470D81A00276BF1 /* zbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zbar.h; sourceTree = "<group>"; };
-		57F73A5F1470D81A00276BF1 /* ZBarCameraSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarCameraSimulator.h; sourceTree = "<group>"; };
-		57F73A601470D81A00276BF1 /* ZBarCaptureReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarCaptureReader.h; sourceTree = "<group>"; };
-		57F73A611470D81A00276BF1 /* ZBarHelpController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarHelpController.h; sourceTree = "<group>"; };
-		57F73A621470D81A00276BF1 /* ZBarImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarImage.h; sourceTree = "<group>"; };
-		57F73A631470D81A00276BF1 /* ZBarImageScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarImageScanner.h; sourceTree = "<group>"; };
-		57F73A641470D81A00276BF1 /* ZBarReaderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarReaderController.h; sourceTree = "<group>"; };
-		57F73A651470D81A00276BF1 /* ZBarReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarReaderView.h; sourceTree = "<group>"; };
-		57F73A661470D81A00276BF1 /* ZBarReaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarReaderViewController.h; sourceTree = "<group>"; };
-		57F73A671470D81A00276BF1 /* ZBarSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarSDK.h; sourceTree = "<group>"; };
-		57F73A681470D81A00276BF1 /* ZBarSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarSymbol.h; sourceTree = "<group>"; };
-		57F73A691470D81A00276BF1 /* libzbar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libzbar.a; sourceTree = "<group>"; };
-		57F73A6B1470D81A00276BF1 /* zbar-back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-back.png"; sourceTree = "<group>"; };
-		57F73A6C1470D81A00276BF1 /* zbar-help.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "zbar-help.html"; sourceTree = "<group>"; };
-		57F73A6D1470D81A00276BF1 /* zbar-helpicons.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-helpicons.png"; sourceTree = "<group>"; };
-		57F73A6E1470D81A00276BF1 /* zbar-samples.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-samples.png"; sourceTree = "<group>"; };
 		57F88E2414795EE6008259A5 /* 40_application-7zip.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "40_application-7zip.png"; sourceTree = "<group>"; };
 		57F88E2514795EE6008259A5 /* 40_application-atom+xml.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "40_application-atom+xml.png"; sourceTree = "<group>"; };
 		57F88E2614795EE6008259A5 /* 40_application-illustrator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "40_application-illustrator.png"; sourceTree = "<group>"; };
@@ -2786,6 +2751,40 @@
 		57F8906D14795EE7008259A5 /* 80_x-office-presentation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80_x-office-presentation.png"; sourceTree = "<group>"; };
 		57F8906E14795EE7008259A5 /* 80_x-office-spreadsheet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80_x-office-spreadsheet.png"; sourceTree = "<group>"; };
 		57F8906F14795EE7008259A5 /* 80_zip.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 80_zip.png; sourceTree = "<group>"; };
+		F847801B19548E82004BE6DB /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = SOURCE_ROOT; };
+		F85EF1D01A2BD5C8004A6E24 /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decoder.h; sourceTree = "<group>"; };
+		F85EF1D11A2BD5C8004A6E24 /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
+		F85EF1D21A2BD5C8004A6E24 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
+		F85EF1D31A2BD5C8004A6E24 /* ImageScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageScanner.h; sourceTree = "<group>"; };
+		F85EF1D41A2BD5C8004A6E24 /* Processor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Processor.h; sourceTree = "<group>"; };
+		F85EF1D51A2BD5C8004A6E24 /* Scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scanner.h; sourceTree = "<group>"; };
+		F85EF1D61A2BD5C8004A6E24 /* Symbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Symbol.h; sourceTree = "<group>"; };
+		F85EF1D71A2BD5C8004A6E24 /* Video.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Video.h; sourceTree = "<group>"; };
+		F85EF1D81A2BD5C8004A6E24 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Window.h; sourceTree = "<group>"; };
+		F85EF1D91A2BD5C8004A6E24 /* zbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zbar.h; sourceTree = "<group>"; };
+		F85EF1DA1A2BD5C8004A6E24 /* ZBarCameraSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarCameraSimulator.h; sourceTree = "<group>"; };
+		F85EF1DB1A2BD5C8004A6E24 /* ZBarCaptureReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarCaptureReader.h; sourceTree = "<group>"; };
+		F85EF1DC1A2BD5C8004A6E24 /* ZBarHelpController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarHelpController.h; sourceTree = "<group>"; };
+		F85EF1DD1A2BD5C8004A6E24 /* ZBarImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarImage.h; sourceTree = "<group>"; };
+		F85EF1DE1A2BD5C8004A6E24 /* ZBarImageScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarImageScanner.h; sourceTree = "<group>"; };
+		F85EF1DF1A2BD5C8004A6E24 /* ZBarReaderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarReaderController.h; sourceTree = "<group>"; };
+		F85EF1E01A2BD5C8004A6E24 /* ZBarReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarReaderView.h; sourceTree = "<group>"; };
+		F85EF1E11A2BD5C8004A6E24 /* ZBarReaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarReaderViewController.h; sourceTree = "<group>"; };
+		F85EF1E21A2BD5C8004A6E24 /* ZBarSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarSDK.h; sourceTree = "<group>"; };
+		F85EF1E31A2BD5C8004A6E24 /* ZBarSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBarSymbol.h; sourceTree = "<group>"; };
+		F85EF1E61A2BD5C8004A6E24 /* zbar-back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-back.png"; sourceTree = "<group>"; };
+		F85EF1E71A2BD5C8004A6E24 /* zbar-help.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "zbar-help.html"; sourceTree = "<group>"; };
+		F85EF1E81A2BD5C8004A6E24 /* zbar-helpicons.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-helpicons.png"; sourceTree = "<group>"; };
+		F85EF1E91A2BD5C8004A6E24 /* zbar-samples.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-samples.png"; sourceTree = "<group>"; };
+		F85EF1FE1A2BD5F1004A6E24 /* libzbar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libzbar.a; sourceTree = "<group>"; };
+		F8ED7A531A2D4FB0009A4043 /* blackArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blackArrow.png; sourceTree = "<group>"; };
+		F8ED7A541A2D4FB0009A4043 /* blackArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blackArrow@2x.png"; sourceTree = "<group>"; };
+		F8ED7A551A2D4FB0009A4043 /* blueArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blueArrow.png; sourceTree = "<group>"; };
+		F8ED7A561A2D4FB0009A4043 /* blueArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blueArrow@2x.png"; sourceTree = "<group>"; };
+		F8ED7A571A2D4FB0009A4043 /* grayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = grayArrow.png; sourceTree = "<group>"; };
+		F8ED7A581A2D4FB0009A4043 /* grayArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grayArrow@2x.png"; sourceTree = "<group>"; };
+		F8ED7A591A2D4FB0009A4043 /* whiteArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whiteArrow.png; sourceTree = "<group>"; };
+		F8ED7A5A1A2D4FB0009A4043 /* whiteArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "whiteArrow@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2795,6 +2794,7 @@
 			files = (
 				578528BC14B1AC59003A1FFC /* QuickLook.framework in Frameworks */,
 				578528BD14B1AC59003A1FFC /* libiconv.dylib in Frameworks */,
+				F85EF2011A2BD5F1004A6E24 /* libzbar.a in Frameworks */,
 				578528BE14B1AC59003A1FFC /* QuartzCore.framework in Frameworks */,
 				578528BF14B1AC59003A1FFC /* CoreVideo.framework in Frameworks */,
 				578528C014B1AC59003A1FFC /* CoreMedia.framework in Frameworks */,
@@ -2806,7 +2806,6 @@
 				578528C614B1AC59003A1FFC /* UIKit.framework in Frameworks */,
 				578528C714B1AC59003A1FFC /* Foundation.framework in Frameworks */,
 				578528C814B1AC59003A1FFC /* CoreGraphics.framework in Frameworks */,
-				578528C914B1AC59003A1FFC /* libzbar.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2816,6 +2815,7 @@
 			files = (
 				57852B6514B1B582003A1FFC /* QuickLook.framework in Frameworks */,
 				57852B6614B1B582003A1FFC /* libiconv.dylib in Frameworks */,
+				F85EF2021A2BD5F1004A6E24 /* libzbar.a in Frameworks */,
 				57852B6714B1B582003A1FFC /* QuartzCore.framework in Frameworks */,
 				57852B6814B1B582003A1FFC /* CoreVideo.framework in Frameworks */,
 				57852B6914B1B582003A1FFC /* CoreMedia.framework in Frameworks */,
@@ -2827,7 +2827,6 @@
 				57852B6F14B1B582003A1FFC /* UIKit.framework in Frameworks */,
 				57852B7014B1B582003A1FFC /* Foundation.framework in Frameworks */,
 				57852B7114B1B582003A1FFC /* CoreGraphics.framework in Frameworks */,
-				57852B7214B1B582003A1FFC /* libzbar.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2837,6 +2836,7 @@
 			files = (
 				579EE16F147041280074B72B /* QuickLook.framework in Frameworks */,
 				57AD9CDD146D82CF00BED6A6 /* libiconv.dylib in Frameworks */,
+				F85EF1FF1A2BD5F1004A6E24 /* libzbar.a in Frameworks */,
 				57AD9CDB146D82C600BED6A6 /* QuartzCore.framework in Frameworks */,
 				57AD9CD9146D82BA00BED6A6 /* CoreVideo.framework in Frameworks */,
 				57AD9CD7146D82B200BED6A6 /* CoreMedia.framework in Frameworks */,
@@ -2848,7 +2848,6 @@
 				579F9AA914678A4E00709C70 /* UIKit.framework in Frameworks */,
 				579F9AAB14678A4E00709C70 /* Foundation.framework in Frameworks */,
 				579F9AAD14678A4E00709C70 /* CoreGraphics.framework in Frameworks */,
-				57F73A6F1470D81A00276BF1 /* libzbar.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2858,6 +2857,7 @@
 			files = (
 				579F9AD314678A4E00709C70 /* SenTestingKit.framework in Frameworks */,
 				579F9AD414678A4E00709C70 /* UIKit.framework in Frameworks */,
+				F85EF2001A2BD5F1004A6E24 /* libzbar.a in Frameworks */,
 				579F9AD514678A4E00709C70 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2946,21 +2946,9 @@
 		571F4F801473C12A00D440FD /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				571F4F811473C12A00D440FD /* Controller */,
 				571F4F861473C12A00D440FD /* View */,
 			);
 			path = Classes;
-			sourceTree = "<group>";
-		};
-		571F4F811473C12A00D440FD /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				571F4F821473C12A00D440FD /* PullToRefreshTableViewController.h */,
-				571F4F831473C12A00D440FD /* PullToRefreshTableViewController.m */,
-				571F4F841473C12A00D440FD /* RootViewController.h */,
-				571F4F851473C12A00D440FD /* RootViewController.m */,
-			);
-			path = Controller;
 			sourceTree = "<group>";
 		};
 		571F4F861473C12A00D440FD /* View */ = {
@@ -2975,10 +2963,14 @@
 		571F4F891473C12A00D440FD /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				571F4F8A1473C12A00D440FD /* blackArrow.png */,
-				571F4F8B1473C12A00D440FD /* blueArrow.png */,
-				571F4F8C1473C12A00D440FD /* blueArrow_new.png */,
-				571F4F8D1473C12A00D440FD /* whiteArrow.png */,
+				F8ED7A531A2D4FB0009A4043 /* blackArrow.png */,
+				F8ED7A541A2D4FB0009A4043 /* blackArrow@2x.png */,
+				F8ED7A551A2D4FB0009A4043 /* blueArrow.png */,
+				F8ED7A561A2D4FB0009A4043 /* blueArrow@2x.png */,
+				F8ED7A571A2D4FB0009A4043 /* grayArrow.png */,
+				F8ED7A581A2D4FB0009A4043 /* grayArrow@2x.png */,
+				F8ED7A591A2D4FB0009A4043 /* whiteArrow.png */,
+				F8ED7A5A1A2D4FB0009A4043 /* whiteArrow@2x.png */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3007,9 +2999,9 @@
 				571F4F6E1473C12A00D440FD /* EGOTableViewPullRefresh */,
 				57C770281472C56900F7CDC7 /* UIImage-FileType */,
 				572920A71471AB6000E4A3E8 /* SVProgressHUD */,
-				57F73A511470D81A00276BF1 /* ZBarSDK */,
 				57F739711470D75C00276BF1 /* AFNetworking */,
 				57F739CF1470D75C00276BF1 /* FormatterKit */,
+				F85EF1CC1A2BD5C8004A6E24 /* ZBarSDK */,
 			);
 			path = libs;
 			sourceTree = "<group>";
@@ -3020,8 +3012,8 @@
 				579F9AAE14678A4E00709C70 /* SparkleShare */,
 				579F9AD814678A4E00709C70 /* SparkleShareTests */,
 				579F9AA714678A4E00709C70 /* Frameworks */,
-				579F9AA514678A4E00709C70 /* Products */,
 				579BC0A81470CD4100BB8233 /* libs */,
+				579F9AA514678A4E00709C70 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3113,6 +3105,7 @@
 				572979851476C805007A2947 /* Default-Portrait~ipad.png */,
 				572979831476C69B007A2947 /* Default@2x.png */,
 				572979811476C68D007A2947 /* Default.png */,
+				F847801B19548E82004BE6DB /* Default-568h@2x.png */,
 				572979381476C094007A2947 /* app-icon-ipad.png */,
 				572979361476C07E007A2947 /* app-icon-iphone-retina.png */,
 				572979321476BD81007A2947 /* app-icon-iphone.png */,
@@ -3286,70 +3279,6 @@
 				57F739FF1470D75C00276BF1 /* TTTURLRequestFormatter.m */,
 			);
 			path = TTTURLRequestFormatter;
-			sourceTree = "<group>";
-		};
-		57F73A511470D81A00276BF1 /* ZBarSDK */ = {
-			isa = PBXGroup;
-			children = (
-				57F73A521470D81A00276BF1 /* Headers */,
-				57F73A691470D81A00276BF1 /* libzbar.a */,
-				57F73A6A1470D81A00276BF1 /* Resources */,
-			);
-			path = ZBarSDK;
-			sourceTree = "<group>";
-		};
-		57F73A521470D81A00276BF1 /* Headers */ = {
-			isa = PBXGroup;
-			children = (
-				57F73A531470D81A00276BF1 /* ZBarSDK */,
-			);
-			path = Headers;
-			sourceTree = "<group>";
-		};
-		57F73A531470D81A00276BF1 /* ZBarSDK */ = {
-			isa = PBXGroup;
-			children = (
-				57F73A541470D81A00276BF1 /* zbar */,
-				57F73A5E1470D81A00276BF1 /* zbar.h */,
-				57F73A5F1470D81A00276BF1 /* ZBarCameraSimulator.h */,
-				57F73A601470D81A00276BF1 /* ZBarCaptureReader.h */,
-				57F73A611470D81A00276BF1 /* ZBarHelpController.h */,
-				57F73A621470D81A00276BF1 /* ZBarImage.h */,
-				57F73A631470D81A00276BF1 /* ZBarImageScanner.h */,
-				57F73A641470D81A00276BF1 /* ZBarReaderController.h */,
-				57F73A651470D81A00276BF1 /* ZBarReaderView.h */,
-				57F73A661470D81A00276BF1 /* ZBarReaderViewController.h */,
-				57F73A671470D81A00276BF1 /* ZBarSDK.h */,
-				57F73A681470D81A00276BF1 /* ZBarSymbol.h */,
-			);
-			path = ZBarSDK;
-			sourceTree = "<group>";
-		};
-		57F73A541470D81A00276BF1 /* zbar */ = {
-			isa = PBXGroup;
-			children = (
-				57F73A551470D81A00276BF1 /* Decoder.h */,
-				57F73A561470D81A00276BF1 /* Exception.h */,
-				57F73A571470D81A00276BF1 /* Image.h */,
-				57F73A581470D81A00276BF1 /* ImageScanner.h */,
-				57F73A591470D81A00276BF1 /* Processor.h */,
-				57F73A5A1470D81A00276BF1 /* Scanner.h */,
-				57F73A5B1470D81A00276BF1 /* Symbol.h */,
-				57F73A5C1470D81A00276BF1 /* Video.h */,
-				57F73A5D1470D81A00276BF1 /* Window.h */,
-			);
-			path = zbar;
-			sourceTree = "<group>";
-		};
-		57F73A6A1470D81A00276BF1 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				57F73A6B1470D81A00276BF1 /* zbar-back.png */,
-				57F73A6C1470D81A00276BF1 /* zbar-help.html */,
-				57F73A6D1470D81A00276BF1 /* zbar-helpicons.png */,
-				57F73A6E1470D81A00276BF1 /* zbar-samples.png */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		57F88E2314795EE6008259A5 /* Icons */ = {
@@ -3939,6 +3868,70 @@
 			path = Icons;
 			sourceTree = "<group>";
 		};
+		F85EF1CC1A2BD5C8004A6E24 /* ZBarSDK */ = {
+			isa = PBXGroup;
+			children = (
+				F85EF1FE1A2BD5F1004A6E24 /* libzbar.a */,
+				F85EF1CD1A2BD5C8004A6E24 /* Headers */,
+				F85EF1E51A2BD5C8004A6E24 /* Resources */,
+			);
+			path = ZBarSDK;
+			sourceTree = "<group>";
+		};
+		F85EF1CD1A2BD5C8004A6E24 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				F85EF1CE1A2BD5C8004A6E24 /* ZBarSDK */,
+			);
+			path = Headers;
+			sourceTree = "<group>";
+		};
+		F85EF1CE1A2BD5C8004A6E24 /* ZBarSDK */ = {
+			isa = PBXGroup;
+			children = (
+				F85EF1CF1A2BD5C8004A6E24 /* zbar */,
+				F85EF1D91A2BD5C8004A6E24 /* zbar.h */,
+				F85EF1DA1A2BD5C8004A6E24 /* ZBarCameraSimulator.h */,
+				F85EF1DB1A2BD5C8004A6E24 /* ZBarCaptureReader.h */,
+				F85EF1DC1A2BD5C8004A6E24 /* ZBarHelpController.h */,
+				F85EF1DD1A2BD5C8004A6E24 /* ZBarImage.h */,
+				F85EF1DE1A2BD5C8004A6E24 /* ZBarImageScanner.h */,
+				F85EF1DF1A2BD5C8004A6E24 /* ZBarReaderController.h */,
+				F85EF1E01A2BD5C8004A6E24 /* ZBarReaderView.h */,
+				F85EF1E11A2BD5C8004A6E24 /* ZBarReaderViewController.h */,
+				F85EF1E21A2BD5C8004A6E24 /* ZBarSDK.h */,
+				F85EF1E31A2BD5C8004A6E24 /* ZBarSymbol.h */,
+			);
+			path = ZBarSDK;
+			sourceTree = "<group>";
+		};
+		F85EF1CF1A2BD5C8004A6E24 /* zbar */ = {
+			isa = PBXGroup;
+			children = (
+				F85EF1D01A2BD5C8004A6E24 /* Decoder.h */,
+				F85EF1D11A2BD5C8004A6E24 /* Exception.h */,
+				F85EF1D21A2BD5C8004A6E24 /* Image.h */,
+				F85EF1D31A2BD5C8004A6E24 /* ImageScanner.h */,
+				F85EF1D41A2BD5C8004A6E24 /* Processor.h */,
+				F85EF1D51A2BD5C8004A6E24 /* Scanner.h */,
+				F85EF1D61A2BD5C8004A6E24 /* Symbol.h */,
+				F85EF1D71A2BD5C8004A6E24 /* Video.h */,
+				F85EF1D81A2BD5C8004A6E24 /* Window.h */,
+			);
+			path = zbar;
+			sourceTree = "<group>";
+		};
+		F85EF1E51A2BD5C8004A6E24 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F85EF1E61A2BD5C8004A6E24 /* zbar-back.png */,
+				F85EF1E71A2BD5C8004A6E24 /* zbar-help.html */,
+				F85EF1E81A2BD5C8004A6E24 /* zbar-helpicons.png */,
+				F85EF1E91A2BD5C8004A6E24 /* zbar-samples.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -4011,7 +4004,7 @@
 			name = SparkleShareTests;
 			productName = SparkleShareTests;
 			productReference = 579F9AD114678A4E00709C70 /* SparkleShareTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -4019,7 +4012,8 @@
 		579F9A9B14678A4D00709C70 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastTestingUpgradeCheck = 0610;
+				LastUpgradeCheck = 0610;
 			};
 			buildConfigurationList = 579F9A9E14678A4D00709C70 /* Build configuration list for PBXProject "SparkleShare" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -4046,10 +4040,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				578528CB14B1AC59003A1FFC /* zbar-back.png in Resources */,
-				578528CC14B1AC59003A1FFC /* zbar-help.html in Resources */,
-				578528CD14B1AC59003A1FFC /* zbar-helpicons.png in Resources */,
-				578528CE14B1AC59003A1FFC /* zbar-samples.png in Resources */,
 				578528CF14B1AC59003A1FFC /* SVProgressHUD.bundle in Resources */,
 				578528D014B1AC59003A1FFC /* sparkleshare-logo.png in Resources */,
 				578528D114B1AC59003A1FFC /* InfoPlist.strings in Resources */,
@@ -4069,10 +4059,6 @@
 				578528DF14B1AC59003A1FFC /* StartingViewController_iPhone.xib in Resources */,
 				578528E014B1AC59003A1FFC /* Settings.bundle in Resources */,
 				578528E114B1AC59003A1FFC /* FileTypeIcons.plist in Resources */,
-				578528E214B1AC59003A1FFC /* blackArrow.png in Resources */,
-				578528E314B1AC59003A1FFC /* blueArrow.png in Resources */,
-				578528E414B1AC59003A1FFC /* blueArrow_new.png in Resources */,
-				578528E514B1AC59003A1FFC /* whiteArrow.png in Resources */,
 				578528E614B1AC59003A1FFC /* app-icon-iphone.png in Resources */,
 				578528E714B1AC59003A1FFC /* app-icon-iphone-retina.png in Resources */,
 				578528E814B1AC59003A1FFC /* app-icon-ipad.png in Resources */,
@@ -4163,6 +4149,7 @@
 				5785293D14B1AC59003A1FFC /* 40_application-x-gnome-app-info.png in Resources */,
 				5785293E14B1AC59003A1FFC /* 40_application-x-gnome-theme-package.png in Resources */,
 				5785293F14B1AC59003A1FFC /* 40_application-x-gnumeric.png in Resources */,
+				F85EF1F41A2BD5C8004A6E24 /* zbar-help.html in Resources */,
 				5785294014B1AC59003A1FFC /* 40_application-x-gzip.png in Resources */,
 				5785294114B1AC59003A1FFC /* 40_application-x-gzpostscript.png in Resources */,
 				5785294214B1AC59003A1FFC /* 40_application-x-jar.png in Resources */,
@@ -4240,6 +4227,7 @@
 				5785298A14B1AC59003A1FFC /* 40_image-bmp.png in Resources */,
 				5785298B14B1AC59003A1FFC /* 40_image-gif.png in Resources */,
 				5785298C14B1AC59003A1FFC /* 40_image-jpeg.png in Resources */,
+				F85EF1FC1A2BD5C8004A6E24 /* zbar-samples.png in Resources */,
 				5785298D14B1AC59003A1FFC /* 40_image-jpeg2000.png in Resources */,
 				5785298E14B1AC59003A1FFC /* 40_image-png.png in Resources */,
 				5785298F14B1AC59003A1FFC /* 40_image-svg+xml.png in Resources */,
@@ -4345,6 +4333,7 @@
 				578529F314B1AC59003A1FFC /* 40_text-x-sql.png in Resources */,
 				578529F414B1AC59003A1FFC /* 40_text-x-tex.png in Resources */,
 				578529F514B1AC59003A1FFC /* 40_text-x-vcalendar.png in Resources */,
+				F85EF1F81A2BD5C8004A6E24 /* zbar-helpicons.png in Resources */,
 				578529F614B1AC59003A1FFC /* 40_text-x-vcard.png in Resources */,
 				578529F714B1AC59003A1FFC /* 40_text-x-zsh.png in Resources */,
 				578529F814B1AC59003A1FFC /* 40_text-xhtml+xml.png in Resources */,
@@ -4483,6 +4472,7 @@
 				57852A7D14B1AC59003A1FFC /* 80_application-x-shockwave-flash.png in Resources */,
 				57852A7E14B1AC59003A1FFC /* 80_application-x-sln.png in Resources */,
 				57852A7F14B1AC59003A1FFC /* 80_application-x-sqlite2.png in Resources */,
+				F85EF1F01A2BD5C8004A6E24 /* zbar-back.png in Resources */,
 				57852A8014B1AC59003A1FFC /* 80_application-x-sqlite3.png in Resources */,
 				57852A8114B1AC59003A1FFC /* 80_application-x-stuffit.png in Resources */,
 				57852A8214B1AC59003A1FFC /* 80_application-x-tar.png in Resources */,
@@ -4660,6 +4650,7 @@
 				57852B2E14B1AC59003A1FFC /* 80_x-office-presentation.png in Resources */,
 				57852B2F14B1AC59003A1FFC /* 80_x-office-spreadsheet.png in Resources */,
 				57852B3014B1AC59003A1FFC /* 80_zip.png in Resources */,
+				F847801D19548E82004BE6DB /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4667,10 +4658,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				57852B7414B1B582003A1FFC /* zbar-back.png in Resources */,
-				57852B7514B1B582003A1FFC /* zbar-help.html in Resources */,
-				57852B7614B1B582003A1FFC /* zbar-helpicons.png in Resources */,
-				57852B7714B1B582003A1FFC /* zbar-samples.png in Resources */,
 				57852B7814B1B582003A1FFC /* SVProgressHUD.bundle in Resources */,
 				57852B7914B1B582003A1FFC /* sparkleshare-logo.png in Resources */,
 				57852B7A14B1B582003A1FFC /* InfoPlist.strings in Resources */,
@@ -4690,10 +4677,6 @@
 				57852B8814B1B582003A1FFC /* StartingViewController_iPhone.xib in Resources */,
 				57852B8914B1B582003A1FFC /* Settings.bundle in Resources */,
 				57852B8A14B1B582003A1FFC /* FileTypeIcons.plist in Resources */,
-				57852B8B14B1B582003A1FFC /* blackArrow.png in Resources */,
-				57852B8C14B1B582003A1FFC /* blueArrow.png in Resources */,
-				57852B8D14B1B582003A1FFC /* blueArrow_new.png in Resources */,
-				57852B8E14B1B582003A1FFC /* whiteArrow.png in Resources */,
 				57852B8F14B1B582003A1FFC /* app-icon-iphone.png in Resources */,
 				57852B9014B1B582003A1FFC /* app-icon-iphone-retina.png in Resources */,
 				57852B9114B1B582003A1FFC /* app-icon-ipad.png in Resources */,
@@ -4784,6 +4767,7 @@
 				57852BE614B1B582003A1FFC /* 40_application-x-gnome-app-info.png in Resources */,
 				57852BE714B1B582003A1FFC /* 40_application-x-gnome-theme-package.png in Resources */,
 				57852BE814B1B582003A1FFC /* 40_application-x-gnumeric.png in Resources */,
+				F85EF1F51A2BD5C8004A6E24 /* zbar-help.html in Resources */,
 				57852BE914B1B582003A1FFC /* 40_application-x-gzip.png in Resources */,
 				57852BEA14B1B582003A1FFC /* 40_application-x-gzpostscript.png in Resources */,
 				57852BEB14B1B582003A1FFC /* 40_application-x-jar.png in Resources */,
@@ -4861,6 +4845,7 @@
 				57852C3314B1B582003A1FFC /* 40_image-bmp.png in Resources */,
 				57852C3414B1B582003A1FFC /* 40_image-gif.png in Resources */,
 				57852C3514B1B582003A1FFC /* 40_image-jpeg.png in Resources */,
+				F85EF1FD1A2BD5C8004A6E24 /* zbar-samples.png in Resources */,
 				57852C3614B1B582003A1FFC /* 40_image-jpeg2000.png in Resources */,
 				57852C3714B1B582003A1FFC /* 40_image-png.png in Resources */,
 				57852C3814B1B582003A1FFC /* 40_image-svg+xml.png in Resources */,
@@ -4966,6 +4951,7 @@
 				57852C9C14B1B582003A1FFC /* 40_text-x-sql.png in Resources */,
 				57852C9D14B1B582003A1FFC /* 40_text-x-tex.png in Resources */,
 				57852C9E14B1B582003A1FFC /* 40_text-x-vcalendar.png in Resources */,
+				F85EF1F91A2BD5C8004A6E24 /* zbar-helpicons.png in Resources */,
 				57852C9F14B1B582003A1FFC /* 40_text-x-vcard.png in Resources */,
 				57852CA014B1B582003A1FFC /* 40_text-x-zsh.png in Resources */,
 				57852CA114B1B582003A1FFC /* 40_text-xhtml+xml.png in Resources */,
@@ -5104,6 +5090,7 @@
 				57852D2614B1B582003A1FFC /* 80_application-x-shockwave-flash.png in Resources */,
 				57852D2714B1B582003A1FFC /* 80_application-x-sln.png in Resources */,
 				57852D2814B1B582003A1FFC /* 80_application-x-sqlite2.png in Resources */,
+				F85EF1F11A2BD5C8004A6E24 /* zbar-back.png in Resources */,
 				57852D2914B1B582003A1FFC /* 80_application-x-sqlite3.png in Resources */,
 				57852D2A14B1B582003A1FFC /* 80_application-x-stuffit.png in Resources */,
 				57852D2B14B1B582003A1FFC /* 80_application-x-tar.png in Resources */,
@@ -5281,6 +5268,7 @@
 				57852DD714B1B582003A1FFC /* 80_x-office-presentation.png in Resources */,
 				57852DD814B1B582003A1FFC /* 80_x-office-spreadsheet.png in Resources */,
 				57852DD914B1B582003A1FFC /* 80_zip.png in Resources */,
+				F847801E19548E82004BE6DB /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5288,10 +5276,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				57F73A701470D81A00276BF1 /* zbar-back.png in Resources */,
-				57F73A711470D81A00276BF1 /* zbar-help.html in Resources */,
-				57F73A721470D81A00276BF1 /* zbar-helpicons.png in Resources */,
-				57F73A731470D81A00276BF1 /* zbar-samples.png in Resources */,
 				572920CD1471AB6100E4A3E8 /* SVProgressHUD.bundle in Resources */,
 				57A975E7147203430043B4B3 /* sparkleshare-logo.png in Resources */,
 				57A975E8147203430043B4B3 /* InfoPlist.strings in Resources */,
@@ -5311,10 +5295,6 @@
 				57A975F6147203430043B4B3 /* StartingViewController_iPhone.xib in Resources */,
 				57A975F8147203430043B4B3 /* Settings.bundle in Resources */,
 				57C773AF1472C56C00F7CDC7 /* FileTypeIcons.plist in Resources */,
-				571F4F9C1473C12A00D440FD /* blackArrow.png in Resources */,
-				571F4F9D1473C12A00D440FD /* blueArrow.png in Resources */,
-				571F4F9E1473C12A00D440FD /* blueArrow_new.png in Resources */,
-				571F4F9F1473C12A00D440FD /* whiteArrow.png in Resources */,
 				572979331476BD81007A2947 /* app-icon-iphone.png in Resources */,
 				572979371476C07F007A2947 /* app-icon-iphone-retina.png in Resources */,
 				572979391476C094007A2947 /* app-icon-ipad.png in Resources */,
@@ -5405,6 +5385,7 @@
 				57F890C114795EE7008259A5 /* 40_application-x-gnome-app-info.png in Resources */,
 				57F890C214795EE7008259A5 /* 40_application-x-gnome-theme-package.png in Resources */,
 				57F890C314795EE7008259A5 /* 40_application-x-gnumeric.png in Resources */,
+				F85EF1F21A2BD5C8004A6E24 /* zbar-help.html in Resources */,
 				57F890C414795EE7008259A5 /* 40_application-x-gzip.png in Resources */,
 				57F890C514795EE7008259A5 /* 40_application-x-gzpostscript.png in Resources */,
 				57F890C614795EE7008259A5 /* 40_application-x-jar.png in Resources */,
@@ -5482,6 +5463,7 @@
 				57F8911114795EE7008259A5 /* 40_image-bmp.png in Resources */,
 				57F8911214795EE7008259A5 /* 40_image-gif.png in Resources */,
 				57F8911314795EE7008259A5 /* 40_image-jpeg.png in Resources */,
+				F85EF1FA1A2BD5C8004A6E24 /* zbar-samples.png in Resources */,
 				57F8911414795EE7008259A5 /* 40_image-jpeg2000.png in Resources */,
 				57F8911514795EE7008259A5 /* 40_image-png.png in Resources */,
 				57F8911614795EE7008259A5 /* 40_image-svg+xml.png in Resources */,
@@ -5565,6 +5547,7 @@
 				57F8916414795EE7008259A5 /* 40_text-x-changelog.png in Resources */,
 				57F8916514795EE7008259A5 /* 40_text-x-chdr.png in Resources */,
 				57F8916614795EE7008259A5 /* 40_text-x-copying.png in Resources */,
+				F8ED7A621A2D4FB0009A4043 /* whiteArrow@2x.png in Resources */,
 				57F8916714795EE7008259A5 /* 40_text-x-credits.png in Resources */,
 				57F8916814795EE7008259A5 /* 40_text-x-csh.png in Resources */,
 				57F8916914795EE7008259A5 /* 40_text-x-csharp.png in Resources */,
@@ -5587,6 +5570,7 @@
 				57F8917A14795EE7008259A5 /* 40_text-x-sql.png in Resources */,
 				57F8917B14795EE7008259A5 /* 40_text-x-tex.png in Resources */,
 				57F8917C14795EE7008259A5 /* 40_text-x-vcalendar.png in Resources */,
+				F85EF1F61A2BD5C8004A6E24 /* zbar-helpicons.png in Resources */,
 				57F8917D14795EE7008259A5 /* 40_text-x-vcard.png in Resources */,
 				57F8917E14795EE7008259A5 /* 40_text-x-zsh.png in Resources */,
 				57F8917F14795EE7008259A5 /* 40_text-xhtml+xml.png in Resources */,
@@ -5623,6 +5607,7 @@
 				57F8919E14795EE7008259A5 /* 80_application-ogg.png in Resources */,
 				57F8919F14795EE7008259A5 /* 80_application-pdf.png in Resources */,
 				57F891A014795EE7008259A5 /* 80_application-pgp-encrypted.png in Resources */,
+				F8ED7A5F1A2D4FB0009A4043 /* grayArrow.png in Resources */,
 				57F891A114795EE7008259A5 /* 80_application-pgp-keys.png in Resources */,
 				57F891A214795EE7008259A5 /* 80_application-pkcs7-mime.png in Resources */,
 				57F891A314795EE7008259A5 /* 80_application-postscript.png in Resources */,
@@ -5647,9 +5632,11 @@
 				57F891B614795EE7008259A5 /* 80_application-vnd.openxmlformats-officedocument.wordprocessingml.document.png in Resources */,
 				57F891B714795EE7008259A5 /* 80_application-vnd.rn-realmedia-secure.png in Resources */,
 				57F891B814795EE7008259A5 /* 80_application-vnd.rn-realmedia-vbr.png in Resources */,
+				F8ED7A611A2D4FB0009A4043 /* whiteArrow.png in Resources */,
 				57F891B914795EE7008259A5 /* 80_application-vnd.rn-realmedia.png in Resources */,
 				57F891BA14795EE7008259A5 /* 80_application-vnd.scribus.png in Resources */,
 				57F891BB14795EE7008259A5 /* 80_application-vnd.stardivision.calc.png in Resources */,
+				F8ED7A5E1A2D4FB0009A4043 /* blueArrow@2x.png in Resources */,
 				57F891BC14795EE7008259A5 /* 80_application-vnd.stardivision.impress.png in Resources */,
 				57F891BD14795EE7008259A5 /* 80_application-vnd.stardivision.writer.png in Resources */,
 				57F891BE14795EE7008259A5 /* 80_application-vnd.sun.xml.calc.png in Resources */,
@@ -5725,6 +5712,7 @@
 				57F8920514795EE7008259A5 /* 80_application-x-shockwave-flash.png in Resources */,
 				57F8920614795EE7008259A5 /* 80_application-x-sln.png in Resources */,
 				57F8920714795EE7008259A5 /* 80_application-x-sqlite2.png in Resources */,
+				F85EF1EE1A2BD5C8004A6E24 /* zbar-back.png in Resources */,
 				57F8920814795EE7008259A5 /* 80_application-x-sqlite3.png in Resources */,
 				57F8920914795EE7008259A5 /* 80_application-x-stuffit.png in Resources */,
 				57F8920A14795EE7008259A5 /* 80_application-x-tar.png in Resources */,
@@ -5810,6 +5798,7 @@
 				57F8925D14795EE7008259A5 /* 80_openofficeorg3-drawing.png in Resources */,
 				57F8925E14795EE7008259A5 /* 80_openofficeorg3-extension.png in Resources */,
 				57F8925F14795EE7008259A5 /* 80_openofficeorg3-oasis-database.png in Resources */,
+				F8ED7A601A2D4FB0009A4043 /* grayArrow@2x.png in Resources */,
 				57F8926014795EE7008259A5 /* 80_openofficeorg3-oasis-spreadsheet.png in Resources */,
 				57F8926114795EE7008259A5 /* 80_opera-extension.png in Resources */,
 				57F8926214795EE7008259A5 /* 80_opera-unite-application.png in Resources */,
@@ -5866,10 +5855,12 @@
 				57F8929514795EE7008259A5 /* 80_text-x-install.png in Resources */,
 				57F8929614795EE7008259A5 /* 80_text-x-java-source.png in Resources */,
 				57F8929714795EE7008259A5 /* 80_text-x-java.png in Resources */,
+				F8ED7A5B1A2D4FB0009A4043 /* blackArrow.png in Resources */,
 				57F8929814795EE7008259A5 /* 80_text-x-javascript.png in Resources */,
 				57F8929914795EE7008259A5 /* 80_text-x-makefile.png in Resources */,
 				57F8929A14795EE7008259A5 /* 80_text-x-preview.png in Resources */,
 				57F8929B14795EE7008259A5 /* 80_text-x-python.png in Resources */,
+				F8ED7A5C1A2D4FB0009A4043 /* blackArrow@2x.png in Resources */,
 				57F8929C14795EE7008259A5 /* 80_text-x-readme.png in Resources */,
 				57F8929D14795EE7008259A5 /* 80_text-x-script.png in Resources */,
 				57F8929E14795EE7008259A5 /* 80_text-x-sh.png in Resources */,
@@ -5892,6 +5883,7 @@
 				57F892AF14795EE7008259A5 /* 80_video.png in Resources */,
 				57F892B014795EE7008259A5 /* 80_vnd.oasis.opendocument.drawing.png in Resources */,
 				57F892B114795EE7008259A5 /* 80_wordprocessing.png in Resources */,
+				F8ED7A5D1A2D4FB0009A4043 /* blueArrow.png in Resources */,
 				57F892B214795EE7008259A5 /* 80_www.png in Resources */,
 				57F892B314795EE7008259A5 /* 80_x-dia-diagram.png in Resources */,
 				57F892B414795EE7008259A5 /* 80_x-font-afm.png in Resources */,
@@ -5902,6 +5894,7 @@
 				57F892B914795EE7008259A5 /* 80_x-office-presentation.png in Resources */,
 				57F892BA14795EE7008259A5 /* 80_x-office-spreadsheet.png in Resources */,
 				57F892BB14795EE7008259A5 /* 80_zip.png in Resources */,
+				F847801C19548E82004BE6DB /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5910,6 +5903,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				579F9ADD14678A4E00709C70 /* InfoPlist.strings in Resources */,
+				F85EF1FB1A2BD5C8004A6E24 /* zbar-samples.png in Resources */,
+				F85EF1F31A2BD5C8004A6E24 /* zbar-help.html in Resources */,
+				F85EF1F71A2BD5C8004A6E24 /* zbar-helpicons.png in Resources */,
+				F85EF1EF1A2BD5C8004A6E24 /* zbar-back.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5990,8 +5987,6 @@
 				578528B514B1AC59003A1FFC /* main.m in Sources */,
 				578528B614B1AC59003A1FFC /* UIImage+FileType.m in Sources */,
 				578528B714B1AC59003A1FFC /* SKFileTypeImageLoader.m in Sources */,
-				578528B814B1AC59003A1FFC /* PullToRefreshTableViewController.m in Sources */,
-				578528B914B1AC59003A1FFC /* RootViewController.m in Sources */,
 				578528BA14B1AC59003A1FFC /* EGORefreshTableHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6040,8 +6035,6 @@
 				57852B5E14B1B582003A1FFC /* main.m in Sources */,
 				57852B5F14B1B582003A1FFC /* UIImage+FileType.m in Sources */,
 				57852B6014B1B582003A1FFC /* SKFileTypeImageLoader.m in Sources */,
-				57852B6114B1B582003A1FFC /* PullToRefreshTableViewController.m in Sources */,
-				57852B6214B1B582003A1FFC /* RootViewController.m in Sources */,
 				57852B6314B1B582003A1FFC /* EGORefreshTableHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6090,8 +6083,6 @@
 				57A975F7147203430043B4B3 /* main.m in Sources */,
 				57C777211472C5BC00F7CDC7 /* UIImage+FileType.m in Sources */,
 				571F47D414739C9900D440FD /* SKFileTypeImageLoader.m in Sources */,
-				571F4F991473C12A00D440FD /* PullToRefreshTableViewController.m in Sources */,
-				571F4F9A1473C12A00D440FD /* RootViewController.m in Sources */,
 				571F4F9B1473C12A00D440FD /* EGORefreshTableHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6154,6 +6145,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
+					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				PRODUCT_NAME = SparkleShareDonate;
 				SKIP_INSTALL = NO;
@@ -6173,6 +6165,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
+					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				PRODUCT_NAME = SparkleShareDonate;
 				PROVISIONING_PROFILE = "22E5FFF2-91CD-46AD-9D0B-9B1A973EB7FA";
@@ -6188,11 +6181,12 @@
 				DSTROOT = /tmp/xcodeproj.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SparkleShare/Supporting/SparkleShare-Prefix.pch";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShareAppStore-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
+					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				PRODUCT_NAME = SparkleShare;
 				SKIP_INSTALL = NO;
@@ -6203,15 +6197,16 @@
 		57852DDC14B1B582003A1FFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "";
 				DSTROOT = /tmp/xcodeproj.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SparkleShare/Supporting/SparkleShare-Prefix.pch";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShareAppStore-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
+					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				PRODUCT_NAME = SparkleShare;
 				PROVISIONING_PROFILE = "";
@@ -6224,8 +6219,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -6235,12 +6238,19 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Debug;
 		};
@@ -6248,14 +6258,26 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -6266,15 +6288,17 @@
 		579F9AE414678A4E00709C70 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				DSTROOT = /tmp/xcodeproj.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SparkleShare/Supporting/SparkleShare-Prefix.pch";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShare-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
+					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -6286,15 +6310,17 @@
 		579F9AE514678A4E00709C70 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				DSTROOT = /tmp/xcodeproj.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SparkleShare/Supporting/SparkleShare-Prefix.pch";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShare-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
+					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -6316,6 +6342,10 @@
 				GCC_PREFIX_HEADER = "SparkleShare/SparkleShare-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "SparkleShareTests/SparkleShareTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs/ZBarSDK",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TEST_HOST = "$(BUNDLE_LOADER)";
@@ -6336,6 +6366,10 @@
 				GCC_PREFIX_HEADER = "SparkleShare/SparkleShare-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "SparkleShareTests/SparkleShareTests-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs/ZBarSDK",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TEST_HOST = "$(BUNDLE_LOADER)";

@@ -22,7 +22,6 @@
 
 - (BOOL)application: (UIApplication *) application didFinishLaunchingWithOptions: (NSDictionary *) launchOptions {
 	self.window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
-
     
 	StartingViewController *startingViewController = [[StartingViewController alloc] init];
 	self.window.rootViewController = startingViewController;
@@ -31,8 +30,6 @@
 	connection = [[SSConnection alloc] initWithUserDefaults];
     connection.delegate = self;
     [connection estabilishConnection];
-
-
 
 	return YES;
 }
