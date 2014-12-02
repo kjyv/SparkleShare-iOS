@@ -39,8 +39,8 @@ static dispatch_queue_t json_request_operation_processing_queue() {
 		 }
 	 }
 	 failure:^(AFHTTPRequestOperation * operation, NSError * error) {
-	         if (failure) {
-	                 failure (operation.request, operation.response, error, [(SSJSONRequestOperation *) operation responseJSON]);
+         if (failure) {
+             failure (operation.request, operation.response, error, [(SSJSONRequestOperation *) operation responseJSON]);
 		 }
 	 }
 	];
@@ -127,30 +127,27 @@ static dispatch_queue_t json_request_operation_processing_queue() {
 		if (self.error) {
 			if (failure) {
 				dispatch_async (dispatch_get_main_queue (), ^(void) {
-				                        failure (self, self.error);
-						}
-				                );
+                    failure (self, self.error);
+                });
 			}
 		}
 		else {
 			dispatch_async (json_request_operation_processing_queue (), ^(void) {
-			                        id JSON = self.responseJSON;
+                id JSON = self.responseJSON;
 
-			                        dispatch_async (dispatch_get_main_queue (), ^(void) {
-			                                                if (self.JSONError) {
-			                                                        if (failure) {
-			                                                                failure (self, self.JSONError);
-										}
-									}
-			                                                else {
-			                                                        if (success) {
-			                                                                success (self, JSON);
-										}
-									}
-								}
-			                                        );
-					}
-			                );
+                dispatch_async (dispatch_get_main_queue (), ^(void) {
+                    if (self.JSONError) {
+                        if (failure) {
+                            failure (self, self.JSONError);
+                        }
+                    }
+                    else {
+                        if (success) {
+                            success (self, JSON);
+                        }
+                    }
+                });
+            });
 		}
 	};
 }

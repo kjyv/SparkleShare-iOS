@@ -105,9 +105,10 @@
                 [self testConnection];
          }
          failure:^(NSURLRequest *request, NSURLResponse *response, NSError *error, id JSON) {
+             NSLog(@"JSON Request error: %@", error);
              [self.delegate connectionLinkingFailed:self];
          }
-	                                    ];
+	];
 
 	[queue addOperation: operation];
 }

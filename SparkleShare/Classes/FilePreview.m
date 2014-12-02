@@ -37,8 +37,21 @@
 		}
 		else {
 			self.localURL = [NSURL fileURLWithPath: tempFileName];
+            //reencode text files which QLPreviewController seems to only be able to display
+            //properly with utf16 encoding
+            if( [file.mime isEqualToString:@"text/plain"] ) {                
+                if( [[[NSString alloc] initWithData:file.content encoding:NSUTF8StringEncoding] writeToURL:self.localURL atomically:YES encoding:NSUTF16StringEncoding error:&error] )
+                {
+                    // Continue presenting the QLPreviewController from localFileURL
+                }
+                else
+                {
+                    NSLog( @"An error occured: %@", error );
+                }
+            }
 		}
 	}
+
 	return self;
 }
 
