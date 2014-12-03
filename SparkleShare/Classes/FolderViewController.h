@@ -9,19 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "SSFolder.h"
 #import "SSFile.h"
-#import "EGORefreshTableHeaderView.h"
 
-@interface FolderViewController : UITableViewController <EGORefreshTableHeaderDelegate, SSFolderInfoDelegate, SSFolderItemsDelegate, SSFileDelegate> {
-
-    EGORefreshTableHeaderView *_refreshHeaderView;
-    BOOL _reloading;
+@interface FolderViewController : UITableViewController <SSFolderInfoDelegate, SSFolderItemsDelegate, SSFileDelegate> {
 }
 
 @property (strong) SSFolder *folder;
 @property int iconSize;
 
 - (id)initWithFolder: (SSFolder *) folder;
-- (void)reloadTableViewDataSource;
-- (void)doneLoadingTableViewData;
 
 @end
