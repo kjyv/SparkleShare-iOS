@@ -39,16 +39,11 @@
     else
         self.iconSize = 40;
     
-    if (_refreshHeaderView == nil) {
-        
-        EGORefreshTableHeaderView *view = [[EGORefreshTableHeaderView alloc] initWithFrame:CGRectMake(0.0f, 0.0f - self.tableView.bounds.size.height, self.view.frame.size.width, self.tableView.bounds.size.height)];
-        view.delegate = self;
-        [self.tableView addSubview:view];
-        _refreshHeaderView = view;
-    }
+    // Refresh Control
+    UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
+    [refreshControl addTarget:self.folder action:@selector(loadItems) forControlEvents:UIControlEventValueChanged];
+    [self setRefreshControl:refreshControl];
     
-    //  update the last update date
-    [_refreshHeaderView refreshLastUpdatedDate];
 }
 
 - (void)viewDidUnload {
@@ -167,7 +162,7 @@
 		}
 	}
 	[SVProgressHUD dismiss];
-    [self doneLoadingTableViewData];
+    [self.refreshControl endRefreshing];
 }
 
 - (void) reloadOneItem: (SSFolderItem *) item {
@@ -180,7 +175,7 @@
 
 - (void) folderLoadingFailed: (SSFolder *) folder {
 	[SVProgressHUD dismissWithError:@"Folder data loading failed"];
-    [self doneLoadingTableViewData];
+    [self.refreshControl endRefreshing];
 }
 
 - (void) folder: (SSFolder *) folder countLoaded: (int) count {
@@ -208,60 +203,6 @@
 
 - (void) fileContentLoadingFailed: (SSFile *) file {
 	[SVProgressHUD dismissWithError:@"File content loading failed"];
-}
-
-
-
-#pragma mark - refreshHeaderView Methods
-
-- (void) reloadTableViewDataSource
-{
-    _reloading = YES;
-	[self.folder loadItems];
-}
-
-- (void)doneLoadingTableViewData
-{
-    _reloading = NO;
-    [_refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
-}
-
-#pragma mark -
-#pragma mark UIScrollViewDelegate Methods
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    
-    [_refreshHeaderView egoRefreshScrollViewDidScroll:scrollView];
-    
-}
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
-    
-    [_refreshHeaderView egoRefreshScrollViewDidEndDragging:scrollView];
-    
-}
-
-
-#pragma mark -
-#pragma mark EGORefreshTableHeaderDelegate Methods
-
-- (void)egoRefreshTableHeaderDidTriggerRefresh:(EGORefreshTableHeaderView*)view{
-    
-    [self reloadTableViewDataSource];
-    [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:3.0];
-    
-}
-
-- (BOOL)egoRefreshTableHeaderDataSourceIsLoading:(EGORefreshTableHeaderView*)view{
-    
-    return _reloading; // should return if data source model is reloading
-    
-}
-
-- (NSDate*)egoRefreshTableHeaderDataSourceLastUpdated:(EGORefreshTableHeaderView*)view{
-    
-    return [NSDate date]; // should return date data source was last changed
-    
 }
 
 
