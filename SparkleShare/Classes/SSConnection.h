@@ -16,7 +16,7 @@
 - (void)connectionEstablishingSuccess: (SSConnection *) connection;
 - (void)connectionEstablishingFailed: (SSConnection *) connection;
 - (void)connectionLinkingSuccess: (SSConnection *) connection;
-- (void)connectionLinkingFailed: (SSConnection *) connection;
+- (void)connectionLinkingFailed: (SSConnection *) connection error: (NSString*) error;
 @end
 
 

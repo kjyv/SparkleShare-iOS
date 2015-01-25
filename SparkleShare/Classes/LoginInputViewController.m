@@ -8,6 +8,7 @@
 
 #import "LoginInputViewController.h"
 #import "UIViewController+AutoPlatformNibName.h"
+
 @implementation LoginInputViewController
 @synthesize delegate = _delegate;
 
