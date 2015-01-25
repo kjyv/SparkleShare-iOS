@@ -106,7 +106,10 @@
          }
          failure:^(NSURLRequest *request, NSURLResponse *response, NSError *error, id JSON) {
              NSLog(@"JSON Request error: %@", error);
-             [self.delegate connectionLinkingFailed:self];
+             //TODO: make more enduser friendly (display proper reason depending on e.g. error code)
+             //errors:
+             //-1012 if certificate is invalid (expired? or self signed)
+             [self.delegate connectionLinkingFailed:self error: [error description]];
          }
 	];
 

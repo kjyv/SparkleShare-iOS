@@ -1,15 +1,10 @@
+
+This fork adds iOS >=7 and larger screen compatibility. It also fixes some bugs and
+adds features.
+
+---
+
 iOS Client for [SparkleShare Project](http://www.sparkleshare.org)
-
-Grab it right away at [AppStore](http://bit.ly/zA54N5)! Or support me by buying [paid version](http://itunes.apple.com/us/app/sparkleshare-support-us!/id492519879)
-
-<a href="https://www.cisimple.com/jobs/vocmunsave861uxic"><img src='https://www.cisimple.com/jobs/vocmunsave861uxic/build_status.png'/></a>
-
-Continuous Integration provided by [cisimple](https://www.cisimple.com).
-
-
-## Current Development Status ##
-
-SparkleShare for iOS is in Beta development stage
 
 ### Implemented features ###
 
@@ -19,14 +14,16 @@ SparkleShare for iOS is in Beta development stage
 
 ### Planned features ###
 
- - Uploading files
+ - Uploading and editing files
+ - allowing self-signed certificates
+ - displaying more file types
 
 ### Build on osx
 
 * Execute:
 
 ```sh
-git clone git://github.com/darvin/SparkleShare-iOS.git
+git clone git://github.com/kjyv/SparkleShare-iOS.git
 cd SparkleShare-iOS
 git submodule update --init
 open SparkleShare.xcodeproj

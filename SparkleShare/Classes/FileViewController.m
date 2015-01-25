@@ -58,7 +58,6 @@
 
 - (id <QLPreviewItem>)previewController: (QLPreviewController *) controller previewItemAtIndex: (NSInteger) index;
 {
-    //TODO: controller.editButtonItem
 	if (index == 0 && self.filePreview) {
 		return self.filePreview;
 	}

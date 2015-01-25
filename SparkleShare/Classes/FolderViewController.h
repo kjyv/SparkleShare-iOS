@@ -17,5 +17,6 @@
 @property int iconSize;
 
 - (id)initWithFolder: (SSFolder *) folder;
+- (void)reloadFolder;
 
 @end
