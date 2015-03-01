@@ -116,8 +116,11 @@
     [SVProgressHUD dismissWithSuccess:@"Linked!"];
 }
 
-- (void)connectionLinkingFailed: (SSConnection *) connection {
-    [SVProgressHUD dismissWithError:@"Error during linking"];
+- (void)connectionLinkingFailed: (SSConnection *) connection error: (NSString*) error {
+    NSMutableString *errorString = [NSMutableString stringWithString: @"Error during linking: "];
+    [errorString appendString:error];
+    
+    [SVProgressHUD dismissWithError: errorString afterDelay:5];
 }
 
 @end

@@ -109,7 +109,15 @@
              //TODO: make more enduser friendly (display proper reason depending on e.g. error code)
              //errors:
              //-1012 if certificate is invalid (expired? or self signed)
-             [self.delegate connectionLinkingFailed:self error: [error description]];
+             //(-1012 generally means kCFURLErrorUserCancelledAuthentication
+             
+             if (error.code == -1012) {
+                 [self.delegate connectionLinkingFailed:self error: @"Unable to connect to Server URL. The SSL certificate might be invalid. Consider importing it manually if it is self-signed."];
+             } else if (error.code == -1011 && ((NSHTTPURLResponse *)response).statusCode == 403) {
+                     [self.delegate connectionLinkingFailed:self error: @"Unable to connect to Server URL. The link code was not accepted."];
+             } else {
+                 [self.delegate connectionLinkingFailed:self error: [error description]];
+             }
          }
 	];
 
