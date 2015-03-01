@@ -215,12 +215,36 @@
 - (void)fileContentLoaded: (SSFile *) file content: (NSData *) content {
     [SVProgressHUD dismiss];
     
+    //override some text mime types that otherwise would not be displayed as text
+    NSArray *overrideMime = @[@"application/x-tex",
+                              @"application/x-latex",
+                              @"application/javascript",
+                              @"application/x-javascript",
+                              @"application/mathematica",
+                              @"text/x-opml"];
+    if ([overrideMime containsObject: file.mime])
+        file.mime = @"text/plain";
+    
+    //a lot of files are also detected as octet stream while
+    if ([file.mime isEqualToString:@"application/octet-stream"]) {
+        if ([file.name hasPrefix:@"."] ||
+            [file.name hasSuffix:@".py"] ||
+            [file.name hasSuffix:@".coffee"] ||
+            [file.name hasSuffix:@".sci"] ||
+            [file.name hasSuffix:@".rb"] ||
+            [file.name hasSuffix:@".conf"] ||
+            [file.name hasSuffix:@".plist"])
+        {
+            file.mime = @"text/plain";
+        }
+    }
+    
     //open text editing view if file is text
     if( [file.mime isEqualToString:@"text/plain"] ) {
         FileEditController *newFileEditController = [[FileEditController alloc] initWithFile: file];
         [self.navigationController pushViewController: newFileEditController animated: YES];
     }  else {
-       	FilePreview *filePreview = [[FilePreview alloc] initWithFile: file];
+        FilePreview *filePreview = [[FilePreview alloc] initWithFile: file];
         FileViewController *newFileViewController = [[FileViewController alloc] initWithFilePreview: filePreview filename: file.name];
     	[self.navigationController pushViewController: newFileViewController animated: YES];
     }
