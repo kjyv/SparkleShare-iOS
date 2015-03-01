@@ -27,17 +27,6 @@
 			}
 		}
         
-        //override some mime types that otherwise would not be displayed
-        //TODO: add more of these
-        NSArray *overrideMime = @[@"application/x-tex",
-                                  @"application/x-latex",
-                                  @"application/javascript",
-                                  @"application/x-javascript",
-                                  @"application/mathematica"];
-        
-        if ([overrideMime containsObject: file.mime])
-            file.mime = @"text/plain";
-        
 		NSString *tempFileName = [path stringByAppendingPathComponent: self.filename];
 
 		if (![[NSFileManager defaultManager] createFileAtPath: tempFileName
@@ -51,7 +40,7 @@
             //reencode text files since QLPreviewController seems to only be able to
             //display them properly with utf16 encoding
             //Note: might give problems with really large text files...
-            if( [file.mime isEqualToString:@"text/plain"] ) {                
+            if( [file.mime isEqualToString:@"text/plain"] ) {
                 if( ![[[NSString alloc] initWithData:file.content encoding:NSUTF8StringEncoding] writeToURL:self.localURL atomically:YES encoding:NSUTF16StringEncoding error:&error] )
                 {
                     NSLog( @"An error occured: %@", error );
