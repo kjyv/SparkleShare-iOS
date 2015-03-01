@@ -34,8 +34,8 @@ static dispatch_queue_t json_request_operation_processing_queue() {
        failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure {
 	SSJSONRequestOperation *requestOperation = [[[self alloc] initWithRequest: urlRequest] autorelease];
 	[requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation * operation, id responseObject) {
-	         if (success) {
-	                 success (operation.request, operation.response, responseObject);
+         if (success) {
+             success (operation.request, operation.response, responseObject);
 		 }
 	 }
 	 failure:^(AFHTTPRequestOperation * operation, NSError * error) {
@@ -58,7 +58,6 @@ static dispatch_queue_t json_request_operation_processing_queue() {
 	if (!self) {
 		return nil;
 	}
-
 
 	return self;
 }

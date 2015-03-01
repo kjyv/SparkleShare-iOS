@@ -10,8 +10,10 @@
 
 @class SSFile;
 @protocol SSFileDelegate <NSObject>
-- (void)file: (SSFile *) file contentLoaded: (NSData *) content;
+- (void)fileContentLoaded: (SSFile *) file content: (NSData *) content;
 - (void)fileContentLoadingFailed: (SSFile *) file;
+- (void)fileContentSaved: (SSFile *) file;
+- (void)fileContentSavingFailed: (SSFile *) file error: (NSError *) error;
 @end
 
 
@@ -30,4 +32,5 @@
 @property int filesize;
 @property (weak) id <SSFileDelegate> delegate;
 - (void)loadContent;
+- (void)saveContent: (NSString *) text;
 @end

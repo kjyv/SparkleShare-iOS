@@ -63,4 +63,16 @@
 	[connection sendRequestWithString: [NSString stringWithFormat: @"/api/%@/%@?%@", method, self.ssid, path] success: success failure: failure];
 }
 
+- (void) sendPostRequestWithMethodAndData: (NSString *) method data: (NSString *) data
+       success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
+       failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure {
+    
+    if (self.url) {
+        [connection sendPostRequestWithStringAndData: [NSString stringWithFormat: @"/api/%@/%@?%@", method, self.projectFolder.ssid, self.url] data:data success: success failure: failure];
+    } else {
+        [connection sendPostRequestWithStringAndData: [NSString stringWithFormat: @"/api/%@/%@", method, self.projectFolder.ssid] data:data success: success failure: failure];
+    }
+}
+
+
 @end

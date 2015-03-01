@@ -37,5 +37,8 @@
 - (void)sendRequestWithString: (NSString *) string
        success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
        failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure;
+- (void) sendPostRequestWithStringAndData:(NSString *)string data: (NSString *)data
+       success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON))success
+       failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON))failure;
 - (void)linkDeviceWithAddress: (NSURL *) anAddress code: (NSString *) aCode;
 @end

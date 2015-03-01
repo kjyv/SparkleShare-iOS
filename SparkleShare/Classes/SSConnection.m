@@ -106,15 +106,15 @@
          }
          failure:^(NSURLRequest *request, NSURLResponse *response, NSError *error, id JSON) {
              NSLog(@"JSON Request error: %@", error);
-             //TODO: make more enduser friendly (display proper reason depending on e.g. error code)
              //errors:
              //-1012 if certificate is invalid (expired? or self signed)
              //(-1012 generally means kCFURLErrorUserCancelledAuthentication
+             //-1011 if return code != 200-299
              
              if (error.code == -1012) {
                  [self.delegate connectionLinkingFailed:self error: @"Unable to connect to Server URL. The SSL certificate might be invalid. Consider importing it manually if it is self-signed."];
              } else if (error.code == -1011 && ((NSHTTPURLResponse *)response).statusCode == 403) {
-                     [self.delegate connectionLinkingFailed:self error: @"Unable to connect to Server URL. The link code was not accepted."];
+                 [self.delegate connectionLinkingFailed:self error: @"Unable to connect to Server URL. The link code was not accepted."];
              } else {
                  [self.delegate connectionLinkingFailed:self error: [error description]];
              }
@@ -126,34 +126,50 @@
 
 
 - (void) sendRequestWithString: (NSString *) string
-       success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
-       failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure {
+        success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
+        failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure {
 	NSString *urlRequest = [[address absoluteString] stringByAppendingString: string];
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString: urlRequest]];
 	[request setValue: identCode forHTTPHeaderField: @"X-SPARKLE-IDENT"];
 	[request setValue: authCode forHTTPHeaderField: @"X-SPARKLE-AUTH"];
-
 
 	SSJSONRequestOperation *operation = [SSJSONRequestOperation JSONRequestOperationWithRequest: request success: success failure: failure];
 
 	[queue addOperation: operation];
 }
 
+- (void) sendPostRequestWithStringAndData:(NSString *)string data: (NSString *)data
+        success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
+        failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure {
+    //expects a string data with form of "key=value&key2=..."
+    NSString *urlRequest = [[address absoluteString] stringByAppendingString: string];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString: urlRequest]];
+    [request setValue: identCode forHTTPHeaderField: @"X-SPARKLE-IDENT"];
+    [request setValue: authCode forHTTPHeaderField: @"X-SPARKLE-AUTH"];
+    [request setHTTPMethod:@"POST"];
+    
+    [request setHTTPBody: [data dataUsingEncoding:NSUTF8StringEncoding]];
+    [request setTimeoutInterval:120];
+    
+    SSJSONRequestOperation *operation = [SSJSONRequestOperation JSONRequestOperationWithRequest: request success: success failure: failure];
+    
+    [queue addOperation: operation];
+}
+
 - (void) testConnection {
 	[self sendRequestWithString: @"/api/ping"
 	 success:
 	 ^(NSURLRequest * request, NSURLResponse * response, id JSON) {
-	         if ([@"pong" isEqual: JSON]) {
-	                 self.rootFolder = [[SSRootFolder alloc] initWithConnection: self];
-	                 [self.delegate connectionEstablishingSuccess: self];
-		 }
-	         else {
-	                 [self.delegate connectionEstablishingFailed: self];
+         if ([@"pong" isEqual: JSON]) {
+             self.rootFolder = [[SSRootFolder alloc] initWithConnection: self];
+             [self.delegate connectionEstablishingSuccess: self];
+		 } else {
+             [self.delegate connectionEstablishingFailed: self];
 		 }
 	 }
 	 failure:
 	 ^(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) {
-	         [self.delegate connectionEstablishingFailed: self];
+         [self.delegate connectionEstablishingFailed: self];
 	 }
 	];
 }

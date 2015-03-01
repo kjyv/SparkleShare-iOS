@@ -8,6 +8,7 @@
 
 #import "FolderViewController.h"
 #import "FileViewController.h"
+#import "FileEditController.h"
 #import "GitInfoFormatter.h"
 #import "SSFolder.h"
 #import "SSRootFolder.h"
@@ -41,9 +42,10 @@
     
     // Refresh Control
     UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
-    [refreshControl addTarget:self.folder action:@selector(loadItems) forControlEvents:UIControlEventValueChanged];
+    [refreshControl addTarget:self action:@selector(reloadFolder) forControlEvents:UIControlEventValueChanged];
     [self setRefreshControl:refreshControl];
     
+    self.restorationIdentifier = @"folderViewID";
 }
 
 - (void)viewDidUnload {
@@ -73,6 +75,19 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) interfaceOrientation {
 	return YES;
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+    [coder encodeObject:self.folder.url  forKey:@"FolderPath"];
+    [super encodeRestorableStateWithCoder:coder];
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+    //NSLog([coder decodeObjectForKey:@"FolderPath"]);
+    //TODO: recursively call didSelectRowAtIndexPath with path mapped to next part of indexPath,
+    //pushing for each directory
+    //could also just use userdefaults to restore
+    [super decodeRestorableStateWithCoder:coder];
 }
 
 #pragma mark - Table view data source
@@ -111,7 +126,7 @@
 		NSString *sizeString = [sizeFormatter stringFromNumber: [NSNumber numberWithInt: ( (SSFile *)item ).filesize]];
 		cell.detailTextLabel.text = [NSString stringWithFormat: @"%@  %@",
 		                             ( (SSFile *)item ).mime, sizeString];
-		cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+		cell.accessoryType = UITableViewCellAccessoryNone;
 	}
 
 
@@ -166,11 +181,15 @@
 }
 
 - (void) reloadOneItem: (SSFolderItem *) item {
-	int i = [self.folder.items indexOfObject: item];
-
+	NSInteger i = [self.folder.items indexOfObject: item];
 	NSIndexPath *indexPath = [NSIndexPath indexPathForRow: i inSection: 0];
 
 	[self.tableView reloadRowsAtIndexPaths: [NSArray arrayWithObject: indexPath] withRowAnimation: UITableViewRowAnimationNone];
+}
+
+- (void) reloadFolder {
+	[SVProgressHUD show];
+    [self.folder loadItems];
 }
 
 - (void) folderLoadingFailed: (SSFolder *) folder {
@@ -193,16 +212,33 @@
 - (void) folderInfoLoadingFailed: (SSFolder *) folder {
 }
 
-- (void) file: (SSFile *) file contentLoaded: (NSData *) content {
-	FilePreview *filePreview = [[FilePreview alloc] initWithFile: file];
+- (void)fileContentLoaded: (SSFile *) file content: (NSData *) content {
+    [SVProgressHUD dismiss];
     
-	FileViewController *newFileViewController = [[FileViewController alloc] initWithFilePreview: filePreview filename: file.name];
-	[SVProgressHUD dismiss];
-	[self.navigationController pushViewController: newFileViewController animated: YES];
+    //open text editing view if file is text
+    if( [file.mime isEqualToString:@"text/plain"] ) {
+        FileEditController *newFileEditController = [[FileEditController alloc] initWithFile: file];
+        [self.navigationController pushViewController: newFileEditController animated: YES];
+    }  else {
+       	FilePreview *filePreview = [[FilePreview alloc] initWithFile: file];
+        FileViewController *newFileViewController = [[FileViewController alloc] initWithFilePreview: filePreview filename: file.name];
+    	[self.navigationController pushViewController: newFileViewController animated: YES];
+    }
 }
 
 - (void) fileContentLoadingFailed: (SSFile *) file {
 	[SVProgressHUD dismissWithError:@"File content loading failed"];
+}
+
+- (void)fileContentSaved: (SSFile *) file {
+    [SVProgressHUD show];
+    [SVProgressHUD dismissWithSuccess:@"File saved"];
+}
+
+- (void) fileContentSavingFailed: (SSFile *) file error: (NSError *) error {
+    [SVProgressHUD show];
+    [SVProgressHUD dismissWithError:@"Saving file failed"];
+    NSLog(@"Error %@", [error localizedRecoverySuggestion]);
 }
 
 

@@ -35,16 +35,22 @@
 @property (readonly) BOOL completely_loaded;
 
 - (void)sendRequestWithSelfUrlAndMethod: (NSString *) method
-       success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
-       failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure;
+    success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
+    failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure;
+
 //http://localhost:3000/api/{method}/{self->ssid}
 - (void)sendRequestWithMethod: (NSString *) method
-       success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
-       failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure;
+    success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
+    failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure;
+
 //http://localhost:3000/api/{method}/{self->ssid}?{path}
 - (void)sendRequestWithMethod: (NSString *) method path: (NSString *) path
-       success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
-       failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure;
+    success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
+    failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure;
+
+- (void) sendPostRequestWithMethodAndData: (NSString *) method data: (NSString *) data
+    success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
+    failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure;
 
 
 @end
