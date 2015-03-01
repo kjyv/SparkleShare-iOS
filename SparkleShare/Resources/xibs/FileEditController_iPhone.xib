@@ -28,7 +28,7 @@
                             </attributes>
                         </fragment>
                     </attributedString>
-                    <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="yes" spellCheckingType="yes"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes" spellCheckingType="yes"/>
                     <connections>
                         <outlet property="delegate" destination="-1" id="myo-ih-OAi"/>
                     </connections>
