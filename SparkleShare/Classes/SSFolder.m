@@ -82,7 +82,7 @@
 // //http://localhost:3000/api/getFolderRevision/c0acdbe1e1fec3290db71beecc9af500af126f8d
 //"b26aa22664f2b9759d93df228e1a8c4693dc44af"
 - (void) loadRevision {
-	[self sendRequestWithMethod: @"getFolderRevision" success:
+	[self sendRequestWithSelfUrlAndMethod: @"getFolderRevision" success:
 	 ^(NSURLRequest * request, NSURLResponse * response, id JSON) {
 	         self.revision = JSON;
 	         [self.infoDelegate folder: self revisionLoaded: self.revision];
