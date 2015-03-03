@@ -27,8 +27,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     
+    //TODO: improve loading the text, could be different encodings, binary, too large etc.
     [textEditView setText:[[NSString alloc] initWithData:_file.content encoding:NSUTF8StringEncoding]];
     
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
@@ -57,8 +57,8 @@
         [textEditView setEditable:false];
         //save changes
         if (fileChanged) {
-            [SVProgressHUD showWithStatus:@"saving" networkIndicator:true];
-            [_file saveContent: textEditView.text];
+            [SVProgressHUD showWithStatus:@"Saving" networkIndicator:true];
+            [_file saveContent: textEditView.text];            
             fileChanged = false;
         }
     }
@@ -84,10 +84,10 @@
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
+    fileChanged = true;
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView {
-    fileChanged = true;
 }
 
 @end

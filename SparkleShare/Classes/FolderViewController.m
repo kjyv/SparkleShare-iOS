@@ -255,8 +255,9 @@
 }
 
 - (void)fileContentSaved: (SSFile *) file {
-    [SVProgressHUD show];
-    [SVProgressHUD dismissWithSuccess:@"File saved"];
+//    [SVProgressHUD show];
+//    [SVProgressHUD dismissWithSuccess:@"File saved"];
+    [SVProgressHUD dismiss];
 }
 
 - (void) fileContentSavingFailed: (SSFile *) file error: (NSError *) error {

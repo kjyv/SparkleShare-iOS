@@ -1962,6 +1962,9 @@
 		F847801C19548E82004BE6DB /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F847801B19548E82004BE6DB /* Default-568h@2x.png */; };
 		F847801D19548E82004BE6DB /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F847801B19548E82004BE6DB /* Default-568h@2x.png */; };
 		F847801E19548E82004BE6DB /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F847801B19548E82004BE6DB /* Default-568h@2x.png */; };
+		F8512C881AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */; };
+		F8512C891AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */; };
+		F8512C8A1AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */; };
 		F85EF1EE1A2BD5C8004A6E24 /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E61A2BD5C8004A6E24 /* zbar-back.png */; };
 		F85EF1EF1A2BD5C8004A6E24 /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E61A2BD5C8004A6E24 /* zbar-back.png */; };
 		F85EF1F01A2BD5C8004A6E24 /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = F85EF1E61A2BD5C8004A6E24 /* zbar-back.png */; };
@@ -1998,6 +2001,18 @@
 		F8AC01FC1A3BA8D00067C19E /* FileEditController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */; };
 		F8AC01FD1A3BA8D00067C19E /* FileEditController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */; };
 		F8AC01FE1A3BA8D00067C19E /* FileEditController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */; };
+		F8E08E601AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E591AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.m */; };
+		F8E08E611AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E591AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.m */; };
+		F8E08E621AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E591AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.m */; };
+		F8E08E631AA6711000E88ACD /* TPKeyboardAvoidingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E5B1AA6711000E88ACD /* TPKeyboardAvoidingScrollView.m */; };
+		F8E08E641AA6711000E88ACD /* TPKeyboardAvoidingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E5B1AA6711000E88ACD /* TPKeyboardAvoidingScrollView.m */; };
+		F8E08E651AA6711000E88ACD /* TPKeyboardAvoidingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E5B1AA6711000E88ACD /* TPKeyboardAvoidingScrollView.m */; };
+		F8E08E661AA6711000E88ACD /* TPKeyboardAvoidingTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E5D1AA6711000E88ACD /* TPKeyboardAvoidingTableView.m */; };
+		F8E08E671AA6711000E88ACD /* TPKeyboardAvoidingTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E5D1AA6711000E88ACD /* TPKeyboardAvoidingTableView.m */; };
+		F8E08E681AA6711000E88ACD /* TPKeyboardAvoidingTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E5D1AA6711000E88ACD /* TPKeyboardAvoidingTableView.m */; };
+		F8E08E691AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E5F1AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.m */; };
+		F8E08E6A1AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E5F1AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.m */; };
+		F8E08E6B1AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F8E08E5F1AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2703,6 +2718,7 @@
 		57F8906E14795EE7008259A5 /* 80_x-office-spreadsheet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80_x-office-spreadsheet.png"; sourceTree = "<group>"; };
 		57F8906F14795EE7008259A5 /* 80_zip.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 80_zip.png; sourceTree = "<group>"; };
 		F847801B19548E82004BE6DB /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = SOURCE_ROOT; };
+		F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileEditController_iPad.xib; sourceTree = "<group>"; };
 		F85EF1D01A2BD5C8004A6E24 /* Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Decoder.h; sourceTree = "<group>"; };
 		F85EF1D11A2BD5C8004A6E24 /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
 		F85EF1D21A2BD5C8004A6E24 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
@@ -2752,6 +2768,14 @@
 		F8AC01F61A3BA5270067C19E /* FileEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileEditController.m; sourceTree = "<group>"; };
 		F8AC01FA1A3BA5530067C19E /* FileEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileEditController.h; sourceTree = "<group>"; };
 		F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileEditController_iPhone.xib; sourceTree = "<group>"; };
+		F8E08E581AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingCollectionView.h; sourceTree = "<group>"; };
+		F8E08E591AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingCollectionView.m; sourceTree = "<group>"; };
+		F8E08E5A1AA6711000E88ACD /* TPKeyboardAvoidingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingScrollView.h; sourceTree = "<group>"; };
+		F8E08E5B1AA6711000E88ACD /* TPKeyboardAvoidingScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingScrollView.m; sourceTree = "<group>"; };
+		F8E08E5C1AA6711000E88ACD /* TPKeyboardAvoidingTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPKeyboardAvoidingTableView.h; sourceTree = "<group>"; };
+		F8E08E5D1AA6711000E88ACD /* TPKeyboardAvoidingTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPKeyboardAvoidingTableView.m; sourceTree = "<group>"; };
+		F8E08E5E1AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+TPKeyboardAvoidingAdditions.h"; sourceTree = "<group>"; };
+		F8E08E5F1AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+TPKeyboardAvoidingAdditions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2918,9 +2942,10 @@
 			isa = PBXGroup;
 			children = (
 				F86526051A75777C00011E5B /* AFNetworking */,
-				57C770281472C56900F7CDC7 /* UIImage-FileType */,
-				572920A71471AB6000E4A3E8 /* SVProgressHUD */,
 				57F739CF1470D75C00276BF1 /* FormatterKit */,
+				572920A71471AB6000E4A3E8 /* SVProgressHUD */,
+				F8E08E571AA6711000E88ACD /* TPKeyboardAvoiding */,
+				57C770281472C56900F7CDC7 /* UIImage-FileType */,
 				F85EF1CC1A2BD5C8004A6E24 /* ZBarSDK */,
 			);
 			path = libs;
@@ -3050,6 +3075,7 @@
 			children = (
 				57A975C2147203430043B4B3 /* FileViewController_iPad.xib */,
 				57A975C3147203430043B4B3 /* FileViewController_iPhone.xib */,
+				F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */,
 				F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */,
 				57A975C4147203430043B4B3 /* FolderViewController_iPad.xib */,
 				57A975C5147203430043B4B3 /* FolderViewController_iPhone.xib */,
@@ -3852,6 +3878,22 @@
 			path = AFNetworking;
 			sourceTree = "<group>";
 		};
+		F8E08E571AA6711000E88ACD /* TPKeyboardAvoiding */ = {
+			isa = PBXGroup;
+			children = (
+				F8E08E581AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.h */,
+				F8E08E591AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.m */,
+				F8E08E5A1AA6711000E88ACD /* TPKeyboardAvoidingScrollView.h */,
+				F8E08E5B1AA6711000E88ACD /* TPKeyboardAvoidingScrollView.m */,
+				F8E08E5C1AA6711000E88ACD /* TPKeyboardAvoidingTableView.h */,
+				F8E08E5D1AA6711000E88ACD /* TPKeyboardAvoidingTableView.m */,
+				F8E08E5E1AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.h */,
+				F8E08E5F1AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.m */,
+			);
+			name = TPKeyboardAvoiding;
+			path = TPKeyboardAvoiding/TPKeyboardAvoiding;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3941,6 +3983,8 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
+				es,
 			);
 			mainGroup = 579F9A9914678A4D00709C70;
 			productRefGroup = 579F9AA514678A4E00709C70 /* Products */;
@@ -4447,6 +4491,7 @@
 				57852AB314B1AC59003A1FFC /* 80_image-vnd.adobe.photoshop.png in Resources */,
 				57852AB414B1AC59003A1FFC /* 80_image-vnd.microsoft.icon.png in Resources */,
 				57852AB514B1AC59003A1FFC /* 80_image-x-cmu-raster.png in Resources */,
+				F8512C891AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */,
 				57852AB614B1AC59003A1FFC /* 80_image-x-eps.png in Resources */,
 				57852AB714B1AC59003A1FFC /* 80_image-x-generic.png in Resources */,
 				57852AB814B1AC59003A1FFC /* 80_image-x-ico.png in Resources */,
@@ -5066,6 +5111,7 @@
 				57852D5C14B1B582003A1FFC /* 80_image-vnd.adobe.photoshop.png in Resources */,
 				57852D5D14B1B582003A1FFC /* 80_image-vnd.microsoft.icon.png in Resources */,
 				57852D5E14B1B582003A1FFC /* 80_image-x-cmu-raster.png in Resources */,
+				F8512C8A1AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */,
 				57852D5F14B1B582003A1FFC /* 80_image-x-eps.png in Resources */,
 				57852D6014B1B582003A1FFC /* 80_image-x-generic.png in Resources */,
 				57852D6114B1B582003A1FFC /* 80_image-x-ico.png in Resources */,
@@ -5685,6 +5731,7 @@
 				57F8923E14795EE7008259A5 /* 80_image-vnd.adobe.photoshop.png in Resources */,
 				57F8923F14795EE7008259A5 /* 80_image-vnd.microsoft.icon.png in Resources */,
 				57F8924014795EE7008259A5 /* 80_image-x-cmu-raster.png in Resources */,
+				F8512C881AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */,
 				57F8924114795EE7008259A5 /* 80_image-x-eps.png in Resources */,
 				57F8924214795EE7008259A5 /* 80_image-x-generic.png in Resources */,
 				57F8924314795EE7008259A5 /* 80_image-x-ico.png in Resources */,
@@ -5880,14 +5927,18 @@
 				578528A914B1AC59003A1FFC /* QRCodeLoginInputViewController.m in Sources */,
 				F8AC01F81A3BA5270067C19E /* FileEditController.m in Sources */,
 				578528AA14B1AC59003A1FFC /* SelectLoginInputViewController.m in Sources */,
+				F8E08E611AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.m in Sources */,
+				F8E08E671AA6711000E88ACD /* TPKeyboardAvoidingTableView.m in Sources */,
 				578528AB14B1AC59003A1FFC /* SparkleShareAppDelegate.m in Sources */,
 				578528AC14B1AC59003A1FFC /* SSConnection.m in Sources */,
 				578528AD14B1AC59003A1FFC /* SSFile.m in Sources */,
 				578528AE14B1AC59003A1FFC /* SSFolder.m in Sources */,
+				F8E08E6A1AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
 				578528AF14B1AC59003A1FFC /* SSFolderItem.m in Sources */,
 				578528B014B1AC59003A1FFC /* SSJSONRequestOperation.m in Sources */,
 				578528B114B1AC59003A1FFC /* SSRootFolder.m in Sources */,
 				578528B214B1AC59003A1FFC /* StartingViewController.m in Sources */,
+				F8E08E641AA6711000E88ACD /* TPKeyboardAvoidingScrollView.m in Sources */,
 				578528B314B1AC59003A1FFC /* UIColor+ApplicationColors.m in Sources */,
 				578528B414B1AC59003A1FFC /* UIViewController+AutoPlatformNibName.m in Sources */,
 				578528B514B1AC59003A1FFC /* main.m in Sources */,
@@ -5918,14 +5969,18 @@
 				57852B5214B1B582003A1FFC /* QRCodeLoginInputViewController.m in Sources */,
 				F8AC01F91A3BA5270067C19E /* FileEditController.m in Sources */,
 				57852B5314B1B582003A1FFC /* SelectLoginInputViewController.m in Sources */,
+				F8E08E621AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.m in Sources */,
+				F8E08E681AA6711000E88ACD /* TPKeyboardAvoidingTableView.m in Sources */,
 				57852B5414B1B582003A1FFC /* SparkleShareAppDelegate.m in Sources */,
 				57852B5514B1B582003A1FFC /* SSConnection.m in Sources */,
 				57852B5614B1B582003A1FFC /* SSFile.m in Sources */,
 				57852B5714B1B582003A1FFC /* SSFolder.m in Sources */,
+				F8E08E6B1AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
 				57852B5814B1B582003A1FFC /* SSFolderItem.m in Sources */,
 				57852B5914B1B582003A1FFC /* SSJSONRequestOperation.m in Sources */,
 				57852B5A14B1B582003A1FFC /* SSRootFolder.m in Sources */,
 				57852B5B14B1B582003A1FFC /* StartingViewController.m in Sources */,
+				F8E08E651AA6711000E88ACD /* TPKeyboardAvoidingScrollView.m in Sources */,
 				57852B5C14B1B582003A1FFC /* UIColor+ApplicationColors.m in Sources */,
 				57852B5D14B1B582003A1FFC /* UIViewController+AutoPlatformNibName.m in Sources */,
 				57852B5E14B1B582003A1FFC /* main.m in Sources */,
@@ -5943,6 +5998,7 @@
 				57F73A441470D75D00276BF1 /* TTTLocationFormatter.m in Sources */,
 				57F73A451470D75D00276BF1 /* TTTOrdinalNumberFormatter.m in Sources */,
 				57F73A461470D75D00276BF1 /* TTTTimeIntervalFormatter.m in Sources */,
+				F8E08E691AA6711000E88ACD /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
 				57F73A471470D75D00276BF1 /* TTTURLRequestFormatter.m in Sources */,
 				F86526691A75777D00011E5B /* AFPropertyListRequestOperation.m in Sources */,
 				572920CE1471AB6100E4A3E8 /* SVProgressHUD.m in Sources */,
@@ -5957,7 +6013,9 @@
 				F86526671A75777D00011E5B /* AFJSONRequestOperation.m in Sources */,
 				57A975DA147203430043B4B3 /* NSString+Hashing.m in Sources */,
 				F86526631A75777D00011E5B /* AFHTTPClient.m in Sources */,
+				F8E08E601AA6711000E88ACD /* TPKeyboardAvoidingCollectionView.m in Sources */,
 				57A975DB147203430043B4B3 /* QRCodeLoginInputViewController.m in Sources */,
+				F8E08E631AA6711000E88ACD /* TPKeyboardAvoidingScrollView.m in Sources */,
 				F8AC01F71A3BA5270067C19E /* FileEditController.m in Sources */,
 				57A975DC147203430043B4B3 /* SelectLoginInputViewController.m in Sources */,
 				57A975DD147203430043B4B3 /* SparkleShareAppDelegate.m in Sources */,
@@ -5967,6 +6025,7 @@
 				F865266C1A75777D00011E5B /* UIImageView+AFNetworking.m in Sources */,
 				57A975DF147203430043B4B3 /* SSFile.m in Sources */,
 				57A975E0147203430043B4B3 /* SSFolder.m in Sources */,
+				F8E08E661AA6711000E88ACD /* TPKeyboardAvoidingTableView.m in Sources */,
 				57A975E1147203430043B4B3 /* SSFolderItem.m in Sources */,
 				57A975E2147203430043B4B3 /* SSJSONRequestOperation.m in Sources */,
 				57A975E3147203430043B4B3 /* SSRootFolder.m in Sources */,
