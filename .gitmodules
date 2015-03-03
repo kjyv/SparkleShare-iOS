@@ -10,3 +10,6 @@
 [submodule "libs/SVProgressHUD"]
 	path = libs/SVProgressHUD
 	url = git://github.com/samvermette/SVProgressHUD.git
+[submodule "libs/TPKeyboardAvoiding"]
+	path = libs/TPKeyboardAvoiding
+	url = https://github.com/michaeltyson/TPKeyboardAvoiding.git
