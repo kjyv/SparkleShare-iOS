@@ -12,6 +12,9 @@
 
 @interface FileEditController : UIViewController <UITextViewDelegate> {
     bool fileChanged;
+    bool shifted;
+    CGRect _oldRect;
+    NSTimer* _caretVisibilityTimer;
 };
 - (id)initWithFile: (SSFile *) file;
 
