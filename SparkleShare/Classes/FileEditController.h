@@ -12,14 +12,14 @@
 
 @interface FileEditController : UIViewController <UITextViewDelegate> {
     bool fileChanged;
-    bool shifted;
     CGRect _oldRect;
     NSTimer* _caretVisibilityTimer;
+    UITextRange *_selectedRange;
+    CGPoint offset;
 };
 - (id)initWithFile: (SSFile *) file;
 
 @property (weak) SSFile *file;
 @property (weak, nonatomic) IBOutlet UITextView *textEditView;
-
 
 @end

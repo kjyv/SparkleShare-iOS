@@ -2753,6 +2753,9 @@
 		F865261C1A75777C00011E5B /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
 		F86B0F551A758348004177D3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		F86B0F751A75935B004177D3 /* AFJSONUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AFJSONUtilities.h; path = SparkleShare/Classes/AFJSONUtilities.h; sourceTree = SOURCE_ROOT; };
+		F89899311AC22512006211F9 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F89899321AC22512006211F9 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F89899331AC22512006211F9 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F8AC01F61A3BA5270067C19E /* FileEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileEditController.m; sourceTree = "<group>"; };
 		F8AC01FA1A3BA5530067C19E /* FileEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileEditController.h; sourceTree = "<group>"; };
 		F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileEditController_iPhone.xib; sourceTree = "<group>"; };
@@ -3937,7 +3940,7 @@
 		579F9A9B14678A4D00709C70 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastTestingUpgradeCheck = 0610;
+				LastTestingUpgradeCheck = 0620;
 				LastUpgradeCheck = 0610;
 			};
 			buildConfigurationList = 579F9A9E14678A4D00709C70 /* Build configuration list for PBXProject "SparkleShare" */;
@@ -3947,7 +3950,7 @@
 			knownRegions = (
 				en,
 				Base,
-				es,
+				de,
 			);
 			mainGroup = 579F9A9914678A4D00709C70;
 			productRefGroup = 579F9AA514678A4E00709C70 /* Products */;
@@ -6014,6 +6017,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				579F9ADC14678A4E00709C70 /* en */,
+				F89899331AC22512006211F9 /* de */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -6022,6 +6026,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				57A975BD147203430043B4B3 /* en */,
+				F89899311AC22512006211F9 /* de */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -6030,6 +6035,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				57A975BF147203430043B4B3 /* en */,
+				F89899321AC22512006211F9 /* de */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -6112,6 +6118,7 @@
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
 					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = SparkleShare;
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = NO;
