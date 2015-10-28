@@ -3941,7 +3941,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastTestingUpgradeCheck = 0620;
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0710;
+				TargetAttributes = {
+					579F9AA314678A4E00709C70 = {
+						DevelopmentTeam = V9BCPT2N9B;
+					};
+				};
 			};
 			buildConfigurationList = 579F9A9E14678A4D00709C70 /* Build configuration list for PBXProject "SparkleShare" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -6057,6 +6062,7 @@
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
 					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SparkleShareDonate;
 				SKIP_INSTALL = NO;
 				WRAPPER_EXTENSION = app;
@@ -6077,6 +6083,7 @@
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
 					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SparkleShareDonate;
 				PROVISIONING_PROFILE = "22E5FFF2-91CD-46AD-9D0B-9B1A973EB7FA";
 				SKIP_INSTALL = NO;
@@ -6098,6 +6105,7 @@
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
 					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SparkleShare;
 				SKIP_INSTALL = NO;
 				WRAPPER_EXTENSION = app;
@@ -6119,6 +6127,7 @@
 					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SparkleShare;
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = NO;
@@ -6140,8 +6149,10 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -6180,6 +6191,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -6199,7 +6211,8 @@
 		579F9AE414678A4E00709C70 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DSTROOT = /tmp/xcodeproj.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SparkleShare/Supporting/SparkleShare-Prefix.pch";
@@ -6211,6 +6224,7 @@
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
 					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = NO;
@@ -6221,7 +6235,8 @@
 		579F9AE514678A4E00709C70 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DSTROOT = /tmp/xcodeproj.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SparkleShare/Supporting/SparkleShare-Prefix.pch";
@@ -6233,6 +6248,7 @@
 					"\"$(SRCROOT)/libs/ZBarSDK\"",
 					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = NO;
@@ -6257,6 +6273,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TEST_HOST = "$(BUNDLE_LOADER)";
@@ -6281,6 +6298,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TEST_HOST = "$(BUNDLE_LOADER)";

@@ -110,6 +110,7 @@
              //-1012 if certificate is invalid (expired? or self signed)
              //(-1012 generally means kCFURLErrorUserCancelledAuthentication
              //-1011 if return code != 200-299
+             //-1200 if some ats ssl error has happened
              
              if (error.code == -1012) {
                  [self.delegate connectionLinkingFailed:self error: @"Unable to connect to Server URL. The SSL certificate might be invalid. Consider importing it manually if it is self-signed."];
