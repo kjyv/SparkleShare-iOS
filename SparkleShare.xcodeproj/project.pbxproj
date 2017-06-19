@@ -2759,6 +2759,7 @@
 		F8AC01F61A3BA5270067C19E /* FileEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileEditController.m; sourceTree = "<group>"; };
 		F8AC01FA1A3BA5530067C19E /* FileEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileEditController.h; sourceTree = "<group>"; };
 		F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileEditController_iPhone.xib; sourceTree = "<group>"; };
+		F8B9C88B1C8EFC16008ADE9A /* SparkleShare-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "SparkleShare-Prefix.pch"; path = "SparkleShare/SparkleShare-Prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2936,6 +2937,7 @@
 		579F9A9914678A4D00709C70 = {
 			isa = PBXGroup;
 			children = (
+				F8B9C88B1C8EFC16008ADE9A /* SparkleShare-Prefix.pch */,
 				579F9AAE14678A4E00709C70 /* SparkleShare */,
 				579F9AD814678A4E00709C70 /* SparkleShareTests */,
 				579F9AA714678A4E00709C70 /* Frameworks */,
