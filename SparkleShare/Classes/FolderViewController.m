@@ -112,6 +112,8 @@
 
 	SSFolderItem *item = [self.folder.items objectAtIndex: indexPath.row];
 	cell.textLabel.text = item.name;
+    
+    //folder entries
 	if ([item isKindOfClass: [SSFolder class]]) {
 		if ([self.folder isKindOfClass: [SSRootFolder class]]) {
 			cell.detailTextLabel.text = [NSString stringWithFormat: @"rev %@   %d items", [GitInfoFormatter stringFromGitRevision: ( (SSRootFolder *)item ).revision], ( (SSRootFolder *)item ).count];
@@ -121,6 +123,7 @@
 		}
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 	}
+    //file entries
 	else if ([item isKindOfClass: [SSFile class]]) {
 		FileSizeFormatter *sizeFormatter = [[FileSizeFormatter alloc] init];
 		NSString *sizeString = [sizeFormatter stringFromNumber: [NSNumber numberWithInt: ( (SSFile *)item ).filesize]];
@@ -187,6 +190,7 @@
 	[self.tableView reloadRowsAtIndexPaths: [NSArray arrayWithObject: indexPath] withRowAnimation: UITableViewRowAnimationNone];
 }
 
+//manually called refresh
 - (void) reloadFolder {
 	[SVProgressHUD show];
     [self.folder loadItems];

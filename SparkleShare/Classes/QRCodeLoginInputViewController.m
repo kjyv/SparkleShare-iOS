@@ -7,7 +7,7 @@
 //
 
 #import "QRCodeLoginInputViewController.h"
-#import "ZBarSDK.h"
+#import "ZBarSDK/ZBarSDK.h"
 @interface QRCodeLoginInputViewController ()
 @end
 
