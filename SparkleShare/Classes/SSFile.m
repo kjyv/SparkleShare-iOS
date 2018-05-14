@@ -8,6 +8,7 @@
 
 #import "SSFile.h"
 #import "TTTURLRequestFormatter.h"
+#import "NSString+urlencode.h"
 
 @implementation SSFile
 @synthesize delegate = _delegate;
@@ -56,8 +57,8 @@
 // //"http://localhost:3000/api/putFile/c0acdbe1e1fec3290db71beecc9\
 // //af500af126f8d?path=c%2Fd&hash=21efaca824f4705deeb9ef6025fd879c871a7117&name=d" --data "data=This is a nice test."
 - (void) saveContent: (NSString *) text {
-    NSString* postString = [NSString stringWithFormat:@"data=%@", text];
-
+    NSString* postString = [NSString stringWithFormat:@"data=%@", [text urlencode]];
+        
     [self sendPostRequestWithMethodAndData: @"putFile" data: postString success:
      ^(NSURLRequest * request, NSURLResponse * response, id JSON) {
          [self.delegate fileContentSaved:self];

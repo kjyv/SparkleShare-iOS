@@ -29,7 +29,7 @@
 
 	connection = [[SSConnection alloc] initWithUserDefaults];
     connection.delegate = self;
-    [connection estabilishConnection];
+    [connection establishConnection];
 
 	return YES;
 }

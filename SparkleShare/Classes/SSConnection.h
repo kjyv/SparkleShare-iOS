@@ -33,7 +33,7 @@
 @property (strong) SSRootFolder *rootFolder;
 
 - (id)initWithUserDefaults;
-- (void)estabilishConnection;
+- (void)establishConnection;
 - (void)sendRequestWithString: (NSString *) string
        success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
        failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure;
