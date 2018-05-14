@@ -83,24 +83,24 @@ static dispatch_queue_t json_request_operation_processing_queue() {
 	}
 
 	if (!_responseJSON) {
-		id responce;
+		id response;
 		NSString *rawData = [[NSString alloc] initWithData: self.responseData
 		                     encoding: NSUTF8StringEncoding];
 		if ([rawData hasPrefix: @"\""] && [rawData hasSuffix: @"\""]) {
-			responce = [rawData substringWithRange: NSMakeRange(1, [rawData length] - 2)];
+			response = [rawData substringWithRange: NSMakeRange(1, [rawData length] - 2)];
 		}
 		else {
 			NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
 			NSNumber *numberResponce = [f numberFromString: rawData];
 			[f release];
 			if (numberResponce)
-				responce = numberResponce;
+				response = numberResponce;
 			else
-				responce = self.responseData;
+				response = self.responseData;
 		}
 		[rawData release];
 
-		return responce;
+		return response;
 	}
 	else {
 		return _responseJSON;

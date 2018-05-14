@@ -96,7 +96,7 @@
         offset = self.textEditView.contentOffset;
         [textEditView setEditable:true];
         [[NSOperationQueue mainQueue] addOperationWithBlock: ^{
-            [self.textEditView setContentOffset: offset];
+            [self.textEditView setContentOffset: self->offset];
         }];
 
     }
@@ -106,7 +106,7 @@
         //save changes
         if (fileChanged) {
             [SVProgressHUD showWithStatus:@"Saving" networkIndicator:true];
-            [_file saveContent: textEditView.text];            
+            [_file saveContent: textEditView.text];
             fileChanged = false;
         }
     }

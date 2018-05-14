@@ -61,7 +61,7 @@
 	return self;
 }
 
-- (void) estabilishConnection {
+- (void) establishConnection {
     if (!self.address) {
         [self.delegate connectionEstablishingFailed:self];
     }
@@ -148,9 +148,12 @@
     [request setValue: identCode forHTTPHeaderField: @"X-SPARKLE-IDENT"];
     [request setValue: authCode forHTTPHeaderField: @"X-SPARKLE-AUTH"];
     [request setHTTPMethod:@"POST"];
+    [request addValue: @"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     
-    [request setHTTPBody: [data dataUsingEncoding:NSUTF8StringEncoding]];
-    [request setTimeoutInterval:120];
+    NSData *encodedData = [data dataUsingEncoding:NSUTF8StringEncoding];
+    [request setHTTPBody: encodedData];    
+
+    [request setTimeoutInterval:60];
     
     SSJSONRequestOperation *operation = [SSJSONRequestOperation JSONRequestOperationWithRequest: request success: success failure: failure];
     
