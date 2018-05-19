@@ -1977,9 +1977,8 @@
 		F8AC01FC1A3BA8D00067C19E /* FileEditController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */; };
 		F8AC01FD1A3BA8D00067C19E /* FileEditController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */; };
 		F8AC01FE1A3BA8D00067C19E /* FileEditController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */; };
-		F8C8B56F2090E1A5002F8750 /* ZBarSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8C8B56E2090E1A5002F8750 /* ZBarSDK.framework */; };
-		F8C8B5702090E1B3002F8750 /* ZBarSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8C8B56E2090E1A5002F8750 /* ZBarSDK.framework */; };
-		F8C8B5722090E35A002F8750 /* ZBarSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F8C8B56E2090E1A5002F8750 /* ZBarSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F8CF9D6C20B0342500865861 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF9D6B20B0342500865861 /* libiconv.tbd */; };
+		F8CF9D7820B034A000865861 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF9D7520B0349800865861 /* libzbar.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1990,6 +1989,20 @@
 			remoteGlobalIDString = 579F9AA314678A4E00709C70;
 			remoteInfo = SparkleShare;
 		};
+		F8CF9D7420B0349800865861 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F8CF9D6D20B0349800865861 /* zbar.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2AAC07E0554694100DB518D;
+			remoteInfo = libzbar;
+		};
+		F8CF9D7620B0349800865861 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F8CF9D6D20B0349800865861 /* zbar.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC3CEF9D121633C500D7A786;
+			remoteInfo = readertest;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1999,7 +2012,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F8C8B5722090E35A002F8750 /* ZBarSDK.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2726,7 +2738,8 @@
 		F8AC01FA1A3BA5530067C19E /* FileEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileEditController.h; sourceTree = "<group>"; };
 		F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileEditController_iPhone.xib; sourceTree = "<group>"; };
 		F8B9C88B1C8EFC16008ADE9A /* SparkleShare-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "SparkleShare-Prefix.pch"; path = "SparkleShare/SparkleShare-Prefix.pch"; sourceTree = "<group>"; };
-		F8C8B56E2090E1A5002F8750 /* ZBarSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZBarSDK.framework; path = libs/ZBarSDK.framework; sourceTree = "<group>"; };
+		F8CF9D6B20B0342500865861 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		F8CF9D6D20B0349800865861 /* zbar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = zbar.xcodeproj; path = ZBar/iphone/zbar.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2759,7 +2772,6 @@
 				57852B6A14B1B582003A1FFC /* AVFoundation.framework in Frameworks */,
 				57852B6B14B1B582003A1FFC /* SystemConfiguration.framework in Frameworks */,
 				57852B6C14B1B582003A1FFC /* MobileCoreServices.framework in Frameworks */,
-				F8C8B5702090E1B3002F8750 /* ZBarSDK.framework in Frameworks */,
 				57852B6E14B1B582003A1FFC /* CFNetwork.framework in Frameworks */,
 				57852B6F14B1B582003A1FFC /* UIKit.framework in Frameworks */,
 				57852B7014B1B582003A1FFC /* Foundation.framework in Frameworks */,
@@ -2771,6 +2783,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8CF9D7820B034A000865861 /* libzbar.a in Frameworks */,
+				F8CF9D6C20B0342500865861 /* libiconv.tbd in Frameworks */,
 				F86B0F561A758348004177D3 /* Security.framework in Frameworks */,
 				579EE16F147041280074B72B /* QuickLook.framework in Frameworks */,
 				57AD9CDB146D82C600BED6A6 /* QuartzCore.framework in Frameworks */,
@@ -2783,7 +2797,6 @@
 				579F9AA914678A4E00709C70 /* UIKit.framework in Frameworks */,
 				579F9AAB14678A4E00709C70 /* Foundation.framework in Frameworks */,
 				579F9AAD14678A4E00709C70 /* CoreGraphics.framework in Frameworks */,
-				F8C8B56F2090E1A5002F8750 /* ZBarSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2885,6 +2898,7 @@
 		579BC0A81470CD4100BB8233 /* libs */ = {
 			isa = PBXGroup;
 			children = (
+				F8CF9D6D20B0349800865861 /* zbar.xcodeproj */,
 				F83DB2BD20A9C18F00BD80FE /* AFNetworking */,
 				57F739CF1470D75C00276BF1 /* FormatterKit */,
 				572920A71471AB6000E4A3E8 /* SVProgressHUD */,
@@ -2919,7 +2933,7 @@
 		579F9AA714678A4E00709C70 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F8C8B56E2090E1A5002F8750 /* ZBarSDK.framework */,
+				F8CF9D6B20B0342500865861 /* libiconv.tbd */,
 				F86B0F551A758348004177D3 /* Security.framework */,
 				579EE16E147041280074B72B /* QuickLook.framework */,
 				57AD9CDA146D82C600BED6A6 /* QuartzCore.framework */,
@@ -3747,6 +3761,15 @@
 			path = AFNetworking/AFNetworking;
 			sourceTree = "<group>";
 		};
+		F8CF9D6E20B0349800865861 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F8CF9D7520B0349800865861 /* libzbar.a */,
+				F8CF9D7720B0349800865861 /* readertest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3849,6 +3872,12 @@
 			mainGroup = 579F9A9914678A4D00709C70;
 			productRefGroup = 579F9AA514678A4E00709C70 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F8CF9D6E20B0349800865861 /* Products */;
+					ProjectRef = F8CF9D6D20B0349800865861 /* zbar.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				579F9AA314678A4E00709C70 /* SparkleShare */,
@@ -3858,6 +3887,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F8CF9D7520B0349800865861 /* libzbar.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libzbar.a;
+			remoteRef = F8CF9D7420B0349800865861 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F8CF9D7720B0349800865861 /* readertest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = readertest.app;
+			remoteRef = F8CF9D7620B0349800865861 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		578528CA14B1AC59003A1FFC /* Resources */ = {
@@ -6139,6 +6185,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "libs/ZBar/iphone/include libs/ZBar/include";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -6168,6 +6215,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "libs/ZBar/iphone/include libs/ZBar/include";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
