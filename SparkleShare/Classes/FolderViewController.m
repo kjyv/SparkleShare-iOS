@@ -48,12 +48,6 @@
     self.restorationIdentifier = @"folderViewID";
 }
 
-- (void)viewDidUnload {
-	[super viewDidUnload];
-	// Release any retained subviews of the main view.
-	// e.g. self.myOutlet = nil;
-}
-
 - (void)viewWillAppear: (BOOL) animated {
 	[super viewWillAppear: animated];
 	[SVProgressHUD show];
@@ -70,11 +64,6 @@
 
 - (void)viewDidDisappear: (BOOL) animated {
 	[super viewDidDisappear: animated];
-}
-
-
-- (BOOL)shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) interfaceOrientation {
-	return YES;
 }
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
@@ -131,7 +120,6 @@
 		                             ( (SSFile *)item ).mime, sizeString];
 		cell.accessoryType = UITableViewCellAccessoryNone;
 	}
-
 
     [cell.imageView setImage:[UIImage imageForMimeType:item.mime size:self.iconSize]];
     
@@ -224,12 +212,11 @@
                               @"application/x-latex",
                               @"application/javascript",
                               @"application/x-javascript",
-                              @"application/mathematica",
-                              @"text/x-opml"];
+                              @"application/mathematica"];
     if ([overrideMime containsObject: file.mime])
         file.mime = @"text/plain";
     
-    //a lot of files are also detected as octet stream while
+    //a lot of files are detected as octet-stream while they are text based
     if ([file.mime isEqualToString:@"application/octet-stream"]) {
         if ([file.name hasPrefix:@"."] ||
             [file.name hasSuffix:@".py"] ||
@@ -243,11 +230,12 @@
         }
     }
     
-    //open text editing view if file is text
-    if( [file.mime isEqualToString:@"text/plain"] ) {
+    if( [file.mime hasPrefix:@"text/"] ) {
+        //open text editing view if file is text
         FileEditController *newFileEditController = [[FileEditController alloc] initWithFile: file];
         [self.navigationController pushViewController: newFileEditController animated: YES];
     }  else {
+        //otherwise preview file
         FilePreview *filePreview = [[FilePreview alloc] initWithFile: file];
         FileViewController *newFileViewController = [[FileViewController alloc] initWithFilePreview: filePreview filename: file.name];
     	[self.navigationController pushViewController: newFileViewController animated: YES];
@@ -259,8 +247,6 @@
 }
 
 - (void)fileContentSaved: (SSFile *) file {
-//    [SVProgressHUD show];
-//    [SVProgressHUD dismissWithSuccess:@"File saved"];
     [SVProgressHUD dismiss];
 }
 

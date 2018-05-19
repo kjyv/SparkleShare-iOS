@@ -77,7 +77,7 @@
 
 
 - (void) connectionEstablishingSuccess: (SSConnection *) aConnection {
-	//fixme ugly casting
+    //fixme: ugly casting
 	id rootFolder = aConnection.rootFolder;
 	NSAssert([rootFolder isKindOfClass: [SSFolder class]], @"Return value is not of type SSFolder as expected.");
 	FolderViewController *folderViewController = [[FolderViewController alloc] initWithFolder: rootFolder];

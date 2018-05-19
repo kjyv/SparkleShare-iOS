@@ -8,6 +8,7 @@
 
 #import "QRCodeLoginInputViewController.h"
 #import "ZBarSDK/ZBarSDK.h"
+
 @interface QRCodeLoginInputViewController ()
 @end
 
@@ -20,6 +21,7 @@
 	if (self) {
 		[ZBarReaderView class];
 	}
+    
 	return self;
 }
 
@@ -37,18 +39,16 @@
 	// the delegate receives decode results
 	readerView.readerDelegate = self;
 	qrCaptured = NO;
-	// you can use this to support the simulator
+    
+    //disable auto flash
+    readerView.torchMode = 0;
+    
+	// support the simulator
 	if (TARGET_IPHONE_SIMULATOR) {
 		cameraSim = [[ZBarCameraSimulator alloc]
 		             initWithViewController: self];
 		cameraSim.readerView = readerView;
 	}
-}
-
-- (void)viewDidUnload {
-	[super viewDidUnload];
-	// Release any retained subviews of the main view.
-	// e.g. self.myOutlet = nil;
 }
 
 - (void)viewDidAppear: (BOOL) animated {
@@ -57,11 +57,6 @@
 
 - (void)viewWillDisappear: (BOOL) animated {
 	[readerView stop];
-}
-
-
-- (BOOL)shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) interfaceOrientation {
-	return YES;
 }
 
 - (void) readerView: (ZBarReaderView *) view
@@ -81,6 +76,8 @@
 			self.urlLabel.text = [chunks objectAtIndex: 0];
 			self.codeLabel.text = [chunks objectAtIndex: 1];
 			qrCaptured = YES;
+            
+            [self editDone:self];
 		}
 	}
 }
