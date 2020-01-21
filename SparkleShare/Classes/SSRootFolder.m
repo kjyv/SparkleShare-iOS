@@ -30,7 +30,7 @@
 	 ^(NSURLRequest * request, NSURLResponse * response, id JSON) {
 	         NSMutableArray *newFolders = [NSMutableArray array];
 	         for (NSDictionary * folderInfo in JSON) {
-	                 SSFolder *newFolder = [[SSFolder alloc] initWithConnection: connection
+                 SSFolder *newFolder = [[SSFolder alloc] initWithConnection: self->connection
 	                                        name: [folderInfo objectForKey: @"name"]
 	                                        ssid: [folderInfo objectForKey: @"id"]
 	                                        type: [folderInfo objectForKey: @"type"]];

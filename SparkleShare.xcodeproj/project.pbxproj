@@ -1970,6 +1970,7 @@
 		F8512C881AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */; };
 		F8512C891AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */; };
 		F8512C8A1AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */; };
+		F86A409C23D67E0D008BA4E2 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF9D7520B0349800865861 /* libzbar.a */; };
 		F86B0F561A758348004177D3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F86B0F551A758348004177D3 /* Security.framework */; };
 		F8AC01F71A3BA5270067C19E /* FileEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8AC01F61A3BA5270067C19E /* FileEditController.m */; };
 		F8AC01F81A3BA5270067C19E /* FileEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8AC01F61A3BA5270067C19E /* FileEditController.m */; };
@@ -1978,7 +1979,6 @@
 		F8AC01FD1A3BA8D00067C19E /* FileEditController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */; };
 		F8AC01FE1A3BA8D00067C19E /* FileEditController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */; };
 		F8CF9D6C20B0342500865861 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF9D6B20B0342500865861 /* libiconv.tbd */; };
-		F8CF9D7820B034A000865861 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF9D7520B0349800865861 /* libzbar.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2783,9 +2783,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F8CF9D7820B034A000865861 /* libzbar.a in Frameworks */,
 				F8CF9D6C20B0342500865861 /* libiconv.tbd in Frameworks */,
 				F86B0F561A758348004177D3 /* Security.framework in Frameworks */,
+				F86A409C23D67E0D008BA4E2 /* libzbar.a in Frameworks */,
 				579EE16F147041280074B72B /* QuickLook.framework in Frameworks */,
 				57AD9CDB146D82C600BED6A6 /* QuartzCore.framework in Frameworks */,
 				57AD9CD9146D82BA00BED6A6 /* CoreVideo.framework in Frameworks */,
@@ -3862,7 +3862,7 @@
 			};
 			buildConfigurationList = 579F9A9E14678A4D00709C70 /* Build configuration list for PBXProject "SparkleShare" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -6108,7 +6108,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -6152,7 +6152,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

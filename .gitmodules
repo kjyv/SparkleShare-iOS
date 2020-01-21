@@ -7,6 +7,3 @@
 [submodule "libs/UIImage-FileType"]
 	path = libs/UIImage-FileType
 	url = git://github.com/darvin/UIImage-FileType.git
-[submodule "libs/SVProgressHUD"]
-	path = libs/SVProgressHUD
-	url = git://github.com/samvermette/SVProgressHUD.git

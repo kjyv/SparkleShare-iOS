@@ -67,7 +67,7 @@
 	         NSNumber *count = JSON;
 	         self.count = [count intValue]; //fixme
 	         [self.infoDelegate folder: self countLoaded: self.count];
-         _completely_loaded = YES;
+        self->_completely_loaded = YES;
 
 	 }
 	 failure:
@@ -107,10 +107,10 @@
 	                 NSString *type = [itemInfo objectForKey: @"type"];
 	                 SSFolderItem *newItem;
 	                 if ([type isEqual: @"file"]) {
-	                         newItem = [[SSFile alloc] initWithConnection: connection name: [itemInfo objectForKey: @"name"] ssid: [itemInfo objectForKey: @"id"] url: [itemInfo objectForKey: @"url"] projectFolder: self.projectFolder mime: [itemInfo objectForKey: @"mime"] filesize: [[itemInfo objectForKey: @"fileSize"] intValue]];
+                         newItem = [[SSFile alloc] initWithConnection: self->connection name: [itemInfo objectForKey: @"name"] ssid: [itemInfo objectForKey: @"id"] url: [itemInfo objectForKey: @"url"] projectFolder: self.projectFolder mime: [itemInfo objectForKey: @"mime"] filesize: [[itemInfo objectForKey: @"fileSize"] intValue]];
 			 }
 	                 else if ([type isEqual: @"dir"]) {
-	                         newItem = [[SSFolder alloc] initWithConnection: connection name: [itemInfo objectForKey: @"name"] ssid: [itemInfo objectForKey: @"id"] url: [itemInfo objectForKey: @"url"] projectFolder: self.projectFolder];
+                         newItem = [[SSFolder alloc] initWithConnection: self->connection name: [itemInfo objectForKey: @"name"] ssid: [itemInfo objectForKey: @"id"] url: [itemInfo objectForKey: @"url"] projectFolder: self.projectFolder];
 			 }
 
 
