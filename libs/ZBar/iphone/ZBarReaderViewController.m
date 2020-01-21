@@ -395,8 +395,8 @@ AVSessionPresetForUIVideoQuality (UIImagePickerControllerQualityType quality)
 
 - (void) viewWillAppear: (BOOL) animated
 {
-    zlog(@"willAppear: anim=%d orient=%d",
-         animated, self.interfaceOrientation);
+    zlog(@"willAppear: anim=%d orient=%ld",
+         animated, (long)self.interfaceOrientation);
     [self initControls];
     [super viewWillAppear: animated];
 
@@ -457,7 +457,7 @@ AVSessionPresetForUIVideoQuality (UIImagePickerControllerQualityType quality)
 - (void) willRotateToInterfaceOrientation: (UIInterfaceOrientation) orient
                                  duration: (NSTimeInterval) duration
 {
-    zlog(@"willRotate: orient=%d #%g", orient, duration);
+    zlog(@"willRotate: orient=%ld #%g", (long)orient, duration);
     rotating = YES;
     if(readerView)
         [readerView willRotateToInterfaceOrientation: orient
@@ -467,7 +467,7 @@ AVSessionPresetForUIVideoQuality (UIImagePickerControllerQualityType quality)
 - (void) willAnimateRotationToInterfaceOrientation: (UIInterfaceOrientation) orient
                                           duration: (NSTimeInterval) duration
 {
-    zlog(@"willAnimateRotation: orient=%d #%g", orient, duration);
+    zlog(@"willAnimateRotation: orient=%ld #%g", (long)orient, duration);
     if(helpController)
         [helpController willAnimateRotationToInterfaceOrientation: orient
                         duration: duration];
@@ -477,7 +477,7 @@ AVSessionPresetForUIVideoQuality (UIImagePickerControllerQualityType quality)
 
 - (void) didRotateFromInterfaceOrientation: (UIInterfaceOrientation) orient
 {
-    zlog(@"didRotate(%d): orient=%d", rotating, orient);
+    zlog(@"didRotate(%d): orient=%ld", rotating, (long)orient);
     if(!rotating && readerView) {
         // work around UITabBarController bug: willRotate is not called
         // for non-portrait initial interface orientation
