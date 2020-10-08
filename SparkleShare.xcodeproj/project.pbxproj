@@ -17,12 +17,6 @@
 		572979841476C69B007A2947 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 572979831476C69B007A2947 /* Default@2x.png */; };
 		572979861476C805007A2947 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 572979851476C805007A2947 /* Default-Portrait~ipad.png */; };
 		572979881476C82F007A2947 /* Default-Landscape~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 572979871476C82F007A2947 /* Default-Landscape~ipad.png */; };
-		5785289A14B1AC59003A1FFC /* TTTArrayFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F01470D75C00276BF1 /* TTTArrayFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		5785289B14B1AC59003A1FFC /* TTTHoursOfOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F31470D75C00276BF1 /* TTTHoursOfOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		5785289C14B1AC59003A1FFC /* TTTLocationFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F61470D75C00276BF1 /* TTTLocationFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		5785289D14B1AC59003A1FFC /* TTTOrdinalNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F91470D75C00276BF1 /* TTTOrdinalNumberFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		5785289E14B1AC59003A1FFC /* TTTTimeIntervalFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739FC1470D75C00276BF1 /* TTTTimeIntervalFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		5785289F14B1AC59003A1FFC /* TTTURLRequestFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739FF1470D75C00276BF1 /* TTTURLRequestFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		578528A014B1AC59003A1FFC /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 572920BE1471AB6000E4A3E8 /* SVProgressHUD.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		578528A114B1AC59003A1FFC /* FilePreview.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A97591147203430043B4B3 /* FilePreview.m */; };
 		578528A214B1AC59003A1FFC /* FileSizeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A97593147203430043B4B3 /* FileSizeFormatter.m */; };
@@ -664,12 +658,6 @@
 		57852B2E14B1AC59003A1FFC /* 80_x-office-presentation.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906D14795EE7008259A5 /* 80_x-office-presentation.png */; };
 		57852B2F14B1AC59003A1FFC /* 80_x-office-spreadsheet.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906E14795EE7008259A5 /* 80_x-office-spreadsheet.png */; };
 		57852B3014B1AC59003A1FFC /* 80_zip.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906F14795EE7008259A5 /* 80_zip.png */; };
-		57852B4314B1B582003A1FFC /* TTTArrayFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F01470D75C00276BF1 /* TTTArrayFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57852B4414B1B582003A1FFC /* TTTHoursOfOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F31470D75C00276BF1 /* TTTHoursOfOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57852B4514B1B582003A1FFC /* TTTLocationFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F61470D75C00276BF1 /* TTTLocationFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57852B4614B1B582003A1FFC /* TTTOrdinalNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F91470D75C00276BF1 /* TTTOrdinalNumberFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57852B4714B1B582003A1FFC /* TTTTimeIntervalFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739FC1470D75C00276BF1 /* TTTTimeIntervalFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57852B4814B1B582003A1FFC /* TTTURLRequestFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739FF1470D75C00276BF1 /* TTTURLRequestFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		57852B4914B1B582003A1FFC /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 572920BE1471AB6000E4A3E8 /* SVProgressHUD.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		57852B4A14B1B582003A1FFC /* FilePreview.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A97591147203430043B4B3 /* FilePreview.m */; };
 		57852B4B14B1B582003A1FFC /* FileSizeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A97593147203430043B4B3 /* FileSizeFormatter.m */; };
@@ -1320,7 +1308,6 @@
 		579F9ADD14678A4E00709C70 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 579F9ADB14678A4E00709C70 /* InfoPlist.strings */; };
 		579F9AE014678A4E00709C70 /* SparkleShareTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 579F9ADF14678A4E00709C70 /* SparkleShareTests.m */; };
 		579F9B2414679D5A00709C70 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579F9B2314679D5A00709C70 /* CFNetwork.framework */; };
-		579F9B2814679D7900709C70 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579F9B2714679D7900709C70 /* MobileCoreServices.framework */; };
 		579F9B2A14679D8300709C70 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 579F9B2914679D8300709C70 /* SystemConfiguration.framework */; };
 		57A975D3147203430043B4B3 /* FilePreview.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A97591147203430043B4B3 /* FilePreview.m */; };
 		57A975D4147203430043B4B3 /* FileSizeFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57A97593147203430043B4B3 /* FileSizeFormatter.m */; };
@@ -1366,12 +1353,6 @@
 		57AD9CDB146D82C600BED6A6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57AD9CDA146D82C600BED6A6 /* QuartzCore.framework */; };
 		57C773AF1472C56C00F7CDC7 /* FileTypeIcons.plist in Resources */ = {isa = PBXBuildFile; fileRef = 57C770351472C56900F7CDC7 /* FileTypeIcons.plist */; };
 		57C777211472C5BC00F7CDC7 /* UIImage+FileType.m in Sources */ = {isa = PBXBuildFile; fileRef = 57C777201472C5BC00F7CDC7 /* UIImage+FileType.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57F73A421470D75D00276BF1 /* TTTArrayFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F01470D75C00276BF1 /* TTTArrayFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57F73A431470D75D00276BF1 /* TTTHoursOfOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F31470D75C00276BF1 /* TTTHoursOfOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57F73A441470D75D00276BF1 /* TTTLocationFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F61470D75C00276BF1 /* TTTLocationFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57F73A451470D75D00276BF1 /* TTTOrdinalNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739F91470D75C00276BF1 /* TTTOrdinalNumberFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57F73A461470D75D00276BF1 /* TTTTimeIntervalFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739FC1470D75C00276BF1 /* TTTTimeIntervalFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		57F73A471470D75D00276BF1 /* TTTURLRequestFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 57F739FF1470D75C00276BF1 /* TTTURLRequestFormatter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		57F8907014795EE7008259A5 /* 40_application-7zip.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F88E2414795EE6008259A5 /* 40_application-7zip.png */; };
 		57F8907114795EE7008259A5 /* 40_application-atom+xml.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F88E2514795EE6008259A5 /* 40_application-atom+xml.png */; };
 		57F8907214795EE7008259A5 /* 40_application-illustrator.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F88E2614795EE6008259A5 /* 40_application-illustrator.png */; };
@@ -1952,6 +1933,7 @@
 		57F892B914795EE7008259A5 /* 80_x-office-presentation.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906D14795EE7008259A5 /* 80_x-office-presentation.png */; };
 		57F892BA14795EE7008259A5 /* 80_x-office-spreadsheet.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906E14795EE7008259A5 /* 80_x-office-spreadsheet.png */; };
 		57F892BB14795EE7008259A5 /* 80_zip.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906F14795EE7008259A5 /* 80_zip.png */; };
+		F8217482252DDDE500293A6E /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8217481252DDDE500293A6E /* CoreServices.framework */; };
 		F83DB2D120A9C18F00BD80FE /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = F83DB2C520A9C18F00BD80FE /* AFURLResponseSerialization.m */; };
 		F83DB2D220A9C18F00BD80FE /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F83DB2C620A9C18F00BD80FE /* AFHTTPSessionManager.m */; };
 		F83DB2D320A9C18F00BD80FE /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = F83DB2C720A9C18F00BD80FE /* AFURLConnectionOperation.m */; };
@@ -2115,18 +2097,6 @@
 		57C770351472C56900F7CDC7 /* FileTypeIcons.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = FileTypeIcons.plist; sourceTree = "<group>"; };
 		57C7771F1472C5BC00F7CDC7 /* UIImage+FileType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+FileType.h"; sourceTree = "<group>"; };
 		57C777201472C5BC00F7CDC7 /* UIImage+FileType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+FileType.m"; sourceTree = "<group>"; };
-		57F739EF1470D75C00276BF1 /* TTTArrayFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTArrayFormatter.h; sourceTree = "<group>"; };
-		57F739F01470D75C00276BF1 /* TTTArrayFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTArrayFormatter.m; sourceTree = "<group>"; };
-		57F739F21470D75C00276BF1 /* TTTHoursOfOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTHoursOfOperation.h; sourceTree = "<group>"; };
-		57F739F31470D75C00276BF1 /* TTTHoursOfOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTHoursOfOperation.m; sourceTree = "<group>"; };
-		57F739F51470D75C00276BF1 /* TTTLocationFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTLocationFormatter.h; sourceTree = "<group>"; };
-		57F739F61470D75C00276BF1 /* TTTLocationFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTLocationFormatter.m; sourceTree = "<group>"; };
-		57F739F81470D75C00276BF1 /* TTTOrdinalNumberFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTOrdinalNumberFormatter.h; sourceTree = "<group>"; };
-		57F739F91470D75C00276BF1 /* TTTOrdinalNumberFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTOrdinalNumberFormatter.m; sourceTree = "<group>"; };
-		57F739FB1470D75C00276BF1 /* TTTTimeIntervalFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTTimeIntervalFormatter.h; sourceTree = "<group>"; };
-		57F739FC1470D75C00276BF1 /* TTTTimeIntervalFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTTimeIntervalFormatter.m; sourceTree = "<group>"; };
-		57F739FE1470D75C00276BF1 /* TTTURLRequestFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTURLRequestFormatter.h; sourceTree = "<group>"; };
-		57F739FF1470D75C00276BF1 /* TTTURLRequestFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTURLRequestFormatter.m; sourceTree = "<group>"; };
 		57F88E2414795EE6008259A5 /* 40_application-7zip.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "40_application-7zip.png"; sourceTree = "<group>"; };
 		57F88E2514795EE6008259A5 /* 40_application-atom+xml.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "40_application-atom+xml.png"; sourceTree = "<group>"; };
 		57F88E2614795EE6008259A5 /* 40_application-illustrator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "40_application-illustrator.png"; sourceTree = "<group>"; };
@@ -2707,6 +2677,7 @@
 		57F8906D14795EE7008259A5 /* 80_x-office-presentation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80_x-office-presentation.png"; sourceTree = "<group>"; };
 		57F8906E14795EE7008259A5 /* 80_x-office-spreadsheet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80_x-office-spreadsheet.png"; sourceTree = "<group>"; };
 		57F8906F14795EE7008259A5 /* 80_zip.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 80_zip.png; sourceTree = "<group>"; };
+		F8217481252DDDE500293A6E /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F83DB2BE20A9C18F00BD80FE /* AFSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFSecurityPolicy.h; sourceTree = "<group>"; };
 		F83DB2BF20A9C18F00BD80FE /* AFNetworkReachabilityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkReachabilityManager.h; sourceTree = "<group>"; };
 		F83DB2C020A9C18F00BD80FE /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -2792,10 +2763,10 @@
 				57AD9CD7146D82B200BED6A6 /* CoreMedia.framework in Frameworks */,
 				57AD9CD5146D82AC00BED6A6 /* AVFoundation.framework in Frameworks */,
 				579F9B2A14679D8300709C70 /* SystemConfiguration.framework in Frameworks */,
-				579F9B2814679D7900709C70 /* MobileCoreServices.framework in Frameworks */,
 				579F9B2414679D5A00709C70 /* CFNetwork.framework in Frameworks */,
 				579F9AA914678A4E00709C70 /* UIKit.framework in Frameworks */,
 				579F9AAB14678A4E00709C70 /* Foundation.framework in Frameworks */,
+				F8217482252DDDE500293A6E /* CoreServices.framework in Frameworks */,
 				579F9AAD14678A4E00709C70 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2900,7 +2871,6 @@
 			children = (
 				F8CF9D6D20B0349800865861 /* zbar.xcodeproj */,
 				F83DB2BD20A9C18F00BD80FE /* AFNetworking */,
-				57F739CF1470D75C00276BF1 /* FormatterKit */,
 				572920A71471AB6000E4A3E8 /* SVProgressHUD */,
 				57C770281472C56900F7CDC7 /* UIImage-FileType */,
 			);
@@ -2933,6 +2903,7 @@
 		579F9AA714678A4E00709C70 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F8217481252DDDE500293A6E /* CoreServices.framework */,
 				F8CF9D6B20B0342500865861 /* libiconv.tbd */,
 				F86B0F551A758348004177D3 /* Security.framework */,
 				579EE16E147041280074B72B /* QuickLook.framework */,
@@ -3078,73 +3049,6 @@
 				57C770351472C56900F7CDC7 /* FileTypeIcons.plist */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		57F739CF1470D75C00276BF1 /* FormatterKit */ = {
-			isa = PBXGroup;
-			children = (
-				57F739EE1470D75C00276BF1 /* TTTArrayFormatter */,
-				57F739F11470D75C00276BF1 /* TTTHoursOfOperation */,
-				57F739F41470D75C00276BF1 /* TTTLocationFormatter */,
-				57F739F71470D75C00276BF1 /* TTTOrdinalNumberFormatter */,
-				57F739FA1470D75C00276BF1 /* TTTTimeIntervalFormatter */,
-				57F739FD1470D75C00276BF1 /* TTTURLRequestFormatter */,
-			);
-			path = FormatterKit;
-			sourceTree = "<group>";
-		};
-		57F739EE1470D75C00276BF1 /* TTTArrayFormatter */ = {
-			isa = PBXGroup;
-			children = (
-				57F739EF1470D75C00276BF1 /* TTTArrayFormatter.h */,
-				57F739F01470D75C00276BF1 /* TTTArrayFormatter.m */,
-			);
-			path = TTTArrayFormatter;
-			sourceTree = "<group>";
-		};
-		57F739F11470D75C00276BF1 /* TTTHoursOfOperation */ = {
-			isa = PBXGroup;
-			children = (
-				57F739F21470D75C00276BF1 /* TTTHoursOfOperation.h */,
-				57F739F31470D75C00276BF1 /* TTTHoursOfOperation.m */,
-			);
-			path = TTTHoursOfOperation;
-			sourceTree = "<group>";
-		};
-		57F739F41470D75C00276BF1 /* TTTLocationFormatter */ = {
-			isa = PBXGroup;
-			children = (
-				57F739F51470D75C00276BF1 /* TTTLocationFormatter.h */,
-				57F739F61470D75C00276BF1 /* TTTLocationFormatter.m */,
-			);
-			path = TTTLocationFormatter;
-			sourceTree = "<group>";
-		};
-		57F739F71470D75C00276BF1 /* TTTOrdinalNumberFormatter */ = {
-			isa = PBXGroup;
-			children = (
-				57F739F81470D75C00276BF1 /* TTTOrdinalNumberFormatter.h */,
-				57F739F91470D75C00276BF1 /* TTTOrdinalNumberFormatter.m */,
-			);
-			path = TTTOrdinalNumberFormatter;
-			sourceTree = "<group>";
-		};
-		57F739FA1470D75C00276BF1 /* TTTTimeIntervalFormatter */ = {
-			isa = PBXGroup;
-			children = (
-				57F739FB1470D75C00276BF1 /* TTTTimeIntervalFormatter.h */,
-				57F739FC1470D75C00276BF1 /* TTTTimeIntervalFormatter.m */,
-			);
-			path = TTTTimeIntervalFormatter;
-			sourceTree = "<group>";
-		};
-		57F739FD1470D75C00276BF1 /* TTTURLRequestFormatter */ = {
-			isa = PBXGroup;
-			children = (
-				57F739FE1470D75C00276BF1 /* TTTURLRequestFormatter.h */,
-				57F739FF1470D75C00276BF1 /* TTTURLRequestFormatter.m */,
-			);
-			path = TTTURLRequestFormatter;
 			sourceTree = "<group>";
 		};
 		57F88E2314795EE6008259A5 /* Icons */ = {
@@ -3852,10 +3756,10 @@
 			isa = PBXProject;
 			attributes = {
 				LastTestingUpgradeCheck = 0720;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1200;
 				TargetAttributes = {
 					579F9AA314678A4E00709C70 = {
-						DevelopmentTeam = TQMFWFWVT8;
+						DevelopmentTeam = F229TX233T;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -5799,12 +5703,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5785289A14B1AC59003A1FFC /* TTTArrayFormatter.m in Sources */,
-				5785289B14B1AC59003A1FFC /* TTTHoursOfOperation.m in Sources */,
-				5785289C14B1AC59003A1FFC /* TTTLocationFormatter.m in Sources */,
-				5785289D14B1AC59003A1FFC /* TTTOrdinalNumberFormatter.m in Sources */,
-				5785289E14B1AC59003A1FFC /* TTTTimeIntervalFormatter.m in Sources */,
-				5785289F14B1AC59003A1FFC /* TTTURLRequestFormatter.m in Sources */,
 				578528A014B1AC59003A1FFC /* SVProgressHUD.m in Sources */,
 				578528A114B1AC59003A1FFC /* FilePreview.m in Sources */,
 				578528A214B1AC59003A1FFC /* FileSizeFormatter.m in Sources */,
@@ -5838,12 +5736,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				57852B4314B1B582003A1FFC /* TTTArrayFormatter.m in Sources */,
-				57852B4414B1B582003A1FFC /* TTTHoursOfOperation.m in Sources */,
-				57852B4514B1B582003A1FFC /* TTTLocationFormatter.m in Sources */,
-				57852B4614B1B582003A1FFC /* TTTOrdinalNumberFormatter.m in Sources */,
-				57852B4714B1B582003A1FFC /* TTTTimeIntervalFormatter.m in Sources */,
-				57852B4814B1B582003A1FFC /* TTTURLRequestFormatter.m in Sources */,
 				57852B4914B1B582003A1FFC /* SVProgressHUD.m in Sources */,
 				57852B4A14B1B582003A1FFC /* FilePreview.m in Sources */,
 				57852B4B14B1B582003A1FFC /* FileSizeFormatter.m in Sources */,
@@ -5877,14 +5769,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				57F73A421470D75D00276BF1 /* TTTArrayFormatter.m in Sources */,
 				F83DB2D820A9C18F00BD80FE /* AFNetworkReachabilityManager.m in Sources */,
-				57F73A431470D75D00276BF1 /* TTTHoursOfOperation.m in Sources */,
 				F83DB2D720A9C18F00BD80FE /* AFHTTPRequestOperation.m in Sources */,
-				57F73A441470D75D00276BF1 /* TTTLocationFormatter.m in Sources */,
-				57F73A451470D75D00276BF1 /* TTTOrdinalNumberFormatter.m in Sources */,
-				57F73A461470D75D00276BF1 /* TTTTimeIntervalFormatter.m in Sources */,
-				57F73A471470D75D00276BF1 /* TTTURLRequestFormatter.m in Sources */,
 				572920CE1471AB6100E4A3E8 /* SVProgressHUD.m in Sources */,
 				57A975D3147203430043B4B3 /* FilePreview.m in Sources */,
 				57A975D4147203430043B4B3 /* FileSizeFormatter.m in Sources */,
@@ -6082,6 +5968,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -6134,6 +6021,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -6165,7 +6053,8 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = TQMFWFWVT8;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = F229TX233T;
 				DSTROOT = /tmp/xcodeproj.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6176,10 +6065,10 @@
 				GCC_PREFIX_HEADER = "SparkleShare/Supporting/SparkleShare-Prefix.pch";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShare-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = "de.sb.SparkleShare-dev";
+				PRODUCT_BUNDLE_IDENTIFIER = de.sb.SparkleShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -6195,7 +6084,8 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = TQMFWFWVT8;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = F229TX233T;
 				DSTROOT = /tmp/xcodeproj.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6206,10 +6096,10 @@
 				GCC_PREFIX_HEADER = "SparkleShare/Supporting/SparkleShare-Prefix.pch";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShare-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = "de.sb.SparkleShare-dev";
+				PRODUCT_BUNDLE_IDENTIFIER = de.sb.SparkleShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

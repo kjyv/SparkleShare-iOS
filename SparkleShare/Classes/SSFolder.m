@@ -9,7 +9,6 @@
 #import "SSFolder.h"
 #import "SSFile.h"
 #import "SSConnection.h"
-#import "TTTURLRequestFormatter.h"
 #import "SSFolderItem.h"
 @interface SSFolder ()
 @end

@@ -52,15 +52,17 @@
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
+    //push up content by keyboard size
     UIEdgeInsets insets = self.textEditView.contentInset;
     insets.bottom = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
     self.textEditView.contentInset = insets;
     
-    insets = self.textEditView.scrollIndicatorInsets;
+    //push up scroll indicator by keyboard size
+    insets = self.textEditView.verticalScrollIndicatorInsets;
     insets.bottom = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-    self.textEditView.scrollIndicatorInsets = insets;
+    self.textEditView.verticalScrollIndicatorInsets = insets;
   
-    self.textEditView.selectedTextRange = _selectedRange;
+    //self.textEditView.selectedTextRange = _selectedRange;
 }
 
 -(void)keyboardWillHide:(NSNotification *)notification
@@ -71,11 +73,11 @@
         insets.bottom = 0;
     self.textEditView.contentInset = insets;
     
-    insets = self.textEditView.scrollIndicatorInsets;
+    insets = self.textEditView.verticalScrollIndicatorInsets;
 //    insets.bottom -= [notification.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
 //    if (insets.bottom < 0)
         insets.bottom = 0;
-    self.textEditView.scrollIndicatorInsets = insets;
+    self.textEditView.verticalScrollIndicatorInsets = insets;
 }
 
 

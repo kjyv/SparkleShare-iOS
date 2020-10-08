@@ -1,9 +1,6 @@
 [submodule "libs/AFNetworking"]
 	path = libs/AFNetworking
 	url = git://github.com/AFNetworking/AFNetworking.git
-[submodule "libs/FormatterKit"]
-	path = libs/FormatterKit
-	url = git://github.com/mattt/FormatterKit.git
 [submodule "libs/UIImage-FileType"]
 	path = libs/UIImage-FileType
 	url = git://github.com/darvin/UIImage-FileType.git
