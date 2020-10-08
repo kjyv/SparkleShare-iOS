@@ -8,7 +8,6 @@
 
 #import "SSConnection.h"
 #import "SSJSONRequestOperation.h"
-#import "TTTURLRequestFormatter.h"
 #import "SSRootFolder.h"
 
 @interface SSConnection ()

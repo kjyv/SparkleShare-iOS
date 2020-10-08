@@ -7,7 +7,6 @@
 //
 
 #import "SSFile.h"
-#import "TTTURLRequestFormatter.h"
 #import "NSString+urlencode.h"
 
 @implementation SSFile
