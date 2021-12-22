@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1954,6 +1954,9 @@
 		F8512C8A1AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */; };
 		F86A409C23D67E0D008BA4E2 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF9D7520B0349800865861 /* libzbar.a */; };
 		F86B0F561A758348004177D3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F86B0F551A758348004177D3 /* Security.framework */; };
+		F87BFE2A2772BC6700A21B69 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F87BFE292772BC6700A21B69 /* Launch Screen.storyboard */; };
+		F87BFE2B2772BC6700A21B69 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F87BFE292772BC6700A21B69 /* Launch Screen.storyboard */; };
+		F87BFE2C2772BC6700A21B69 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F87BFE292772BC6700A21B69 /* Launch Screen.storyboard */; };
 		F8AC01F71A3BA5270067C19E /* FileEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8AC01F61A3BA5270067C19E /* FileEditController.m */; };
 		F8AC01F81A3BA5270067C19E /* FileEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8AC01F61A3BA5270067C19E /* FileEditController.m */; };
 		F8AC01F91A3BA5270067C19E /* FileEditController.m in Sources */ = {isa = PBXBuildFile; fileRef = F8AC01F61A3BA5270067C19E /* FileEditController.m */; };
@@ -2702,6 +2705,7 @@
 		F847801B19548E82004BE6DB /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = SOURCE_ROOT; };
 		F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileEditController_iPad.xib; sourceTree = "<group>"; };
 		F86B0F551A758348004177D3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		F87BFE292772BC6700A21B69 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		F89899311AC22512006211F9 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F89899321AC22512006211F9 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F89899331AC22512006211F9 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -3013,6 +3017,7 @@
 				57A975CB147203430043B4B3 /* SelectLoginInputViewController_iPhone.xib */,
 				57A975CC147203430043B4B3 /* StartingViewController_iPad.xib */,
 				57A975CD147203430043B4B3 /* StartingViewController_iPhone.xib */,
+				F87BFE292772BC6700A21B69 /* Launch Screen.storyboard */,
 			);
 			path = xibs;
 			sourceTree = "<group>";
@@ -3759,13 +3764,13 @@
 				LastUpgradeCheck = 1200;
 				TargetAttributes = {
 					579F9AA314678A4E00709C70 = {
-						DevelopmentTeam = F229TX233T;
+						DevelopmentTeam = LTQ3P9HJ6S;
 						ProvisioningStyle = Automatic;
 					};
 				};
 			};
 			buildConfigurationList = 579F9A9E14678A4D00709C70 /* Build configuration list for PBXProject "SparkleShare" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -4172,6 +4177,7 @@
 				57852A3614B1AC59003A1FFC /* 80_application-vnd.stardivision.writer.png in Resources */,
 				57852A3714B1AC59003A1FFC /* 80_application-vnd.sun.xml.calc.png in Resources */,
 				57852A3814B1AC59003A1FFC /* 80_application-vnd.sun.xml.draw.png in Resources */,
+				F87BFE2B2772BC6700A21B69 /* Launch Screen.storyboard in Resources */,
 				57852A3914B1AC59003A1FFC /* 80_application-vnd.sun.xml.impress.png in Resources */,
 				57852A3A14B1AC59003A1FFC /* 80_application-vnd.sun.xml.writer.png in Resources */,
 				57852A3B14B1AC59003A1FFC /* 80_application-vnd.wordperfect.png in Resources */,
@@ -4788,6 +4794,7 @@
 				57852CDF14B1B582003A1FFC /* 80_application-vnd.stardivision.writer.png in Resources */,
 				57852CE014B1B582003A1FFC /* 80_application-vnd.sun.xml.calc.png in Resources */,
 				57852CE114B1B582003A1FFC /* 80_application-vnd.sun.xml.draw.png in Resources */,
+				F87BFE2C2772BC6700A21B69 /* Launch Screen.storyboard in Resources */,
 				57852CE214B1B582003A1FFC /* 80_application-vnd.sun.xml.impress.png in Resources */,
 				57852CE314B1B582003A1FFC /* 80_application-vnd.sun.xml.writer.png in Resources */,
 				57852CE414B1B582003A1FFC /* 80_application-vnd.wordperfect.png in Resources */,
@@ -5404,6 +5411,7 @@
 				57F891BD14795EE7008259A5 /* 80_application-vnd.stardivision.writer.png in Resources */,
 				57F891BE14795EE7008259A5 /* 80_application-vnd.sun.xml.calc.png in Resources */,
 				57F891BF14795EE7008259A5 /* 80_application-vnd.sun.xml.draw.png in Resources */,
+				F87BFE2A2772BC6700A21B69 /* Launch Screen.storyboard in Resources */,
 				57F891C014795EE7008259A5 /* 80_application-vnd.sun.xml.impress.png in Resources */,
 				57F891C114795EE7008259A5 /* 80_application-vnd.sun.xml.writer.png in Resources */,
 				57F891C214795EE7008259A5 /* 80_application-vnd.wordperfect.png in Resources */,
@@ -6054,7 +6062,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = F229TX233T;
+				DEVELOPMENT_TEAM = LTQ3P9HJ6S;
 				DSTROOT = /tmp/xcodeproj.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6066,15 +6074,21 @@
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShare-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = de.sb.SparkleShare;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zaubar.SparkleShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "libs/ZBar/iphone/include libs/ZBar/include";
+				USER_HEADER_SEARCH_PATHS = (
+					libs/ZBar/iphone/include,
+					libs/ZBar/include,
+				);
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -6085,7 +6099,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = F229TX233T;
+				DEVELOPMENT_TEAM = LTQ3P9HJ6S;
 				DSTROOT = /tmp/xcodeproj.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6097,15 +6111,21 @@
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShare-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = de.sb.SparkleShare;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zaubar.SparkleShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "libs/ZBar/iphone/include libs/ZBar/include";
+				USER_HEADER_SEARCH_PATHS = (
+					libs/ZBar/iphone/include,
+					libs/ZBar/include,
+				);
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
