@@ -230,6 +230,11 @@
         }
     }
     
+    //override some file binary types that are detected as text
+    if ([file.name hasSuffix:@".kdbx"]) {
+        file.mime = @"application/octet-stream";
+    }
+    
     if( [file.mime hasPrefix:@"text/"] ) {
         //open text editing view if file is text
         FileEditController *newFileEditController = [[FileEditController alloc] initWithFile: file];

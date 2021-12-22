@@ -20,10 +20,12 @@
 //@synthesize splitViewController = _splitViewController;
 @synthesize loginInputViewController = _loginInputViewController;
 
-- (BOOL)application: (UIApplication *) application didFinishLaunchingWithOptions: (NSDictionary *) launchOptions {
-	self.window = [[UIWindow alloc] initWithFrame: [[UIScreen mainScreen] bounds]];
+- (BOOL)application: (UIApplication *) application didFinishLaunchingWithOptions: (NSDictionary *) launchOptions
+{
+	self.window = [[UIWindow alloc] init];
     
 	StartingViewController *startingViewController = [[StartingViewController alloc] init];
+
 	self.window.rootViewController = startingViewController;
     [self.window makeKeyAndVisible];
 
