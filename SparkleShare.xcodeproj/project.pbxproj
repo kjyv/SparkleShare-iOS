@@ -1933,6 +1933,7 @@
 		57F892B914795EE7008259A5 /* 80_x-office-presentation.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906D14795EE7008259A5 /* 80_x-office-presentation.png */; };
 		57F892BA14795EE7008259A5 /* 80_x-office-spreadsheet.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906E14795EE7008259A5 /* 80_x-office-spreadsheet.png */; };
 		57F892BB14795EE7008259A5 /* 80_zip.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906F14795EE7008259A5 /* 80_zip.png */; };
+		F82131732DA89D2100D23F96 /* 80_text-markdown.png in Resources */ = {isa = PBXBuildFile; fileRef = F821316E2DA89D2100D23F96 /* 80_text-markdown.png */; };
 		F8217482252DDDE500293A6E /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8217481252DDDE500293A6E /* CoreServices.framework */; };
 		F83DB2D120A9C18F00BD80FE /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = F83DB2C520A9C18F00BD80FE /* AFURLResponseSerialization.m */; };
 		F83DB2D220A9C18F00BD80FE /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F83DB2C620A9C18F00BD80FE /* AFHTTPSessionManager.m */; };
@@ -2680,6 +2681,7 @@
 		57F8906D14795EE7008259A5 /* 80_x-office-presentation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80_x-office-presentation.png"; sourceTree = "<group>"; };
 		57F8906E14795EE7008259A5 /* 80_x-office-spreadsheet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80_x-office-spreadsheet.png"; sourceTree = "<group>"; };
 		57F8906F14795EE7008259A5 /* 80_zip.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 80_zip.png; sourceTree = "<group>"; };
+		F821316E2DA89D2100D23F96 /* 80_text-markdown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80_text-markdown.png"; sourceTree = "<group>"; };
 		F8217481252DDDE500293A6E /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F83DB2BE20A9C18F00BD80FE /* AFSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFSecurityPolicy.h; sourceTree = "<group>"; };
 		F83DB2BF20A9C18F00BD80FE /* AFNetworkReachabilityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkReachabilityManager.h; sourceTree = "<group>"; };
@@ -2986,6 +2988,7 @@
 				572979361476C07E007A2947 /* app-icon-iphone-retina.png */,
 				572979321476BD81007A2947 /* app-icon-iphone.png */,
 				57A975BA147203430043B4B3 /* sparkleshare-logo.png */,
+				F821316E2DA89D2100D23F96 /* 80_text-markdown.png */,
 			);
 			path = Graphics;
 			sourceTree = "<group>";
@@ -3762,12 +3765,6 @@
 			attributes = {
 				LastTestingUpgradeCheck = 0720;
 				LastUpgradeCheck = 1200;
-				TargetAttributes = {
-					579F9AA314678A4E00709C70 = {
-						DevelopmentTeam = LTQ3P9HJ6S;
-						ProvisioningStyle = Automatic;
-					};
-				};
 			};
 			buildConfigurationList = 579F9A9E14678A4D00709C70 /* Build configuration list for PBXProject "SparkleShare" */;
 			compatibilityVersion = "Xcode 12.0";
@@ -5053,6 +5050,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F82131732DA89D2100D23F96 /* 80_text-markdown.png in Resources */,
 				572920CD1471AB6100E4A3E8 /* SVProgressHUD.bundle in Resources */,
 				57A975E7147203430043B4B3 /* sparkleshare-logo.png in Resources */,
 				57A975E8147203430043B4B3 /* InfoPlist.strings in Resources */,
@@ -6059,10 +6057,10 @@
 		579F9AE414678A4E00709C70 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = LTQ3P9HJ6S;
+				DEVELOPMENT_TEAM = F229TX233T;
 				DSTROOT = /tmp/xcodeproj.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6073,13 +6071,15 @@
 				GCC_PREFIX_HEADER = "SparkleShare/Supporting/SparkleShare-Prefix.pch";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShare-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zaubar.SparkleShare;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sb.SparkleShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -6096,10 +6096,10 @@
 		579F9AE514678A4E00709C70 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = LTQ3P9HJ6S;
+				DEVELOPMENT_TEAM = F229TX233T;
 				DSTROOT = /tmp/xcodeproj.dst;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6110,13 +6110,15 @@
 				GCC_PREFIX_HEADER = "SparkleShare/Supporting/SparkleShare-Prefix.pch";
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShare-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.zaubar.SparkleShare;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sb.SparkleShare;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";

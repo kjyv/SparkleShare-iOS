@@ -181,6 +181,7 @@
 //manually called refresh
 - (void) reloadFolder {
 	[SVProgressHUD show];
+    
     [self.folder loadItems];
 }
 

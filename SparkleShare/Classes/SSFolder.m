@@ -99,6 +99,18 @@
 //[{"id":"83d20198fb3aa38143294226785893964d44b896","type":"file","name":"b","url":"path=b&hash=83d20198fb3aa38143294226785893964d44b896&name=b"},
 //{"id":"b59993a22c86c5e84973d907bce7a4baf04bdb28","type":"dir","name":"c","url":"path=c&hash=b59993a22c86c5e84973d907bce7a4baf04bdb28&name=c"}]
 - (void) loadItems {
+    // Remove 'hash' parameter from the URL query to force loading latest version
+    NSURLComponents *components = [NSURLComponents componentsWithString:[NSString stringWithFormat:@"http://localhost/?%@", self.url]];
+    NSMutableArray *filteredItems = [NSMutableArray array];
+    for (NSURLQueryItem *item in components.queryItems) {
+        if (![item.name isEqualToString:@"hash"]) {
+            [filteredItems addObject:item];
+        }
+    }
+    components.queryItems = filteredItems;
+    NSString *cleanPath = components.percentEncodedQuery;
+    self.url = cleanPath;
+    
 	[self sendRequestWithSelfUrlAndMethod: @"getFolderContent" success:
 	 ^(NSURLRequest * request, NSURLResponse * response, id JSON) {
 	         NSMutableArray *newItems = [NSMutableArray array];

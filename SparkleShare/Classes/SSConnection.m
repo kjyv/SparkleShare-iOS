@@ -91,6 +91,9 @@
 	[request setHTTPBody: requestData];
 
 	SSJSONRequestOperation *operation = [SSJSONRequestOperation JSONRequestOperationWithRequest: request success:^(NSURLRequest * request, NSURLResponse * response, id JSON) {
+            if ([JSON isKindOfClass:[NSString class]]) {
+                [self.delegate connectionLinkingFailed:self error: JSON];
+            } else {
                 identCode = [JSON valueForKey: @"ident"];
                 authCode = [JSON valueForKey: @"authCode"];
                 [userDefaults setObject: identCode forKey: @"identCode"];
@@ -98,10 +101,11 @@
                 [userDefaults setURL: address forKey: @"link"];
                 [userDefaults setBool: YES forKey: @"linked"];
                 [userDefaults removeObjectForKey: @"code"];
-
+                
                 [userDefaults synchronize];
                 [self.delegate connectionLinkingSuccess:self];
                 [self testConnection];
+            }
          }
          failure:^(NSURLRequest *request, NSURLResponse *response, NSError *error, id JSON) {
              NSLog(@"JSON Request error: %@", error);
@@ -130,6 +134,7 @@
         failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure {
 	NSString *urlRequest = [[address absoluteString] stringByAppendingString: string];
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString: urlRequest]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
 	[request setValue: identCode forHTTPHeaderField: @"X-SPARKLE-IDENT"];
 	[request setValue: authCode forHTTPHeaderField: @"X-SPARKLE-AUTH"];
 
