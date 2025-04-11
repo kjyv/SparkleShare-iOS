@@ -34,9 +34,9 @@
 	                                        name: [folderInfo objectForKey: @"name"]
 	                                        ssid: [folderInfo objectForKey: @"id"]
 	                                        type: [folderInfo objectForKey: @"type"]];
-                     newFolder.mime = @"text/directory-documents";
-	                 [newFolders addObject: newFolder];
-		 }
+                 newFolder.mime = @"text/directory-documents";
+                 [newFolders addObject: newFolder];
+             }
 	         [self loadedItems: [NSArray arrayWithArray: newFolders]];
 	 }
 	 failure:
