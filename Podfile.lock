@@ -1,0 +1,16 @@
+PODS:
+  - MMMarkdown (0.5.5)
+
+DEPENDENCIES:
+  - MMMarkdown
+
+SPEC REPOS:
+  trunk:
+    - MMMarkdown
+
+SPEC CHECKSUMS:
+  MMMarkdown: 1af97166ce0f6d6e0cb05695665492195d27c3f1
+
+PODFILE CHECKSUM: ca00b14b7ab9595a0dd63dd99b67c53348bfd789
+
+COCOAPODS: 1.16.2

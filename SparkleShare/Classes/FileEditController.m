@@ -10,6 +10,8 @@
 #import "SSFile.h"
 #import "NSString+Hashing.h"
 #import "SVProgressHUD.h"
+#import <WebKit/WebKit.h>
+#import <MMMarkdown/MMMarkdown.h>
 
 @implementation FileEditController
 @synthesize textEditView;
@@ -32,6 +34,25 @@
     
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
+    if (self.isMarkdownFile) {
+        // Initialize WKWebView only for markdown files
+        self.webView = [[WKWebView alloc] initWithFrame:self.view.bounds];
+        self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.webView.navigationDelegate = self;
+        [self.view addSubview:self.webView];
+        [self.view sendSubviewToBack:self.webView]; // Ensure webView is behind textEditView initially
+
+        // Initial state: Preview mode for markdown files
+        _isPreviewMode = YES; 
+        self.textEditView.hidden = YES;
+        self.webView.hidden = NO;
+        [self renderMarkdownToWebView];
+    } else {
+        // For non-markdown files, always show textEditView
+        _isPreviewMode = NO;
+        self.textEditView.hidden = NO;
+    }
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:)
         name:UIKeyboardWillShowNotification object:nil];
 /*    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:)
@@ -48,59 +69,113 @@
     [super viewDidAppear:animated];
 }
 
+#pragma mark - Markdown Rendering
+
+- (void)renderMarkdownToWebView {
+    NSError *error = nil;
+    NSString *markdownContent = self.textEditView.text;
+    NSString *htmlString = [MMMarkdown HTMLStringWithMarkdown:markdownContent error:&error];
+
+    if (htmlString && !error) {
+        // Get system colors for both bright and dark mode
+        UIColor *brightSystemBackgroundColor = [UIColor systemBackgroundColor];
+        UIColor *brightLabelColor = [UIColor labelColor];
+        
+        // For dark mode, these will be different
+        UIColor *darkSystemBackgroundColor = [UIColor systemBackgroundColor]; // Will be dark in dark mode
+        UIColor *darkLabelColor = [UIColor labelColor]; // Will be light in dark mode
+
+        NSString *brightBgColorRGBA = [self rgbaStringFromColor:brightSystemBackgroundColor];
+        NSString *brightTextColorRGBA = [self rgbaStringFromColor:brightLabelColor];
+        NSString *darkBgColorRGBA = [self rgbaStringFromColor:darkSystemBackgroundColor];
+        NSString *darkTextColorRGBA = [self rgbaStringFromColor:darkLabelColor];
+
+        // Inject CSS for larger font size and dynamic bright/dark mode colors
+        NSString *css = [NSString stringWithFormat:@"<style>body { font-size: 40px; background-color: %@; color: %@; } @media (prefers-color-scheme: dark) { body { background-color: %@; color: %@; } }</style>", brightBgColorRGBA, brightTextColorRGBA, darkBgColorRGBA, darkTextColorRGBA];
+        NSString *finalHtmlString = [NSString stringWithFormat:@"%@%@", css, htmlString];
+        [self.webView loadHTMLString:finalHtmlString baseURL:nil];
+    } else {
+        NSLog(@"Error rendering markdown to HTML: %@", error);
+        [self.webView loadHTMLString:@"<h1>Error rendering markdown</h1>" baseURL:nil];
+    }
+}
+
 #pragma mark - keyboard movements
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-    //push up content by keyboard size
-    UIEdgeInsets insets = self.textEditView.contentInset;
-    insets.bottom = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-    self.textEditView.contentInset = insets;
-    
-    //push up scroll indicator by keyboard size
-    insets = self.textEditView.verticalScrollIndicatorInsets;
-    insets.bottom = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-    self.textEditView.verticalScrollIndicatorInsets = insets;
-  
-    //self.textEditView.selectedTextRange = _selectedRange;
+    // Only adjust for keyboard if in edit mode
+    if (!_isPreviewMode) {
+        //push up content by keyboard size
+        UIEdgeInsets insets = self.textEditView.contentInset;
+        insets.bottom = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+        self.textEditView.contentInset = insets;
+        
+        //push up scroll indicator by keyboard size
+        insets = self.textEditView.verticalScrollIndicatorInsets;
+        insets.bottom = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
+        self.textEditView.verticalScrollIndicatorInsets = insets;
+    }
 }
 
 -(void)keyboardWillHide:(NSNotification *)notification
 {
-    UIEdgeInsets insets = self.textEditView.contentInset;
-//    insets.bottom -= [notification.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
-//    if (insets.bottom < 0)
+    if (!_isPreviewMode) {
+        UIEdgeInsets insets = self.textEditView.contentInset;
         insets.bottom = 0;
-    self.textEditView.contentInset = insets;
-    
-    insets = self.textEditView.verticalScrollIndicatorInsets;
-//    insets.bottom -= [notification.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue].size.height;
-//    if (insets.bottom < 0)
+        self.textEditView.contentInset = insets;
+        
+        insets = self.textEditView.verticalScrollIndicatorInsets;
         insets.bottom = 0;
-    self.textEditView.verticalScrollIndicatorInsets = insets;
+        self.textEditView.verticalScrollIndicatorInsets = insets;
+    }
 }
 
 
 - (void)setEditing:(BOOL)flag animated:(BOOL)animated
 {
     [super setEditing:flag animated:animated];
-    if (flag == YES){
-        //make view editable
-        offset = self.textEditView.contentOffset;
-        [textEditView setEditable:true];
-        [[NSOperationQueue mainQueue] addOperationWithBlock: ^{
-            [self.textEditView setContentOffset: self->offset];
-        }];
+    if (self.isMarkdownFile) {
+        if (flag == YES){
+            // Entering Edit Mode
+            _isPreviewMode = NO;
+            self.textEditView.hidden = NO;
+            self.webView.hidden = YES;
+            [textEditView setEditable:true];
+            
+            // Reset content insets and scroll to top to ensure correct positioning
+            self.textEditView.contentInset = UIEdgeInsetsZero;
+            self.textEditView.scrollIndicatorInsets = UIEdgeInsetsZero;
+            [self.textEditView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
 
-    }
-    else {
-        [textEditView setEditable:false];
-                
-        //save changes
-        if (fileChanged) {
-            [SVProgressHUD showWithStatus:@"Saving" networkIndicator:true];
-            [_file saveContent: textEditView.text];
-            fileChanged = false;
+        }
+        else {
+            // Exiting Edit Mode (and potentially saving)
+            _isPreviewMode = YES;
+            self.textEditView.hidden = YES;
+            self.webView.hidden = NO;
+            [textEditView setEditable:false];
+            [self renderMarkdownToWebView]; // Render updated markdown
+                    
+            //save changes
+            if (fileChanged) {
+                [SVProgressHUD showWithStatus:@"Saving" networkIndicator:true];
+                [_file saveContent: textEditView.text];
+                fileChanged = false;
+            }
+        }
+    } else {
+        // For non-markdown files, just handle editing state without preview logic
+        if (flag == YES) {
+            [textEditView setEditable:true];
+        } else {
+            [textEditView setEditable:false];
+            //save changes
+            if (fileChanged) {
+                [SVProgressHUD showWithStatus:@"Saving" networkIndicator:true];
+                [_file saveContent: textEditView.text];
+                fileChanged = false;
+            }
         }
     }
 }
@@ -111,6 +186,20 @@
 - (id)initWithFile: (SSFile *) file {
     if (self = [super initWithAutoPlatformNibName]) {
         _file = file;
+        _isPreviewMode = NO; // Default to edit mode, will be overridden in viewDidLoad
+        
+        // Determine if the file is markdown based on MIME type
+        self.isMarkdownFile = NO;
+        if ([file.mime isEqualToString:@"text/markdown"] ||
+            [file.mime isEqualToString:@"text/x-markdown"]) {
+            self.isMarkdownFile = YES;
+        } else if ([file.mime isEqualToString:@"text/plain"]) {
+            // As a fallback, check extension for plain text files
+            if ([file.name.pathExtension isEqualToString:@"md"] ||
+                [file.name.pathExtension isEqualToString:@"markdown"]) {
+                self.isMarkdownFile = YES;
+            }
+        }
     }
     fileChanged = false;
     return self;
@@ -179,6 +268,13 @@
 -(void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+// Helper to convert UIColor to rgba() string
+- (NSString *)rgbaStringFromColor:(UIColor *)color {
+    CGFloat r, g, b, a;
+    [color getRed:&r green:&g blue:&b alpha:&a];
+    return [NSString stringWithFormat:@"rgba(%.0f, %.0f, %.0f, %.2f)", r * 255, g * 255, b * 255, a];
 }
 
 @end
