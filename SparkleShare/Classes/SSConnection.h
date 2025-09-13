@@ -38,7 +38,9 @@
        success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
        failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure;
 - (void) sendPostRequestWithStringAndData:(NSString *)string data: (NSString *)data
-       success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON))success
-       failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON))failure;
+                                  success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
+                                  failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure;
+- (NSMutableURLRequest *)requestForPath:(NSString *)path;
+- (void)addOperation:(NSOperation *)operation;
 - (void)linkDeviceWithAddress: (NSURL *) anAddress code: (NSString *) aCode;
 @end

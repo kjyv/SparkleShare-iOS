@@ -11,6 +11,11 @@
 @implementation ManualLoginInputViewController
 @synthesize urlField, codeField;
 
+- (id)init {
+    self = [super init];
+    return self;
+}
+
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
 	[super didReceiveMemoryWarning];

@@ -10,6 +10,7 @@
 #import "QRCodeLoginInputViewController.h"
 #import "ManualLoginInputViewController.h"
 #import "UIColor+ApplicationColors.h"
+#import "UIViewController+AutoPlatformNibName.h"
 @interface SelectLoginInputViewController ()
 @property (strong, nonatomic) QRCodeLoginInputViewController *qrcodeLoginInputController;
 @property (strong, nonatomic) ManualLoginInputViewController *manualLoginInputViewController;
@@ -18,6 +19,12 @@
 
 @implementation SelectLoginInputViewController
 @synthesize qrcodeLoginInputController, manualLoginInputViewController;
+
+- (id)init {
+    if (self = [self initWithAutoPlatformNibName]) {
+    }
+    return self;
+}
 
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
@@ -59,7 +66,7 @@
 
 - (void)loginInputViewController: (LoginInputViewController *) loginInputViewController
        willSetLink: (NSURL *) link code: (NSString *) code {
-	[self.navigationController popViewControllerAnimated: YES];
+	[self.navigationController popViewControllerAnimated:NO];
 	[self.delegate loginInputViewController: loginInputViewController willSetLink: link code: code];
 }
 

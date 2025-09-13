@@ -12,9 +12,9 @@
 
 @interface SSConnection ()
 
-@property (readonly) NSString *identCode;
-@property (readonly) NSString *authCode;
-@property (readonly) NSURL *address;
+@property (readwrite) NSString *identCode;
+@property (readwrite) NSString *authCode;
+@property (readwrite) NSURL *address;
 
 - (void) testConnection;
 
@@ -76,29 +76,30 @@
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [address URLByAppendingPathComponent:  @"api/getAuthCode"]];
 	[request setHTTPMethod: @"POST"];
     
-    NSString* deviceName;
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *deviceName = [userDefaults stringForKey:@"customDeviceName"] ?: [[UIDevice currentDevice] name];
+    
+    NSString *encodedCode = [code stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    NSString *encodedName = [deviceName stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
 
-    if ([userDefaults stringForKey:@"customDeviceName"]) {
-        deviceName = [userDefaults stringForKey:@"customDeviceName"];
-    } else {
-        deviceName = [[UIDevice currentDevice] name];
-    }
-	NSString *requestString = [NSString stringWithFormat: @"code=%@&name=%@",
-	                           [code stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding],
-	                           [deviceName stringByAddingPercentEscapesUsingEncoding: NSASCIIStringEncoding]];
-	NSData *requestData = [NSData dataWithBytes: [requestString UTF8String] length: [requestString length]];
-	[request setHTTPBody: requestData];
+    NSString *requestString = [NSString stringWithFormat:@"code=%@&name=%@", encodedCode, encodedName];
+    NSData *requestData = [requestString dataUsingEncoding:NSUTF8StringEncoding];
+    [request setHTTPBody:requestData];
+    [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
 
 	SSJSONRequestOperation *operation = [SSJSONRequestOperation JSONRequestOperationWithRequest: request success:^(NSURLRequest * request, NSURLResponse * response, id JSON) {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
             if ([JSON isKindOfClass:[NSString class]]) {
                 [self.delegate connectionLinkingFailed:self error: JSON];
+            }
+            else if (httpResponse.statusCode == 404 || httpResponse.statusCode == 500) {
+                [self.delegate connectionLinkingFailed:self error: [NSString stringWithFormat:@"Unable to connect to Server URL (error code: %ld).", (long)httpResponse.statusCode]];
             } else {
-                identCode = [JSON valueForKey: @"ident"];
-                authCode = [JSON valueForKey: @"authCode"];
-                [userDefaults setObject: identCode forKey: @"identCode"];
-                [userDefaults setObject: authCode forKey: @"authCode"];
-                [userDefaults setURL: address forKey: @"link"];
+                self->identCode = [JSON valueForKey: @"ident"];
+                self->authCode = [JSON valueForKey: @"authCode"];
+                [userDefaults setObject: self->identCode forKey: @"identCode"];
+                [userDefaults setObject: self->authCode forKey: @"authCode"];
+                [userDefaults setURL: self->address forKey: @"link"];
                 [userDefaults setBool: YES forKey: @"linked"];
                 [userDefaults removeObjectForKey: @"code"];
                 
@@ -159,7 +160,12 @@
 
     [request setTimeoutInterval:60];
     
-    SSJSONRequestOperation *operation = [SSJSONRequestOperation JSONRequestOperationWithRequest: request success: success failure: failure];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        success(operation.request, operation.response, responseObject);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        failure(operation.request, operation.response, error, operation.responseObject);
+    }];
     
     [queue addOperation: operation];
 }
@@ -182,6 +188,17 @@
 	];
 }
 
+- (NSMutableURLRequest *)requestForPath:(NSString *)path {
+    NSString *urlRequest = [[address absoluteString] stringByAppendingString:path];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest]];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
+    [request setValue:identCode forHTTPHeaderField:@"X-SPARKLE-IDENT"];
+    [request setValue:authCode forHTTPHeaderField:@"X-SPARKLE-AUTH"];
+    return request;
+}
 
+- (void)addOperation:(NSOperation *)operation {
+    [queue addOperation:operation];
+}
 
 @end
