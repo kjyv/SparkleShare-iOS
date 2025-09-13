@@ -3,3 +3,5 @@ SparkleShare.xcodeproj/xcuserdata
 libs/ZBar/iphone/zbar.xcodeproj/project.xcworkspace
 .DS_Store
 SparkleShare.xcarchive
+Pods/*
+SparkleShare.xcworkspace/xcuserdata/

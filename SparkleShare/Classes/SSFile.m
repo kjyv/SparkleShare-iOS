@@ -64,11 +64,11 @@
     NSString* postString = [NSString stringWithFormat:@"data=%@", [text urlencode]];
         
     [self sendPostRequestWithMethodAndData: @"putFile" data: postString success:
-     ^(NSURLRequest * request, NSURLResponse * response, id JSON) {
+     ^(NSURLRequest * request, NSURLResponse * response, id responseObject) {
          [self.delegate fileContentSaved:self];
      }
      failure:
-     ^(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) {
+     ^(NSURLRequest * request, NSURLResponse * response, NSError * error, id responseObject) {
          [self.delegate fileContentSavingFailed: self error: error];
      }
      ];

@@ -1933,6 +1933,7 @@
 		57F892B914795EE7008259A5 /* 80_x-office-presentation.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906D14795EE7008259A5 /* 80_x-office-presentation.png */; };
 		57F892BA14795EE7008259A5 /* 80_x-office-spreadsheet.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906E14795EE7008259A5 /* 80_x-office-spreadsheet.png */; };
 		57F892BB14795EE7008259A5 /* 80_zip.png in Resources */ = {isa = PBXBuildFile; fileRef = 57F8906F14795EE7008259A5 /* 80_zip.png */; };
+		A614BD154A296BBAA11883A9 /* Pods_SparkleShare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7BF99FCD81EF1091329C242 /* Pods_SparkleShare.framework */; };
 		F82131732DA89D2100D23F96 /* 80_text-markdown.png in Resources */ = {isa = PBXBuildFile; fileRef = F821316E2DA89D2100D23F96 /* 80_text-markdown.png */; };
 		F8217482252DDDE500293A6E /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8217481252DDDE500293A6E /* CoreServices.framework */; };
 		F83DB2D120A9C18F00BD80FE /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = F83DB2C520A9C18F00BD80FE /* AFURLResponseSerialization.m */; };
@@ -2681,6 +2682,11 @@
 		57F8906D14795EE7008259A5 /* 80_x-office-presentation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80_x-office-presentation.png"; sourceTree = "<group>"; };
 		57F8906E14795EE7008259A5 /* 80_x-office-spreadsheet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80_x-office-spreadsheet.png"; sourceTree = "<group>"; };
 		57F8906F14795EE7008259A5 /* 80_zip.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 80_zip.png; sourceTree = "<group>"; };
+		72DBA7A10A372B9D53EB28B0 /* Pods-SparkleShare.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SparkleShare.release.xcconfig"; path = "Target Support Files/Pods-SparkleShare/Pods-SparkleShare.release.xcconfig"; sourceTree = "<group>"; };
+		99186C2427BD608525110FE7 /* Pods-SparkleShare.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SparkleShare.debug.xcconfig"; path = "Target Support Files/Pods-SparkleShare/Pods-SparkleShare.debug.xcconfig"; sourceTree = "<group>"; };
+		A7BF99FCD81EF1091329C242 /* Pods_SparkleShare.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SparkleShare.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8113BEE2E74FB27009AD15C /* Down.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Down.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8113BF22E74FB2C009AD15C /* Down.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Down.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F821316E2DA89D2100D23F96 /* 80_text-markdown.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "80_text-markdown.png"; sourceTree = "<group>"; };
 		F8217481252DDDE500293A6E /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F83DB2BE20A9C18F00BD80FE /* AFSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFSecurityPolicy.h; sourceTree = "<group>"; };
@@ -2707,10 +2713,12 @@
 		F847801B19548E82004BE6DB /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = SOURCE_ROOT; };
 		F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileEditController_iPad.xib; sourceTree = "<group>"; };
 		F86B0F551A758348004177D3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		F8777E5A2E75007D0016380D /* libcmark-gfm.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libcmark-gfm.tbd"; path = "usr/lib/libcmark-gfm.tbd"; sourceTree = SDKROOT; };
 		F87BFE292772BC6700A21B69 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		F89899311AC22512006211F9 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F89899321AC22512006211F9 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F89899331AC22512006211F9 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F8A2E1F12E74F743001D6821 /* Down.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Down.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8AC01F61A3BA5270067C19E /* FileEditController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileEditController.m; sourceTree = "<group>"; };
 		F8AC01FA1A3BA5530067C19E /* FileEditController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileEditController.h; sourceTree = "<group>"; };
 		F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileEditController_iPhone.xib; sourceTree = "<group>"; };
@@ -2774,6 +2782,7 @@
 				579F9AAB14678A4E00709C70 /* Foundation.framework in Frameworks */,
 				F8217482252DDDE500293A6E /* CoreServices.framework in Frameworks */,
 				579F9AAD14678A4E00709C70 /* CoreGraphics.framework in Frameworks */,
+				A614BD154A296BBAA11883A9 /* Pods_SparkleShare.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2892,6 +2901,7 @@
 				579F9AA714678A4E00709C70 /* Frameworks */,
 				579BC0A81470CD4100BB8233 /* libs */,
 				579F9AA514678A4E00709C70 /* Products */,
+				A65C70D6AA02DED57148379F /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2909,6 +2919,10 @@
 		579F9AA714678A4E00709C70 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F8777E5A2E75007D0016380D /* libcmark-gfm.tbd */,
+				F8113BF22E74FB2C009AD15C /* Down.framework */,
+				F8113BEE2E74FB27009AD15C /* Down.framework */,
+				F8A2E1F12E74F743001D6821 /* Down.framework */,
 				F8217481252DDDE500293A6E /* CoreServices.framework */,
 				F8CF9D6B20B0342500865861 /* libiconv.tbd */,
 				F86B0F551A758348004177D3 /* Security.framework */,
@@ -2923,6 +2937,7 @@
 				579F9AA814678A4E00709C70 /* UIKit.framework */,
 				579F9AAA14678A4E00709C70 /* Foundation.framework */,
 				579F9AAC14678A4E00709C70 /* CoreGraphics.framework */,
+				A7BF99FCD81EF1091329C242 /* Pods_SparkleShare.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -3646,6 +3661,15 @@
 			path = Icons;
 			sourceTree = "<group>";
 		};
+		A65C70D6AA02DED57148379F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				99186C2427BD608525110FE7 /* Pods-SparkleShare.debug.xcconfig */,
+				72DBA7A10A372B9D53EB28B0 /* Pods-SparkleShare.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		F83DB2BD20A9C18F00BD80FE /* AFNetworking */ = {
 			isa = PBXGroup;
 			children = (
@@ -3723,6 +3747,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 579F9AE314678A4E00709C70 /* Build configuration list for PBXNativeTarget "SparkleShare" */;
 			buildPhases = (
+				E54DC35C8398B7AAE3C4BC6A /* [CP] Check Pods Manifest.lock */,
 				579F9AA014678A4E00709C70 /* Sources */,
 				579F9AA114678A4E00709C70 /* Frameworks */,
 				579F9AA214678A4E00709C70 /* Resources */,
@@ -3745,7 +3770,6 @@
 				579F9ACD14678A4E00709C70 /* Frameworks */,
 				579F9ACE14678A4E00709C70 /* Resources */,
 				579F9ACF14678A4E00709C70 /* ShellScript */,
-				A25F605947A541D4B3EB06C2 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -3763,8 +3787,20 @@
 		579F9A9B14678A4D00709C70 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastTestingUpgradeCheck = 0720;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					5785288E14B1AC59003A1FFC = {
+						LastSwiftMigration = 1640;
+					};
+					57852B3714B1B582003A1FFC = {
+						LastSwiftMigration = 1640;
+					};
+					579F9AA314678A4E00709C70 = {
+						LastSwiftMigration = 1640;
+					};
+				};
 			};
 			buildConfigurationList = 579F9A9E14678A4D00709C70 /* Build configuration list for PBXProject "SparkleShare" */;
 			compatibilityVersion = "Xcode 12.0";
@@ -5688,19 +5724,27 @@
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
-		A25F605947A541D4B3EB06C2 /* Copy Pods Resources */ = {
+		E54DC35C8398B7AAE3C4BC6A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
+			inputFileListPaths = (
 			);
-			name = "Copy Pods Resources";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SparkleShare-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -5865,6 +5909,7 @@
 		57852B3214B1AC59003A1FFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DSTROOT = /tmp/xcodeproj.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -5879,6 +5924,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SparkleShareDonate;
 				SKIP_INSTALL = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "SparkleShare/Classes/SparkleShare Donate AppStore-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -5886,6 +5934,7 @@
 		57852B3314B1AC59003A1FFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Sergey Klimov";
 				DSTROOT = /tmp/xcodeproj.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -5901,6 +5950,8 @@
 				PRODUCT_NAME = SparkleShareDonate;
 				PROVISIONING_PROFILE = "22E5FFF2-91CD-46AD-9D0B-9B1A973EB7FA";
 				SKIP_INSTALL = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "SparkleShare/Classes/SparkleShare Donate AppStore-Bridging-Header.h";
+				SWIFT_VERSION = 6.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -5908,6 +5959,7 @@
 		57852DDB14B1B582003A1FFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DSTROOT = /tmp/xcodeproj.dst;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -5926,6 +5978,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SparkleShare;
 				SKIP_INSTALL = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "SparkleShare/Classes/SparkleShare AppStore-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -5933,6 +5988,7 @@
 		57852DDC14B1B582003A1FFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DSTROOT = /tmp/xcodeproj.dst;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -5953,6 +6009,8 @@
 				PRODUCT_NAME = SparkleShare;
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "SparkleShare/Classes/SparkleShare AppStore-Bridging-Header.h";
+				SWIFT_VERSION = 6.0;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -5984,6 +6042,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -6004,7 +6063,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				STRIP_INSTALLED_PRODUCT = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -6036,6 +6094,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -6049,6 +6108,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -6056,7 +6116,9 @@
 		};
 		579F9AE414678A4E00709C70 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 99186C2427BD608525110FE7 /* Pods-SparkleShare.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
@@ -6072,7 +6134,7 @@
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShare-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6084,6 +6146,9 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "SparkleShare/Classes/SparkleShare-Swift.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = (
 					libs/ZBar/iphone/include,
@@ -6095,7 +6160,9 @@
 		};
 		579F9AE514678A4E00709C70 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 72DBA7A10A372B9D53EB28B0 /* Pods-SparkleShare.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2;
@@ -6111,7 +6178,7 @@
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShare-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6123,6 +6190,8 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "SparkleShare/Classes/SparkleShare-Swift.h";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = (
 					libs/ZBar/iphone/include,
