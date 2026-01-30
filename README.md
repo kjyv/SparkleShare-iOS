@@ -1,20 +1,16 @@
-
-This fork adds iOS >=7 and larger screen compatibility. It also fixes some bugs and
-adds features.
-
----
-
 iOS Client for [SparkleShare Project](http://www.sparkleshare.org)
+Requires [SparkleShare Dashboard](https://github.com/kjyv/SparkleShare-dashboard/) to be set up for your projects.
 
-### Implemented features ###
+### Features ###
 
  - Linking with Dashboard (both with QR code or manual)
  - Browsing repos contents
- - Previewing files
+ - Previewing and editing (text) files
+ - Render Markdown files
 
 ### Planned features ###
 
- - Uploading and editing files
+ - Uploading files
  - allowing self-signed certificates
  - displaying more file types
 
@@ -29,4 +25,4 @@ git submodule update --init
 open SparkleShare.xcodeproj
 ```
 
-* Build SparkleShare for iOS
+* Build SparkleShare to device 
