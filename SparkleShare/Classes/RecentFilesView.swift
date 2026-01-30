@@ -93,9 +93,11 @@ struct RecentFilesView: View {
                             }
                     )
                 }
+                Spacer()
             }
             .padding(.horizontal, 16)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, 8)
         .padding(.bottom, 8)
         .background(Color(UIColor.systemGroupedBackground))
