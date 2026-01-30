@@ -7,21 +7,11 @@
 //
 
 #import "LoginInputViewController.h"
-#import "ZBarSDK/ZBarSDK.h"
+#import <AVFoundation/AVFoundation.h>
 
-@interface QRCodeLoginInputViewController : LoginInputViewController <ZBarReaderViewDelegate>
-{
-	ZBarReaderView *readerView;
-	ZBarCameraSimulator *cameraSim;
-	UILabel *codeLabel;
-	UILabel *urlLabel;
-	BOOL qrCaptured;
-}
+@interface QRCodeLoginInputViewController : LoginInputViewController <AVCaptureMetadataOutputObjectsDelegate>
 
-@property (nonatomic, retain) IBOutlet ZBarReaderView *readerView;
-@property (nonatomic, retain) IBOutlet UILabel *codeLabel;
-@property (nonatomic, retain) IBOutlet UILabel *urlLabel;
-
-
+@property (nonatomic, strong) UILabel *codeLabel;
+@property (nonatomic, strong) UILabel *urlLabel;
 
 @end

@@ -1954,7 +1954,6 @@
 		F8512C881AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */; };
 		F8512C891AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */; };
 		F8512C8A1AA6649100B3CE53 /* FileEditController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8512C871AA6649100B3CE53 /* FileEditController_iPad.xib */; };
-		F86A409C23D67E0D008BA4E2 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF9D7520B0349800865861 /* libzbar.a */; };
 		F86B0F561A758348004177D3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F86B0F551A758348004177D3 /* Security.framework */; };
 		F87BFE2A2772BC6700A21B69 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F87BFE292772BC6700A21B69 /* Launch Screen.storyboard */; };
 		F87BFE2B2772BC6700A21B69 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F87BFE292772BC6700A21B69 /* Launch Screen.storyboard */; };
@@ -1984,20 +1983,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 579F9AA314678A4E00709C70;
 			remoteInfo = SparkleShare;
-		};
-		F8CF9D7420B0349800865861 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F8CF9D6D20B0349800865861 /* zbar.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D2AAC07E0554694100DB518D;
-			remoteInfo = libzbar;
-		};
-		F8CF9D7620B0349800865861 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F8CF9D6D20B0349800865861 /* zbar.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DC3CEF9D121633C500D7A786;
-			remoteInfo = readertest;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -2733,7 +2718,6 @@
 		F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FileEditController_iPhone.xib; sourceTree = "<group>"; };
 		F8B9C88B1C8EFC16008ADE9A /* SparkleShare-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "SparkleShare-Prefix.pch"; path = "SparkleShare/SparkleShare-Prefix.pch"; sourceTree = "<group>"; };
 		F8CF9D6B20B0342500865861 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
-		F8CF9D6D20B0349800865861 /* zbar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = zbar.xcodeproj; path = ZBar/iphone/zbar.xcodeproj; sourceTree = "<group>"; };
 		F8DB21092F2CFA4800A8D5BE /* RecentFilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentFilesView.swift; sourceTree = "<group>"; };
 		F8DB210A2F2CFA4800A8D5BE /* SSRecentFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSRecentFile.h; sourceTree = "<group>"; };
 		F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSRecentFile.m; sourceTree = "<group>"; };
@@ -2784,7 +2768,6 @@
 			files = (
 				F8CF9D6C20B0342500865861 /* libiconv.tbd in Frameworks */,
 				F86B0F561A758348004177D3 /* Security.framework in Frameworks */,
-				F86A409C23D67E0D008BA4E2 /* libzbar.a in Frameworks */,
 				579EE16F147041280074B72B /* QuickLook.framework in Frameworks */,
 				57AD9CDB146D82C600BED6A6 /* QuartzCore.framework in Frameworks */,
 				57AD9CD9146D82BA00BED6A6 /* CoreVideo.framework in Frameworks */,
@@ -2898,7 +2881,6 @@
 		579BC0A81470CD4100BB8233 /* libs */ = {
 			isa = PBXGroup;
 			children = (
-				F8CF9D6D20B0349800865861 /* zbar.xcodeproj */,
 				F83DB2BD20A9C18F00BD80FE /* AFNetworking */,
 				572920A71471AB6000E4A3E8 /* SVProgressHUD */,
 				57C770281472C56900F7CDC7 /* UIImage-FileType */,
@@ -3716,15 +3698,6 @@
 			path = AFNetworking/AFNetworking;
 			sourceTree = "<group>";
 		};
-		F8CF9D6E20B0349800865861 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F8CF9D7520B0349800865861 /* libzbar.a */,
-				F8CF9D7720B0349800865861 /* readertest.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3833,12 +3806,6 @@
 			mainGroup = 579F9A9914678A4D00709C70;
 			productRefGroup = 579F9AA514678A4E00709C70 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = F8CF9D6E20B0349800865861 /* Products */;
-					ProjectRef = F8CF9D6D20B0349800865861 /* zbar.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				579F9AA314678A4E00709C70 /* SparkleShare */,
@@ -3848,23 +3815,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		F8CF9D7520B0349800865861 /* libzbar.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libzbar.a;
-			remoteRef = F8CF9D7420B0349800865861 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F8CF9D7720B0349800865861 /* readertest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = readertest.app;
-			remoteRef = F8CF9D7620B0349800865861 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		578528CA14B1AC59003A1FFC /* Resources */ = {
@@ -5946,8 +5896,6 @@
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShareAppStoreDonate-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/libs/ZBarSDK\"",
-					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SparkleShareDonate;
@@ -5971,8 +5919,6 @@
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShareAppStoreDonate-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/libs/ZBarSDK\"",
-					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SparkleShareDonate;
@@ -6000,8 +5946,6 @@
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShareAppStore-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/libs/ZBarSDK\"",
-					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = SparkleShare;
@@ -6029,8 +5973,6 @@
 				INFOPLIST_FILE = "SparkleShare/Supporting/SparkleShareAppStore-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/libs/ZBarSDK\"",
-					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
@@ -6178,10 +6120,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = (
-					libs/ZBar/iphone/include,
-					libs/ZBar/include,
-				);
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -6221,10 +6160,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/SparkleShare/SparkleShare-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = (
-					libs/ZBar/iphone/include,
-					libs/ZBar/include,
-				);
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -6244,7 +6180,6 @@
 				INFOPLIST_FILE = "SparkleShareTests/SparkleShareTests-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -6269,7 +6204,6 @@
 				INFOPLIST_FILE = "SparkleShareTests/SparkleShareTests-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/libs/ZBarSDK",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "sparkleshare.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
