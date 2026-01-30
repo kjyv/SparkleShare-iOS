@@ -11,6 +11,7 @@
 @class SSFile;
 @interface FilePreview : NSObject <QLPreviewItem>
 - (id)initWithFile: (SSFile *) file;
+- (id)initWithURL:(NSURL *)url filename:(NSString *)filename;
 @property (copy) NSString *filename;
 @property (copy) NSURL *localURL;
 

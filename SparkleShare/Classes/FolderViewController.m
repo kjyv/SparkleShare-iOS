@@ -25,7 +25,7 @@
 #import "SparkleShare-Swift.h"
 #import <objc/runtime.h>
 
-@interface FolderViewController ()
+@interface FolderViewController () <RecentFilesViewDelegate>
 @property (nonatomic, strong) SSFile *pendingRecentFile;
 @property (nonatomic, strong) NSMutableArray *pendingPathComponents;
 @property (nonatomic, assign) NSInteger currentPathIndex;
@@ -274,16 +274,16 @@
 - (void)fileContentLoaded: (SSFile *) file content: (NSData *) content {
     [SVProgressHUD dismiss];
 
-    //override some text mime types that otherwise would not be displayed as text
+    // Override some text mime types that otherwise would not be displayed as text
     NSArray *overrideMime = @[@"application/x-tex",
                               @"application/x-latex",
                               @"application/javascript",
                               @"application/x-javascript",
                               @"application/mathematica"];
-    if ([overrideMime containsObject: file.mime])
+    if ([overrideMime containsObject:file.mime])
         file.mime = @"text/plain";
 
-    //a lot of files are detected as octet-stream while they are text based
+    // A lot of files are detected as octet-stream while they are text based
     if ([file.mime isEqualToString:@"application/octet-stream"]) {
         if ([file.name hasPrefix:@"."] ||
             [file.name hasSuffix:@".py"] ||
@@ -297,7 +297,7 @@
         }
     }
 
-    //override some file binary types that are detected as text
+    // Override some file binary types that are detected as text
     if ([file.name hasSuffix:@".kdbx"]) {
         file.mime = @"application/octet-stream";
     }
@@ -305,15 +305,15 @@
     // Track this file as recently opened
     [self trackRecentFile:file];
 
-    if( [file.mime hasPrefix:@"text/"] ) {
-        //open text editing view if file is text
-        FileEditController *newFileEditController = [[FileEditController alloc] initWithFile: file];
-        [self.navigationController pushViewController: newFileEditController animated: YES];
-    }  else {
-        //otherwise preview file
-        FilePreview *filePreview = [[FilePreview alloc] initWithFile: file];
-        FileViewController *newFileViewController = [[FileViewController alloc] initWithFilePreview: filePreview filename: file.name];
-    	[self.navigationController pushViewController: newFileViewController animated: YES];
+    if ([file.mime hasPrefix:@"text/"]) {
+        // Open text editing view if file is text
+        FileEditController *newFileEditController = [[FileEditController alloc] initWithFile:file];
+        [self.navigationController pushViewController:newFileEditController animated:YES];
+    } else {
+        // Preview file
+        FilePreview *filePreview = [[FilePreview alloc] initWithFile:file];
+        FileViewController *newFileViewController = [[FileViewController alloc] initWithFilePreview:filePreview filename:file.name];
+        [self.navigationController pushViewController:newFileViewController animated:YES];
     }
 }
 

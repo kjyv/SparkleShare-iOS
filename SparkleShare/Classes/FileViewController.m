@@ -33,12 +33,12 @@
 	// e.g. self.myOutlet = nil;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation: (UIInterfaceOrientation) interfaceOrientation {
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
 	return YES;
 }
 
 #pragma mark -
-- (id)initWithFilePreview: (FilePreview *) filePreview filename: (NSString *) filename {
+- (id)initWithFilePreview:(FilePreview *) filePreview filename: (NSString *) filename {
 	if (self = [super initWithAutoPlatformNibName]) {
 		self.filePreview = filePreview;
 		self.dataSource = self;
@@ -47,22 +47,15 @@
 	return self;
 }
 
-- (NSInteger)numberOfPreviewItemsInPreviewController: (QLPreviewController *) controller {
-	if (self.filePreview) {
-		return 1;
-	}
-	else {
-		return 0;
-	}
+- (NSInteger)numberOfPreviewItemsInPreviewController:(QLPreviewController *)controller {
+	return self.filePreview ? 1 : 0;
 }
 
-- (id <QLPreviewItem>)previewController: (QLPreviewController *) controller previewItemAtIndex: (NSInteger) index;
-{
+- (id<QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index {
 	if (index == 0 && self.filePreview) {
 		return self.filePreview;
 	}
 	return nil;
-};
-
+}
 
 @end

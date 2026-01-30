@@ -13,9 +13,7 @@
 @class SSRecentFile;
 @class RecentFilesHostingView;
 
-@protocol RecentFilesViewDelegate;
-
-@interface FolderViewController : UITableViewController <SSFolderInfoDelegate, SSFolderItemsDelegate, SSFileDelegate, RecentFilesViewDelegate> {
+@interface FolderViewController : UITableViewController <SSFolderInfoDelegate, SSFolderItemsDelegate, SSFileDelegate> {
 }
 
 @property (strong) SSFolder *folder;

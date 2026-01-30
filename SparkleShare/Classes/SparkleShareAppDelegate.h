@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "LoginInputViewController.h"
 #import "SSConnection.h"
+
+@class SelectLoginInputViewController;
+
 @interface SparkleShareAppDelegate : UIResponder <UIApplicationDelegate, LoginInputViewControllerDelegate, SSConnectionDelegate>
 {
 	SSConnection *connection;
@@ -16,7 +19,7 @@
 @property (strong, nonatomic) UIWindow *window;
 
 @property (strong, nonatomic) UINavigationController *navigationController;
-@property (strong, nonatomic) LoginInputViewController *loginInputViewController;
+@property (strong, nonatomic) SelectLoginInputViewController *loginInputViewController;
 @property (strong, nonatomic, readonly) SSConnection *connection;
 //
 //@property (strong, nonatomic) UISplitViewController *splitViewController;

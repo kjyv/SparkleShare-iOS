@@ -12,6 +12,15 @@
 
 @implementation FilePreview
 @synthesize filename = _filename, localURL = _localURL;
+
+- (id)initWithURL:(NSURL *)url filename:(NSString *)filename {
+	if (self = [super init]) {
+		self.localURL = url;
+		self.filename = filename;
+	}
+	return self;
+}
+
 - (id) initWithFile: (SSFile *) file {
 	if (self = [super init]) {
 		self.filename = file.name;
