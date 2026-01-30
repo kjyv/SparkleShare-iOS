@@ -7,6 +7,6 @@ target 'SparkleShare' do
   use_frameworks! :linkage => :static
 
   # Pods for SparkleShare
-  pod 'MMMarkdown'
+  pod 'libcmark_gfm'
 
 end

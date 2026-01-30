@@ -1,16 +1,16 @@
 PODS:
-  - MMMarkdown (0.5.5)
+  - libcmark_gfm (0.29.4)
 
 DEPENDENCIES:
-  - MMMarkdown
+  - libcmark_gfm
 
 SPEC REPOS:
   trunk:
-    - MMMarkdown
+    - libcmark_gfm
 
 SPEC CHECKSUMS:
-  MMMarkdown: 1af97166ce0f6d6e0cb05695665492195d27c3f1
+  libcmark_gfm: aed11fc48515bec53902b0fd4cddcbd42b5e94c2
 
-PODFILE CHECKSUM: ca00b14b7ab9595a0dd63dd99b67c53348bfd789
+PODFILE CHECKSUM: f518f5602057873b08bd213b25384abaa208a885
 
 COCOAPODS: 1.16.2

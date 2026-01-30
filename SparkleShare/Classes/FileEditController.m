@@ -11,7 +11,9 @@
 #import "NSString+Hashing.h"
 #import "SVProgressHUD.h"
 #import <WebKit/WebKit.h>
-#import <MMMarkdown/MMMarkdown.h>
+#import <libcmark_gfm/cmark-gfm.h>
+#import <libcmark_gfm/cmark-gfm-core-extensions.h>
+#import <libcmark_gfm/cmark-gfm-extension_api.h>
 
 @implementation FileEditController
 @synthesize textEditView;
@@ -71,12 +73,55 @@
 
 #pragma mark - Markdown Rendering
 
-- (void)renderMarkdownToWebView {
-    NSError *error = nil;
-    NSString *markdownContent = self.textEditView.text;
-    NSString *htmlString = [MMMarkdown HTMLStringWithMarkdown:markdownContent error:&error];
+- (NSString *)renderMarkdownToHTML:(NSString *)markdown {
+    if (!markdown) return nil;
 
-    if (htmlString && !error) {
+    // Register GFM extensions (tables, strikethrough, tasklist, autolink)
+    cmark_gfm_core_extensions_ensure_registered();
+
+    // Create parser with default options
+    cmark_parser *parser = cmark_parser_new(CMARK_OPT_DEFAULT);
+    if (!parser) return nil;
+
+    // Attach GFM extensions
+    cmark_parser_attach_syntax_extension(parser, cmark_find_syntax_extension("table"));
+    cmark_parser_attach_syntax_extension(parser, cmark_find_syntax_extension("strikethrough"));
+    cmark_parser_attach_syntax_extension(parser, cmark_find_syntax_extension("tasklist"));
+    cmark_parser_attach_syntax_extension(parser, cmark_find_syntax_extension("autolink"));
+
+    // Parse the markdown
+    const char *utf8String = [markdown UTF8String];
+    cmark_parser_feed(parser, utf8String, strlen(utf8String));
+    cmark_node *document = cmark_parser_finish(parser);
+
+    if (!document) {
+        cmark_parser_free(parser);
+        return nil;
+    }
+
+    // Get the list of extensions for rendering
+    cmark_llist *extensions = cmark_parser_get_syntax_extensions(parser);
+
+    // Render to HTML
+    char *html = cmark_render_html(document, CMARK_OPT_DEFAULT, extensions);
+
+    NSString *result = nil;
+    if (html) {
+        result = [NSString stringWithUTF8String:html];
+        free(html);
+    }
+
+    cmark_node_free(document);
+    cmark_parser_free(parser);
+
+    return result;
+}
+
+- (void)renderMarkdownToWebView {
+    NSString *markdownContent = self.textEditView.text;
+    NSString *htmlString = [self renderMarkdownToHTML:markdownContent];
+
+    if (htmlString) {
         // Get system colors for both bright and dark mode
         UIColor *brightSystemBackgroundColor = [UIColor systemBackgroundColor];
         UIColor *brightLabelColor = [UIColor labelColor];
@@ -91,11 +136,21 @@
         NSString *darkTextColorRGBA = [self rgbaStringFromColor:darkLabelColor];
 
         // Inject CSS for larger font size and dynamic bright/dark mode colors
-        NSString *css = [NSString stringWithFormat:@"<style>body { font-size: 40px; background-color: %@; color: %@; } @media (prefers-color-scheme: dark) { body { background-color: %@; color: %@; } }</style>", brightBgColorRGBA, brightTextColorRGBA, darkBgColorRGBA, darkTextColorRGBA];
+        NSString *css = [NSString stringWithFormat:@"<style>"
+            "body { font-size: 40px; background-color: %@; color: %@; } "
+            "@media (prefers-color-scheme: dark) { body { background-color: %@; color: %@; } } "
+            "input[type='checkbox'] { transform: scale(1.5); margin-right: 0.5em; } "
+            "li:has(> input[type='checkbox']) { list-style: none; margin-left: -1em; } "
+            "li:has(> input[type='checkbox']:checked) { text-decoration: line-through; opacity: 0.6; } "
+            "ul:has(input[type='checkbox']) ul { padding-left: 2.5em; } "
+            "h1, h2, h3, h4, h5, h6 { margin: 0.5em 0 0 0; padding: 0; } "
+            "ul, ol { margin: 0 0 1em 0; padding-left: 2em; } "
+            "p { margin: 0.5em 0; } "
+            "p + ul, p + ol { margin-top: -0.5em; }"
+            "</style>", brightBgColorRGBA, brightTextColorRGBA, darkBgColorRGBA, darkTextColorRGBA];
         NSString *finalHtmlString = [NSString stringWithFormat:@"%@%@", css, htmlString];
         [self.webView loadHTMLString:finalHtmlString baseURL:nil];
     } else {
-        NSLog(@"Error rendering markdown to HTML: %@", error);
         [self.webView loadHTMLString:@"<h1>Error rendering markdown</h1>" baseURL:nil];
     }
 }
