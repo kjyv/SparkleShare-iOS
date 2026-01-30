@@ -17,6 +17,7 @@
 
 @property (strong, nonatomic) UINavigationController *navigationController;
 @property (strong, nonatomic) LoginInputViewController *loginInputViewController;
+@property (strong, nonatomic, readonly) SSConnection *connection;
 //
 //@property (strong, nonatomic) UISplitViewController *splitViewController;
 

@@ -20,6 +20,10 @@
 //@synthesize splitViewController = _splitViewController;
 @synthesize loginInputViewController = _loginInputViewController;
 
+- (SSConnection *)connection {
+    return connection;
+}
+
 - (BOOL)application: (UIApplication *) application didFinishLaunchingWithOptions: (NSDictionary *) launchOptions
 {
 	self.window = [[UIWindow alloc] init];

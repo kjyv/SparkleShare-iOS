@@ -10,13 +10,22 @@
 #import "SSFolder.h"
 #import "SSFile.h"
 
-@interface FolderViewController : UITableViewController <SSFolderInfoDelegate, SSFolderItemsDelegate, SSFileDelegate> {
+@class SSRecentFile;
+@class RecentFilesHostingView;
+
+@protocol RecentFilesViewDelegate;
+
+@interface FolderViewController : UITableViewController <SSFolderInfoDelegate, SSFolderItemsDelegate, SSFileDelegate, RecentFilesViewDelegate> {
 }
 
 @property (strong) SSFolder *folder;
 @property int iconSize;
+@property (strong) RecentFilesHostingView *recentFilesView;
 
 - (id)initWithFolder: (SSFolder *) folder;
 - (void)reloadFolder;
+
+// Opens a recent file by navigating through its path
+- (void)openRecentFile:(SSRecentFile *)recentFile;
 
 @end

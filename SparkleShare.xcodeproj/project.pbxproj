@@ -1966,6 +1966,15 @@
 		F8AC01FD1A3BA8D00067C19E /* FileEditController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */; };
 		F8AC01FE1A3BA8D00067C19E /* FileEditController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = F8AC01FB1A3BA8D00067C19E /* FileEditController_iPhone.xib */; };
 		F8CF9D6C20B0342500865861 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F8CF9D6B20B0342500865861 /* libiconv.tbd */; };
+		F8DB210E2F2CFA4800A8D5BE /* RecentFilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21092F2CFA4800A8D5BE /* RecentFilesView.swift */; };
+		F8DB210F2F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210D2F2CFA4800A8D5BE /* SSRecentFilesManager.m */; };
+		F8DB21102F2CFA4800A8D5BE /* SSRecentFile.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */; };
+		F8DB21112F2CFA4800A8D5BE /* RecentFilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21092F2CFA4800A8D5BE /* RecentFilesView.swift */; };
+		F8DB21122F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210D2F2CFA4800A8D5BE /* SSRecentFilesManager.m */; };
+		F8DB21132F2CFA4800A8D5BE /* SSRecentFile.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */; };
+		F8DB21142F2CFA4800A8D5BE /* RecentFilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21092F2CFA4800A8D5BE /* RecentFilesView.swift */; };
+		F8DB21152F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210D2F2CFA4800A8D5BE /* SSRecentFilesManager.m */; };
+		F8DB21162F2CFA4800A8D5BE /* SSRecentFile.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2725,6 +2734,11 @@
 		F8B9C88B1C8EFC16008ADE9A /* SparkleShare-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "SparkleShare-Prefix.pch"; path = "SparkleShare/SparkleShare-Prefix.pch"; sourceTree = "<group>"; };
 		F8CF9D6B20B0342500865861 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		F8CF9D6D20B0349800865861 /* zbar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = zbar.xcodeproj; path = ZBar/iphone/zbar.xcodeproj; sourceTree = "<group>"; };
+		F8DB21092F2CFA4800A8D5BE /* RecentFilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentFilesView.swift; sourceTree = "<group>"; };
+		F8DB210A2F2CFA4800A8D5BE /* SSRecentFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSRecentFile.h; sourceTree = "<group>"; };
+		F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSRecentFile.m; sourceTree = "<group>"; };
+		F8DB210C2F2CFA4800A8D5BE /* SSRecentFilesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSRecentFilesManager.h; sourceTree = "<group>"; };
+		F8DB210D2F2CFA4800A8D5BE /* SSRecentFilesManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSRecentFilesManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2974,6 +2988,11 @@
 		57A9758F147203430043B4B3 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				F8DB21092F2CFA4800A8D5BE /* RecentFilesView.swift */,
+				F8DB210A2F2CFA4800A8D5BE /* SSRecentFile.h */,
+				F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */,
+				F8DB210C2F2CFA4800A8D5BE /* SSRecentFilesManager.h */,
+				F8DB210D2F2CFA4800A8D5BE /* SSRecentFilesManager.m */,
 				571F47E11473AC1200D440FD /* Supporting */,
 				571F47E01473ABD100D440FD /* Views */,
 				571F47DE1473ABC900D440FD /* Model */,
@@ -5757,6 +5776,9 @@
 				578528A114B1AC59003A1FFC /* FilePreview.m in Sources */,
 				578528A214B1AC59003A1FFC /* FileSizeFormatter.m in Sources */,
 				578528A314B1AC59003A1FFC /* FileViewController.m in Sources */,
+				F8DB21142F2CFA4800A8D5BE /* RecentFilesView.swift in Sources */,
+				F8DB21152F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */,
+				F8DB21162F2CFA4800A8D5BE /* SSRecentFile.m in Sources */,
 				578528A414B1AC59003A1FFC /* FolderViewController.m in Sources */,
 				578528A514B1AC59003A1FFC /* GitInfoFormatter.m in Sources */,
 				578528A614B1AC59003A1FFC /* LoginInputViewController.m in Sources */,
@@ -5790,6 +5812,9 @@
 				57852B4A14B1B582003A1FFC /* FilePreview.m in Sources */,
 				57852B4B14B1B582003A1FFC /* FileSizeFormatter.m in Sources */,
 				57852B4C14B1B582003A1FFC /* FileViewController.m in Sources */,
+				F8DB21112F2CFA4800A8D5BE /* RecentFilesView.swift in Sources */,
+				F8DB21122F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */,
+				F8DB21132F2CFA4800A8D5BE /* SSRecentFile.m in Sources */,
 				57852B4D14B1B582003A1FFC /* FolderViewController.m in Sources */,
 				57852B4E14B1B582003A1FFC /* GitInfoFormatter.m in Sources */,
 				57852B4F14B1B582003A1FFC /* LoginInputViewController.m in Sources */,
@@ -5832,6 +5857,9 @@
 				57A975D7147203430043B4B3 /* GitInfoFormatter.m in Sources */,
 				57A975D8147203430043B4B3 /* LoginInputViewController.m in Sources */,
 				57A975D9147203430043B4B3 /* ManualLoginInputViewController.m in Sources */,
+				F8DB210E2F2CFA4800A8D5BE /* RecentFilesView.swift in Sources */,
+				F8DB210F2F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */,
+				F8DB21102F2CFA4800A8D5BE /* SSRecentFile.m in Sources */,
 				57A975DA147203430043B4B3 /* NSString+Hashing.m in Sources */,
 				57A975DB147203430043B4B3 /* QRCodeLoginInputViewController.m in Sources */,
 				F8AC01F71A3BA5270067C19E /* FileEditController.m in Sources */,
@@ -6146,9 +6174,9 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "SparkleShare/Classes/SparkleShare-Swift.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/SparkleShare/SparkleShare-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 6.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = (
 					libs/ZBar/iphone/include,
@@ -6190,8 +6218,8 @@
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "SparkleShare/Classes/SparkleShare-Swift.h";
-				SWIFT_VERSION = 6.0;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/SparkleShare/SparkleShare-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = (
 					libs/ZBar/iphone/include,

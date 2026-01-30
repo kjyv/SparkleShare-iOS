@@ -264,7 +264,6 @@ static SVProgressHUD *sharedView = nil;
         self.userInteractionEnabled = NO;
     
     if(![self isKeyWindow]) {
-        
         [[UIApplication sharedApplication].windows enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             UIWindow *window = (UIWindow*)obj;
             if(window.windowLevel == UIWindowLevelNormal && ![[window class] isEqual:[SVProgressHUD class]]) {
