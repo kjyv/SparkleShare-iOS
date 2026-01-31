@@ -37,8 +37,14 @@
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
     if (self.isMarkdownFile) {
-        // Initialize WKWebView only for markdown files
-        self.webView = [[WKWebView alloc] initWithFrame:self.view.bounds];
+        // Initialize WKWebView with script message handler for checkbox toggling
+        WKUserContentController *contentController = [[WKUserContentController alloc] init];
+        [contentController addScriptMessageHandler:self name:@"checkboxToggle"];
+
+        WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
+        config.userContentController = contentController;
+
+        self.webView = [[WKWebView alloc] initWithFrame:self.view.bounds configuration:config];
         self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.webView.navigationDelegate = self;
         [self.view addSubview:self.webView];
@@ -232,10 +238,68 @@
             "p { margin: 0.5em 0; } "
             "p + ul, p + ol { margin-top: -0.5em; }"
             "</style>", brightBgColorRGBA, brightTextColorRGBA, darkBgColorRGBA, darkTextColorRGBA];
-        NSString *finalHtmlString = [NSString stringWithFormat:@"%@%@", css, htmlString];
+
+        // JavaScript to enable checkbox toggling
+        NSString *js = @"<script>"
+            "document.addEventListener('DOMContentLoaded', function() {"
+            "  var checkboxes = document.querySelectorAll('input[type=\"checkbox\"]');"
+            "  checkboxes.forEach(function(cb, index) {"
+            "    cb.removeAttribute('disabled');"
+            "    cb.dataset.index = index;"
+            "    cb.addEventListener('change', function(e) {"
+            "      webkit.messageHandlers.checkboxToggle.postMessage({"
+            "        index: parseInt(this.dataset.index),"
+            "        checked: this.checked"
+            "      });"
+            "    });"
+            "  });"
+            "});"
+            "</script>";
+
+        NSString *finalHtmlString = [NSString stringWithFormat:@"%@%@%@", css, htmlString, js];
         [self.webView loadHTMLString:finalHtmlString baseURL:nil];
     } else {
         [self.webView loadHTMLString:@"<h1>Error rendering markdown</h1>" baseURL:nil];
+    }
+}
+
+#pragma mark - WKScriptMessageHandler
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
+    if ([message.name isEqualToString:@"checkboxToggle"]) {
+        NSDictionary *body = message.body;
+        NSInteger checkboxIndex = [body[@"index"] integerValue];
+        BOOL checked = [body[@"checked"] boolValue];
+
+        [self toggleCheckboxAtIndex:checkboxIndex toChecked:checked];
+    }
+}
+
+- (void)toggleCheckboxAtIndex:(NSInteger)index toChecked:(BOOL)checked {
+    NSString *markdown = self.textEditView.text;
+    NSMutableString *result = [NSMutableString string];
+
+    // Find the nth checkbox pattern in the markdown
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"- \\[([ xX])\\]"
+                                                                           options:0
+                                                                             error:nil];
+    NSArray *matches = [regex matchesInString:markdown options:0 range:NSMakeRange(0, markdown.length)];
+
+    if (index < (NSInteger)matches.count) {
+        NSTextCheckingResult *match = matches[index];
+        NSRange checkboxRange = [match rangeAtIndex:1]; // The space or x inside [ ]
+
+        // Build the new string
+        [result appendString:[markdown substringToIndex:checkboxRange.location]];
+        [result appendString:checked ? @"x" : @" "];
+        [result appendString:[markdown substringFromIndex:checkboxRange.location + checkboxRange.length]];
+
+        // Update the text view
+        self.textEditView.text = result;
+        fileChanged = YES;
+
+        // Save changes
+        [_file saveContent:result];
     }
 }
 
@@ -407,6 +471,7 @@
 -(void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.webView.configuration.userContentController removeScriptMessageHandlerForName:@"checkboxToggle"];
 }
 
 // Helper to convert UIColor to rgba() string

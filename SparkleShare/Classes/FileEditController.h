@@ -11,7 +11,7 @@
 #import "SSFile.h"
 #import "UIViewController+AutoPlatformNibName.h"
 
-@interface FileEditController : UIViewController <UITextViewDelegate, WKNavigationDelegate> {
+@interface FileEditController : UIViewController <UITextViewDelegate, WKNavigationDelegate, WKScriptMessageHandler> {
     bool fileChanged;
     CGRect _oldRect;
     NSTimer* _caretVisibilityTimer;
