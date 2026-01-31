@@ -18,8 +18,11 @@
     UITextRange *_selectedRange;
     CGPoint offset;
     BOOL _isPreviewMode;
-    NSInteger _editingLineIndex;
+    NSInteger _editingGroupStart;  // Start line of editing group (-1 if not editing)
+    NSInteger _editingGroupEnd;    // End line of editing group (inclusive)
     UIToolbar *_formatToolbar;
+    NSTimer *_saveTimer;           // Debounced save timer
+    BOOL _pendingSave;             // Whether there are unsaved changes
 };
 - (id)initWithFile: (SSFile *) file;
 

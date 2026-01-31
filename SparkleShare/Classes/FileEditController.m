@@ -171,10 +171,43 @@
 - (void)formatDone {
     // Exit editing mode, preserving scroll position
     [self.webView evaluateJavaScript:
-        @"var editingEl = document.querySelector('.line.editing');"
+        @"var editingEl = document.querySelector('.group.editing');"
         "if (editingEl) {"
-        "  webkit.messageHandlers.lineEditingDone.postMessage({line: editingLine, content: editingEl.textContent, direction: 0, scrollY: window.scrollY});"
+        "  webkit.messageHandlers.lineEditingDone.postMessage({start: editingStart, end: editingEnd, content: editingEl.innerText, direction: 0, scrollY: window.scrollY});"
         "}" completionHandler:nil];
+}
+
+#pragma mark - Debounced Save
+
+- (void)scheduleSave {
+    _pendingSave = YES;
+
+    // Invalidate existing timer
+    [_saveTimer invalidate];
+
+    // Schedule new save in 5 seconds
+    _saveTimer = [NSTimer scheduledTimerWithTimeInterval:5.0
+                                                  target:self
+                                                selector:@selector(performScheduledSave)
+                                                userInfo:nil
+                                                 repeats:NO];
+}
+
+- (void)performScheduledSave {
+    if (_pendingSave) {
+        [_file saveContent:self.textEditView.text];
+        _pendingSave = NO;
+    }
+}
+
+- (void)saveImmediatelyIfNeeded {
+    [_saveTimer invalidate];
+    _saveTimer = nil;
+
+    if (_pendingSave) {
+        [_file saveContent:self.textEditView.text];
+        _pendingSave = NO;
+    }
 }
 
 #pragma mark - Markdown Rendering
@@ -312,57 +345,157 @@
     [self renderMarkdownToWebViewPreservingScroll:-1];
 }
 
+// Identify line groups: returns array of dictionaries with {start, end, type}
+// Types: "single", "code", "table"
+- (NSArray *)identifyLineGroups:(NSArray *)lines {
+    NSMutableArray *groups = [NSMutableArray array];
+    NSInteger i = 0;
+
+    while (i < (NSInteger)lines.count) {
+        NSString *line = lines[i];
+        NSString *trimmed = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+        // Check for fenced code block start (``` or ~~~)
+        if ([trimmed hasPrefix:@"```"] || [trimmed hasPrefix:@"~~~"]) {
+            NSString *fence = [trimmed hasPrefix:@"```"] ? @"```" : @"~~~";
+            NSInteger start = i;
+            i++;
+            // Find closing fence
+            while (i < (NSInteger)lines.count) {
+                NSString *nextTrimmed = [lines[i] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                if ([nextTrimmed hasPrefix:fence]) {
+                    break;
+                }
+                i++;
+            }
+            NSInteger end = (i < (NSInteger)lines.count) ? i : i - 1;
+            [groups addObject:@{@"start": @(start), @"end": @(end), @"type": @"code"}];
+            i++;
+            continue;
+        }
+
+        // Check for table (line contains | and next line is separator)
+        if ([trimmed containsString:@"|"] && i + 1 < (NSInteger)lines.count) {
+            NSString *nextTrimmed = [lines[i + 1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            // Table separator line: contains | and - (like |---|---|)
+            if ([nextTrimmed containsString:@"|"] && [nextTrimmed containsString:@"-"]) {
+                NSInteger start = i;
+                i += 2; // Skip header and separator
+                // Continue while lines look like table rows
+                while (i < (NSInteger)lines.count) {
+                    NSString *rowTrimmed = [lines[i] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                    if (![rowTrimmed containsString:@"|"] || rowTrimmed.length == 0) {
+                        break;
+                    }
+                    i++;
+                }
+                [groups addObject:@{@"start": @(start), @"end": @(i - 1), @"type": @"table"}];
+                continue;
+            }
+        }
+
+        // Single line group
+        [groups addObject:@{@"start": @(i), @"end": @(i), @"type": @"single"}];
+        i++;
+    }
+
+    return groups;
+}
+
+// Find which group a line belongs to
+- (NSDictionary *)findGroupForLine:(NSInteger)lineIndex inGroups:(NSArray *)groups {
+    for (NSDictionary *group in groups) {
+        NSInteger start = [group[@"start"] integerValue];
+        NSInteger end = [group[@"end"] integerValue];
+        if (lineIndex >= start && lineIndex <= end) {
+            return group;
+        }
+    }
+    return nil;
+}
+
+// Calculate visual indent for a line
+- (NSInteger)indentLevelForLine:(NSString *)line {
+    NSInteger indentLevel = 0;
+    NSUInteger spaceCount = 0;
+    for (NSUInteger j = 0; j < line.length; j++) {
+        unichar c = [line characterAtIndex:j];
+        if (c == '\t') {
+            indentLevel++;
+            spaceCount = 0;
+        } else if (c == ' ') {
+            spaceCount++;
+            if (spaceCount >= 3) {
+                indentLevel++;
+                spaceCount = 0;
+            }
+        } else {
+            break;
+        }
+    }
+    return indentLevel;
+}
+
 - (void)renderMarkdownToWebViewPreservingScroll:(CGFloat)scrollY {
     NSString *markdownContent = self.textEditView.text;
     NSArray *lines = [markdownContent componentsSeparatedByString:@"\n"];
 
-    // Build HTML with line wrappers
+    // Identify all line groups
+    NSArray *groups = [self identifyLineGroups:lines];
+
+    // Build HTML with group wrappers
     NSMutableString *htmlBody = [NSMutableString string];
 
-    for (NSInteger i = 0; i < (NSInteger)lines.count; i++) {
-        NSString *line = lines[i];
+    for (NSDictionary *group in groups) {
+        NSInteger start = [group[@"start"] integerValue];
+        NSInteger end = [group[@"end"] integerValue];
+        NSString *type = group[@"type"];
 
-        // Calculate indent level for visual offset (count tabs and spaces)
-        NSInteger indentLevel = 0;
-        NSUInteger spaceCount = 0;
-        for (NSUInteger j = 0; j < line.length; j++) {
-            unichar c = [line characterAtIndex:j];
-            if (c == '\t') {
-                // Each tab is one indent level
-                indentLevel++;
-                spaceCount = 0;
-            } else if (c == ' ') {
-                spaceCount++;
-                // 3 spaces = 1 indent level (Obsidian compatibility)
-                if (spaceCount >= 3) {
-                    indentLevel++;
-                    spaceCount = 0;
-                }
-            } else {
-                break;
+        BOOL isEditing = (_editingGroupStart >= 0 && start == _editingGroupStart && end == _editingGroupEnd);
+
+        if (isEditing) {
+            // Render as editable raw markdown
+            NSMutableString *groupContent = [NSMutableString string];
+            for (NSInteger i = start; i <= end; i++) {
+                if (i > start) [groupContent appendString:@"\n"];
+                [groupContent appendString:lines[i]];
             }
-        }
-        NSString *indentStyle = indentLevel > 0 ? [NSString stringWithFormat:@" style='margin-left: %ldpx'", (long)(indentLevel * 20)] : @"";
-
-        if (i == _editingLineIndex) {
-            // Render as editable markdown with visual indent
-            NSString *escapedLine = [self escapeHTMLEntities:line];
-            [htmlBody appendFormat:@"<div class='line editing' data-line='%ld'%@ contenteditable='true'>%@</div>", (long)i, indentStyle, escapedLine];
+            NSString *escaped = [self escapeHTMLEntities:groupContent];
+            // Convert newlines to <br> for proper display in contenteditable
+            escaped = [escaped stringByReplacingOccurrencesOfString:@"\n" withString:@"<br>"];
+            // For multi-line, use a div that preserves newlines
+            [htmlBody appendFormat:@"<div class='group editing' data-start='%ld' data-end='%ld' data-type='%@' contenteditable='true'>%@</div>",
+                (long)start, (long)end, type, escaped];
         } else {
             // Render as HTML preview
-            if (line.length == 0) {
-                // Empty line
-                [htmlBody appendFormat:@"<div class='line empty' data-line='%ld'>&nbsp;</div>", (long)i];
-            } else {
-                // For single-line rendering, strip leading whitespace and render just the content
-                // We handle visual indent via CSS margin, so no need to pass indent to cmark
-                NSString *trimmedLine = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-                NSString *lineHTML = [self renderMarkdownLineToHTML:trimmedLine];
-                // Remove wrapping <p> tags for single lines to avoid extra margins
-                if ([lineHTML hasPrefix:@"<p>"] && [lineHTML hasSuffix:@"</p>\n"]) {
-                    lineHTML = [lineHTML substringWithRange:NSMakeRange(3, lineHTML.length - 8)];
+            if ([type isEqualToString:@"single"]) {
+                NSString *line = lines[start];
+                NSInteger indentLevel = [self indentLevelForLine:line];
+                NSString *indentStyle = indentLevel > 0 ? [NSString stringWithFormat:@" style='margin-left: %ldpx'", (long)(indentLevel * 20)] : @"";
+
+                if (line.length == 0) {
+                    [htmlBody appendFormat:@"<div class='group single empty' data-start='%ld' data-end='%ld' data-type='single'>&nbsp;</div>",
+                        (long)start, (long)end];
+                } else {
+                    NSString *trimmedLine = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+                    NSString *lineHTML = [self renderMarkdownLineToHTML:trimmedLine];
+                    // Remove wrapping <p> tags for single lines
+                    if ([lineHTML hasPrefix:@"<p>"] && [lineHTML hasSuffix:@"</p>\n"]) {
+                        lineHTML = [lineHTML substringWithRange:NSMakeRange(3, lineHTML.length - 8)];
+                    }
+                    [htmlBody appendFormat:@"<div class='group single' data-start='%ld' data-end='%ld' data-type='single'%@>%@</div>",
+                        (long)start, (long)end, indentStyle, lineHTML];
                 }
-                [htmlBody appendFormat:@"<div class='line' data-line='%ld'%@>%@</div>", (long)i, indentStyle, lineHTML];
+            } else {
+                // Multi-line group (code block or table): render together
+                NSMutableString *groupMarkdown = [NSMutableString string];
+                for (NSInteger i = start; i <= end; i++) {
+                    if (i > start) [groupMarkdown appendString:@"\n"];
+                    [groupMarkdown appendString:lines[i]];
+                }
+                NSString *groupHTML = [self renderMarkdownLineToHTML:groupMarkdown];
+                [htmlBody appendFormat:@"<div class='group %@' data-start='%ld' data-end='%ld' data-type='%@'>%@</div>",
+                    type, (long)start, (long)end, type, groupHTML];
             }
         }
     }
@@ -377,9 +510,11 @@
     NSString *css = [NSString stringWithFormat:@"<style>"
         "body { font-family: -apple-system, ui-sans-serif, sans-serif; line-height: 1.5em; font-weight: 350; font-size: 20px; padding-left: 1em; padding-right: 1em; background-color: %@; color: %@; }"
         "@media (prefers-color-scheme: dark) { body { background-color: %@; color: %@; } } "
-        ".line { padding: 2px 4px; border-radius: 4px; min-height: 1.5em; } "
-        ".line.editing { background-color: rgba(0,122,255,0.1); outline: none; font-family: ui-monospace, monospace; white-space: pre-wrap; } "
-        ".line.empty { min-height: 1em; } "
+        ".group { padding: 2px 4px; border-radius: 4px; min-height: 1.5em; } "
+        ".group.editing { background-color: rgba(0,122,255,0.1); outline: none; font-family: ui-monospace, monospace; white-space: pre-wrap; } "
+        ".group.empty { min-height: 1em; } "
+        ".group.code { background-color: rgba(128,128,128,0.1); border-radius: 6px; padding: 8px; margin: 4px 0; } "
+        ".group.table { margin: 4px 0; } "
         "input[type='checkbox'] { transform: scale(1.4) translateX(-0.6em) translateY(0.4em); position: absolute; left: 0; top: 0; } "
         "li:has(> input[type='checkbox']) { list-style: none; margin-left: -0.8em; position: relative; padding-left: 1.0em; } "
         "li:has(> input[type='checkbox']:checked) { text-decoration: line-through; opacity: 0.6; } "
@@ -389,16 +524,21 @@
         "h1, h2, h3, h4, h5, h6 { margin: 0.3em 0; padding: 0; } "
         "ul, ol { margin: 0; padding-left: 2em; } "
         "p { margin: 0; } "
+        "pre { margin: 0; } "
+        "code { font-family: ui-monospace, monospace; font-size: 0.9em; } "
+        "table { border-collapse: collapse; width: 100%%; } "
+        "th, td { border: 1px solid rgba(128,128,128,0.3); padding: 6px 10px; text-align: left; } "
+        "th { background-color: rgba(128,128,128,0.1); } "
         "</style>", bgColorRGBA, textColorRGBA, bgColorRGBA, textColorRGBA];
 
-    
-    // Full line editing JavaScript
+    // Group editing JavaScript
     NSMutableString *jsCode = [NSMutableString stringWithString:@"<script>\n"];
-    [jsCode appendFormat:@"var editingLine = %ld;\n", (long)_editingLineIndex];
+    [jsCode appendFormat:@"var editingStart = %ld;\n", (long)_editingGroupStart];
+    [jsCode appendFormat:@"var editingEnd = %ld;\n", (long)_editingGroupEnd];
     [jsCode appendFormat:@"var initialScroll = %f;\n", scrollY];
     [jsCode appendString:@"document.addEventListener('DOMContentLoaded', function() {\n"];
     [jsCode appendString:@"  if (initialScroll >= 0) window.scrollTo(0, initialScroll);\n"];
-    [jsCode appendString:@"  var editingEl = document.querySelector('.line.editing');\n"];
+    [jsCode appendString:@"  var editingEl = document.querySelector('.group.editing');\n"];
     [jsCode appendString:@"  if (editingEl) {\n"];
     [jsCode appendString:@"    editingEl.focus();\n"];
     [jsCode appendString:@"    var range = document.createRange();\n"];
@@ -408,21 +548,24 @@
     [jsCode appendString:@"    sel.removeAllRanges();\n"];
     [jsCode appendString:@"    sel.addRange(range);\n"];
     [jsCode appendString:@"  }\n"];
-    // Click handlers for non-editing lines
-    [jsCode appendString:@"  document.querySelectorAll('.line:not(.editing)').forEach(function(el) {\n"];
+    // Click handlers for non-editing groups
+    [jsCode appendString:@"  document.querySelectorAll('.group:not(.editing)').forEach(function(el) {\n"];
     [jsCode appendString:@"    el.addEventListener('click', function(e) {\n"];
     [jsCode appendString:@"      if (e.target.type === 'checkbox') return;\n"];
-    [jsCode appendString:@"      var lineIndex = parseInt(this.dataset.line);\n"];
-    [jsCode appendString:@"      webkit.messageHandlers.lineSelected.postMessage({line: lineIndex, scrollY: window.scrollY});\n"];
+    [jsCode appendString:@"      var start = parseInt(this.dataset.start);\n"];
+    [jsCode appendString:@"      var end = parseInt(this.dataset.end);\n"];
+    [jsCode appendString:@"      webkit.messageHandlers.lineSelected.postMessage({start: start, end: end, scrollY: window.scrollY});\n"];
     [jsCode appendString:@"    });\n"];
     [jsCode appendString:@"  });\n"];
-    // Editing line event handlers
+    // Editing group event handlers
     [jsCode appendString:@"  if (editingEl) {\n"];
     [jsCode appendString:@"    editingEl.addEventListener('input', function(e) {\n"];
-    [jsCode appendString:@"      webkit.messageHandlers.lineChanged.postMessage({line: editingLine, content: this.textContent});\n"];
+    [jsCode appendString:@"      webkit.messageHandlers.lineChanged.postMessage({start: editingStart, end: editingEnd, content: this.innerText});\n"];
     [jsCode appendString:@"    });\n"];
     [jsCode appendString:@"    editingEl.addEventListener('keydown', function(e) {\n"];
-    [jsCode appendString:@"      if (e.key === 'Enter' && !e.shiftKey) {\n"];
+    // For single-line groups, Enter creates new line; for multi-line, allow normal newlines
+    [jsCode appendString:@"      var isSingleLine = (editingStart === editingEnd);\n"];
+    [jsCode appendString:@"      if (e.key === 'Enter' && !e.shiftKey && isSingleLine) {\n"];
     [jsCode appendString:@"        e.preventDefault();\n"];
     [jsCode appendString:@"        var sel = window.getSelection();\n"];
     [jsCode appendString:@"        var range = sel.getRangeAt(0);\n"];
@@ -430,27 +573,21 @@
     [jsCode appendString:@"        preRange.setStart(editingEl, 0);\n"];
     [jsCode appendString:@"        preRange.setEnd(range.startContainer, range.startOffset);\n"];
     [jsCode appendString:@"        var beforeCursor = preRange.toString();\n"];
-    [jsCode appendString:@"        var afterCursor = this.textContent.substring(beforeCursor.length);\n"];
-    [jsCode appendString:@"        webkit.messageHandlers.lineEnterPressed.postMessage({line: editingLine, beforeCursor: beforeCursor, afterCursor: afterCursor});\n"];
-    [jsCode appendString:@"      } else if (e.key === 'ArrowUp') {\n"];
-    [jsCode appendString:@"        e.preventDefault();\n"];
-    [jsCode appendString:@"        webkit.messageHandlers.lineEditingDone.postMessage({line: editingLine, content: this.textContent, direction: -1, scrollY: window.scrollY});\n"];
-    [jsCode appendString:@"      } else if (e.key === 'ArrowDown') {\n"];
-    [jsCode appendString:@"        e.preventDefault();\n"];
-    [jsCode appendString:@"        webkit.messageHandlers.lineEditingDone.postMessage({line: editingLine, content: this.textContent, direction: 1, scrollY: window.scrollY});\n"];
+    [jsCode appendString:@"        var afterCursor = this.innerText.substring(beforeCursor.length);\n"];
+    [jsCode appendString:@"        webkit.messageHandlers.lineEnterPressed.postMessage({start: editingStart, beforeCursor: beforeCursor, afterCursor: afterCursor});\n"];
     [jsCode appendString:@"      } else if (e.key === 'Escape') {\n"];
     [jsCode appendString:@"        e.preventDefault();\n"];
-    [jsCode appendString:@"        webkit.messageHandlers.lineEditingDone.postMessage({line: editingLine, content: this.textContent, direction: 0, scrollY: window.scrollY});\n"];
-    [jsCode appendString:@"      } else if (e.key === 'Backspace') {\n"];
+    [jsCode appendString:@"        webkit.messageHandlers.lineEditingDone.postMessage({start: editingStart, end: editingEnd, content: this.innerText, direction: 0, scrollY: window.scrollY});\n"];
+    [jsCode appendString:@"      } else if (e.key === 'Backspace' && isSingleLine) {\n"];
     [jsCode appendString:@"        var sel = window.getSelection();\n"];
     [jsCode appendString:@"        var range = sel.getRangeAt(0);\n"];
     [jsCode appendString:@"        var preRange = document.createRange();\n"];
     [jsCode appendString:@"        preRange.setStart(editingEl, 0);\n"];
     [jsCode appendString:@"        preRange.setEnd(range.startContainer, range.startOffset);\n"];
     [jsCode appendString:@"        var cursorPos = preRange.toString().length;\n"];
-    [jsCode appendString:@"        if (cursorPos === 0 && editingLine > 0) {\n"];
+    [jsCode appendString:@"        if (cursorPos === 0 && editingStart > 0) {\n"];
     [jsCode appendString:@"          e.preventDefault();\n"];
-    [jsCode appendString:@"          webkit.messageHandlers.lineBackspaceAtStart.postMessage({line: editingLine, content: this.textContent, scrollY: window.scrollY});\n"];
+    [jsCode appendString:@"          webkit.messageHandlers.lineBackspaceAtStart.postMessage({start: editingStart, content: this.innerText, scrollY: window.scrollY});\n"];
     [jsCode appendString:@"        }\n"];
     [jsCode appendString:@"      }\n"];
     [jsCode appendString:@"    });\n"];
@@ -464,10 +601,23 @@
     [jsCode appendString:@"      webkit.messageHandlers.checkboxToggle.postMessage({index: parseInt(this.dataset.index), checked: this.checked});\n"];
     [jsCode appendString:@"    });\n"];
     [jsCode appendString:@"  });\n"];
+    // Body click handler to close editing when clicking outside
+    [jsCode appendString:@"  document.body.addEventListener('click', function(e) {\n"];
+    [jsCode appendString:@"    if (editingStart < 0) return;\n"];
+    [jsCode appendString:@"    var target = e.target;\n"];
+    [jsCode appendString:@"    while (target && target !== document.body) {\n"];
+    [jsCode appendString:@"      if (target.classList && target.classList.contains('group')) return;\n"];
+    [jsCode appendString:@"      target = target.parentNode;\n"];
+    [jsCode appendString:@"    }\n"];
+    [jsCode appendString:@"    var editingEl = document.querySelector('.group.editing');\n"];
+    [jsCode appendString:@"    if (editingEl) {\n"];
+    [jsCode appendString:@"      webkit.messageHandlers.lineEditingDone.postMessage({start: editingStart, end: editingEnd, content: editingEl.innerText, direction: 0, scrollY: window.scrollY});\n"];
+    [jsCode appendString:@"    }\n"];
+    [jsCode appendString:@"  });\n"];
     [jsCode appendString:@"});\n"];
     // Formatting helper functions
     [jsCode appendString:@"function applyMarkdownFormat(prefix, suffix) {\n"];
-    [jsCode appendString:@"  var editingEl = document.querySelector('.line.editing');\n"];
+    [jsCode appendString:@"  var editingEl = document.querySelector('.group.editing');\n"];
     [jsCode appendString:@"  if (!editingEl) return;\n"];
     [jsCode appendString:@"  var sel = window.getSelection();\n"];
     [jsCode appendString:@"  if (sel.rangeCount === 0) return;\n"];
@@ -477,20 +627,20 @@
     [jsCode appendString:@"  range.deleteContents();\n"];
     [jsCode appendString:@"  range.insertNode(document.createTextNode(newText));\n"];
     [jsCode appendString:@"  sel.removeAllRanges();\n"];
-    [jsCode appendString:@"  webkit.messageHandlers.lineChanged.postMessage({line: editingLine, content: editingEl.textContent});\n"];
+    [jsCode appendString:@"  webkit.messageHandlers.lineChanged.postMessage({start: editingStart, end: editingEnd, content: editingEl.innerText});\n"];
     [jsCode appendString:@"}\n"];
     [jsCode appendString:@"function applyIndent(direction) {\n"];
-    [jsCode appendString:@"  var editingEl = document.querySelector('.line.editing');\n"];
+    [jsCode appendString:@"  var editingEl = document.querySelector('.group.editing');\n"];
     [jsCode appendString:@"  if (!editingEl) return;\n"];
-    [jsCode appendString:@"  var content = editingEl.textContent;\n"];
+    [jsCode appendString:@"  var content = editingEl.innerText;\n"];
     [jsCode appendString:@"  if (direction > 0) {\n"];
-    [jsCode appendString:@"    editingEl.textContent = '\\t' + content;\n"];  // Tab character
+    [jsCode appendString:@"    editingEl.innerText = '\\t' + content;\n"];
     [jsCode appendString:@"  } else if (direction < 0) {\n"];
     [jsCode appendString:@"    if (content.startsWith('\\t')) {\n"];
-    [jsCode appendString:@"      editingEl.textContent = content.substring(1);\n"];
+    [jsCode appendString:@"      editingEl.innerText = content.substring(1);\n"];
     [jsCode appendString:@"    }\n"];
     [jsCode appendString:@"  }\n"];
-    [jsCode appendString:@"  webkit.messageHandlers.lineChanged.postMessage({line: editingLine, content: editingEl.textContent});\n"];
+    [jsCode appendString:@"  webkit.messageHandlers.lineChanged.postMessage({start: editingStart, end: editingEnd, content: editingEl.innerText});\n"];
     [jsCode appendString:@"}\n"];
     [jsCode appendString:@"</script>"];
 
@@ -511,91 +661,93 @@
         [self toggleCheckboxAtIndex:checkboxIndex toChecked:checked];
     }
     else if ([message.name isEqualToString:@"lineSelected"]) {
-        NSInteger lineIndex = [message.body[@"line"] integerValue];
+        NSInteger start = [message.body[@"start"] integerValue];
+        NSInteger end = [message.body[@"end"] integerValue];
         CGFloat scrollY = [message.body[@"scrollY"] floatValue];
-        [self startEditingLine:lineIndex preserveScroll:scrollY];
+        [self startEditingGroupFrom:start to:end preserveScroll:scrollY];
     }
     else if ([message.name isEqualToString:@"lineChanged"]) {
-        NSInteger lineIndex = [message.body[@"line"] integerValue];
+        NSInteger start = [message.body[@"start"] integerValue];
+        NSInteger end = [message.body[@"end"] integerValue];
         NSString *newContent = message.body[@"content"];
-        [self updateLine:lineIndex withContent:newContent];
+        [self updateGroupFrom:start to:end withContent:newContent];
     }
     else if ([message.name isEqualToString:@"lineEditingDone"]) {
-        NSInteger lineIndex = [message.body[@"line"] integerValue];
+        NSInteger start = [message.body[@"start"] integerValue];
+        NSInteger end = [message.body[@"end"] integerValue];
         NSString *newContent = message.body[@"content"];
-        NSInteger direction = [message.body[@"direction"] integerValue]; // -1=up, 0=blur, 1=down/enter
+        NSInteger direction = [message.body[@"direction"] integerValue];
         CGFloat scrollY = [message.body[@"scrollY"] floatValue];
-        [self finishEditingLine:lineIndex withContent:newContent moveDirection:direction preserveScroll:scrollY];
+        [self finishEditingGroupFrom:start to:end withContent:newContent moveDirection:direction preserveScroll:scrollY];
     }
     else if ([message.name isEqualToString:@"lineEnterPressed"]) {
-        NSInteger lineIndex = [message.body[@"line"] integerValue];
+        NSInteger start = [message.body[@"start"] integerValue];
         NSString *beforeCursor = message.body[@"beforeCursor"];
         NSString *afterCursor = message.body[@"afterCursor"];
-        [self insertNewLineAtLine:lineIndex beforeCursor:beforeCursor afterCursor:afterCursor];
+        [self insertNewLineAtLine:start beforeCursor:beforeCursor afterCursor:afterCursor];
     }
     else if ([message.name isEqualToString:@"lineBackspaceAtStart"]) {
-        NSInteger lineIndex = [message.body[@"line"] integerValue];
+        NSInteger start = [message.body[@"start"] integerValue];
         NSString *currentContent = message.body[@"content"];
         CGFloat scrollY = [message.body[@"scrollY"] floatValue];
-        [self mergeLineWithPrevious:lineIndex currentContent:currentContent preserveScroll:scrollY];
+        [self mergeLineWithPrevious:start currentContent:currentContent preserveScroll:scrollY];
     }
 }
 
-- (void)startEditingLine:(NSInteger)lineIndex preserveScroll:(CGFloat)scrollY {
-    _editingLineIndex = lineIndex;
+- (void)startEditingGroupFrom:(NSInteger)start to:(NSInteger)end preserveScroll:(CGFloat)scrollY {
+    _editingGroupStart = start;
+    _editingGroupEnd = end;
     [self showFormatToolbar];
     [self renderMarkdownToWebViewPreservingScroll:scrollY];
 }
 
-- (void)updateLine:(NSInteger)lineIndex withContent:(NSString *)content {
+- (void)updateGroupFrom:(NSInteger)start to:(NSInteger)end withContent:(NSString *)content {
     NSString *markdown = self.textEditView.text;
     NSMutableArray *lines = [[markdown componentsSeparatedByString:@"\n"] mutableCopy];
 
-    if (lineIndex >= 0 && lineIndex < (NSInteger)lines.count) {
-        lines[lineIndex] = content;
+    // Use the tracked _editingGroupEnd as the authoritative end, since JavaScript
+    // sends the original end value but the group may have grown/shrunk during editing
+    NSInteger actualEnd = (_editingGroupStart == start && _editingGroupEnd >= start) ? _editingGroupEnd : end;
+
+    if (start >= 0 && actualEnd < (NSInteger)lines.count && start <= actualEnd) {
+        // Remove trailing newlines that innerText adds from <br> elements
+        while ([content hasSuffix:@"\n"]) {
+            content = [content substringToIndex:content.length - 1];
+        }
+
+        // Split content by newlines (for multi-line groups)
+        NSArray *newLines = [content componentsSeparatedByString:@"\n"];
+
+        // Remove old lines in the group
+        NSRange range = NSMakeRange(start, actualEnd - start + 1);
+        [lines removeObjectsInRange:range];
+
+        // Insert new lines
+        NSIndexSet *indexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(start, newLines.count)];
+        [lines insertObjects:newLines atIndexes:indexes];
+
+        // Update editing group end if line count changed
+        _editingGroupEnd = start + (NSInteger)newLines.count - 1;
+
         NSString *newMarkdown = [lines componentsJoinedByString:@"\n"];
         self.textEditView.text = newMarkdown;
         fileChanged = YES;
     }
 }
 
-- (void)finishEditingLine:(NSInteger)lineIndex withContent:(NSString *)content moveDirection:(NSInteger)direction preserveScroll:(CGFloat)scrollY {
-    // Update the line content first
-    [self updateLine:lineIndex withContent:content];
+- (void)finishEditingGroupFrom:(NSInteger)start to:(NSInteger)end withContent:(NSString *)content moveDirection:(NSInteger)direction preserveScroll:(CGFloat)scrollY {
+    // Update the group content first (uses tracked _editingGroupEnd internally)
+    [self updateGroupFrom:start to:end withContent:content];
 
-    NSString *markdown = self.textEditView.text;
-    NSArray *lines = [markdown componentsSeparatedByString:@"\n"];
-    NSInteger newLineIndex = -1;
+    // Clear editing state
+    _editingGroupStart = -1;
+    _editingGroupEnd = -1;
 
-    if (direction == 1) {
-        // Enter pressed - move to next line or create new line
-        if (lineIndex < (NSInteger)lines.count - 1) {
-            newLineIndex = lineIndex + 1;
-        } else {
-            // At last line - create a new line
-            NSMutableArray *mutableLines = [lines mutableCopy];
-            [mutableLines addObject:@""];
-            self.textEditView.text = [mutableLines componentsJoinedByString:@"\n"];
-            newLineIndex = lineIndex + 1;
-            fileChanged = YES;
-        }
-    } else if (direction == -1) {
-        // Up arrow - move to previous line
-        if (lineIndex > 0) {
-            newLineIndex = lineIndex - 1;
-        }
-    }
-    // direction == 0 means blur/tap elsewhere - just exit editing
+    // Hide toolbar
+    [self hideFormatToolbar];
 
-    _editingLineIndex = newLineIndex;
-
-    // Hide toolbar if no longer editing
-    if (newLineIndex < 0) {
-        [self hideFormatToolbar];
-    }
-
-    // Save and re-render, preserving scroll position
-    [_file saveContent:self.textEditView.text];
+    // Schedule save and re-render, preserving scroll position
+    [self scheduleSave];
     [self renderMarkdownToWebViewPreservingScroll:scrollY];
 }
 
@@ -613,11 +765,12 @@
         self.textEditView.text = newMarkdown;
         fileChanged = YES;
 
-        // Start editing the new line
-        _editingLineIndex = lineIndex + 1;
+        // Start editing the new line (as a single-line group)
+        _editingGroupStart = lineIndex + 1;
+        _editingGroupEnd = lineIndex + 1;
 
-        // Save and re-render
-        [_file saveContent:newMarkdown];
+        // Schedule save and re-render
+        [self scheduleSave];
         [self renderMarkdownToWebView];
     }
 }
@@ -645,11 +798,12 @@
         self.textEditView.text = newMarkdown;
         fileChanged = YES;
 
-        // Start editing the previous line (cursor will be at end due to default behavior)
-        _editingLineIndex = lineIndex - 1;
+        // Start editing the previous line (as a single-line group)
+        _editingGroupStart = lineIndex - 1;
+        _editingGroupEnd = lineIndex - 1;
 
-        // Save and re-render
-        [_file saveContent:newMarkdown];
+        // Schedule save and re-render
+        [self scheduleSave];
         [self renderMarkdownToWebViewPreservingScroll:scrollY];
     }
 }
@@ -687,8 +841,8 @@
         self.textEditView.text = result;
         fileChanged = YES;
 
-        // Save changes
-        [_file saveContent:result];
+        // Schedule save
+        [self scheduleSave];
     }
 }
 
@@ -749,11 +903,12 @@
             self.webView.hidden = NO;
             [textEditView setEditable:false];
             [self renderMarkdownToWebView]; // Render updated markdown
-                    
-            //save changes
+
+            // Flush any pending saves
+            [self saveImmediatelyIfNeeded];
             if (fileChanged) {
                 [SVProgressHUD showWithStatus:@"Saving" networkIndicator:true];
-                [_file saveContent: textEditView.text];
+                [_file saveContent:textEditView.text];
                 fileChanged = false;
             }
         }
@@ -763,10 +918,11 @@
             [textEditView setEditable:true];
         } else {
             [textEditView setEditable:false];
-            //save changes
+            // Flush any pending saves
+            [self saveImmediatelyIfNeeded];
             if (fileChanged) {
                 [SVProgressHUD showWithStatus:@"Saving" networkIndicator:true];
-                [_file saveContent: textEditView.text];
+                [_file saveContent:textEditView.text];
                 fileChanged = false;
             }
         }
@@ -795,7 +951,8 @@
         }
     }
     fileChanged = false;
-    _editingLineIndex = -1;
+    _editingGroupStart = -1;
+    _editingGroupEnd = -1;
     return self;
 }
 
@@ -861,6 +1018,9 @@
 
 -(void)dealloc
 {
+    // Flush any pending saves before dealloc
+    [self saveImmediatelyIfNeeded];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.webView.configuration.userContentController removeScriptMessageHandlerForName:@"checkboxToggle"];
     [self.webView.configuration.userContentController removeScriptMessageHandlerForName:@"lineSelected"];
