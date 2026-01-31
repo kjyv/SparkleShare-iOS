@@ -18,6 +18,8 @@
     UITextRange *_selectedRange;
     CGPoint offset;
     BOOL _isPreviewMode;
+    NSInteger _editingLineIndex;
+    UIToolbar *_formatToolbar;
 };
 - (id)initWithFile: (SSFile *) file;
 
