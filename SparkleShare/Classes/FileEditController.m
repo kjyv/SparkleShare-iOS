@@ -73,8 +73,90 @@
 
 #pragma mark - Markdown Rendering
 
+// Preprocess markdown to fix nested list parsing for cmark-gfm
+// Issues addressed:
+// 1. Tabs must be converted to spaces (tabs cause code block detection)
+// 2. Use minimal indentation (2 spaces per level) to avoid code block trigger
+// 3. Insert blank lines before nested lists for proper block separation
+- (NSString *)preprocessMarkdownForNestedLists:(NSString *)markdown {
+    NSArray *lines = [markdown componentsSeparatedByString:@"\n"];
+    NSMutableArray *processedLines = [NSMutableArray arrayWithCapacity:lines.count * 2];
+
+    NSInteger prevIndentLevel = -1;
+
+    for (NSUInteger idx = 0; idx < lines.count; idx++) {
+        NSString *line = lines[idx];
+
+        // Count indent level (tabs or 4-spaces or 2-spaces each count as one level)
+        NSUInteger charIndex = 0;
+        NSUInteger indentLevel = 0;
+        NSUInteger spacesInCurrentLevel = 0;
+
+        while (charIndex < line.length) {
+            unichar c = [line characterAtIndex:charIndex];
+            if (c == '\t') {
+                indentLevel++;
+                spacesInCurrentLevel = 0;
+                charIndex++;
+            } else if (c == ' ') {
+                spacesInCurrentLevel++;
+                charIndex++;
+                // Count 2 or 4 spaces as one indent level
+                if (spacesInCurrentLevel >= 2) {
+                    if (spacesInCurrentLevel == 2 || spacesInCurrentLevel == 4) {
+                        indentLevel++;
+                        spacesInCurrentLevel = 0;
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+
+        // Get the content after indentation
+        NSString *trimmedLine = [line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+        // Check if this line is a list item
+        BOOL isListItem = [trimmedLine hasPrefix:@"- "] || [trimmedLine hasPrefix:@"* "] ||
+                          [trimmedLine hasPrefix:@"+ "] || [trimmedLine hasPrefix:@"- ["];
+
+        if (isListItem) {
+            // If this is a nested list (deeper indent than previous), insert blank line
+            if ((NSInteger)indentLevel > prevIndentLevel && prevIndentLevel >= 0) {
+                [processedLines addObject:@""];
+            }
+
+            prevIndentLevel = indentLevel;
+
+            // Build new line with 2-space indentation per level (avoids code block trigger)
+            NSMutableString *newLine = [NSMutableString string];
+            for (NSUInteger i = 0; i < indentLevel; i++) {
+                [newLine appendString:@"  "]; // 2 spaces per level
+            }
+            [newLine appendString:trimmedLine];
+            [processedLines addObject:newLine];
+        } else if (trimmedLine.length == 0) {
+            prevIndentLevel = -1;
+            [processedLines addObject:line];
+        } else {
+            // Non-list content: also convert tabs to spaces to be safe
+            NSMutableString *newLine = [NSMutableString string];
+            for (NSUInteger i = 0; i < indentLevel; i++) {
+                [newLine appendString:@"  "];
+            }
+            [newLine appendString:trimmedLine];
+            [processedLines addObject:newLine];
+        }
+    }
+
+    return [processedLines componentsJoinedByString:@"\n"];
+}
+
 - (NSString *)renderMarkdownToHTML:(NSString *)markdown {
     if (!markdown) return nil;
+
+    // Preprocess to fix nested list indentation
+    markdown = [self preprocessMarkdownForNestedLists:markdown];
 
     // Register GFM extensions (tables, strikethrough, tasklist, autolink)
     cmark_gfm_core_extensions_ensure_registered();
@@ -137,12 +219,14 @@
 
         // Inject CSS for larger font size and dynamic bright/dark mode colors
         NSString *css = [NSString stringWithFormat:@"<style>"
-            "body { font-size: 40px; background-color: %@; color: %@; } "
+            "body { font-family: -apple-system, ui-sans-serif, sans-serif; line-height: 1.5em; font-weight: 350; font-size: 40px; padding-left: 1em; background-color: %@; color: %@; }"
             "@media (prefers-color-scheme: dark) { body { background-color: %@; color: %@; } } "
-            "input[type='checkbox'] { transform: scale(1.5); margin-right: 0.5em; } "
-            "li:has(> input[type='checkbox']) { list-style: none; margin-left: -1em; } "
+            "input[type='checkbox'] { transform: scale(2.4) translateY(0.8em); margin-right: -0.5em; position: absolute; left: 0; top: 0; } "
+            "li:has(> input[type='checkbox']) { list-style: none; margin-left: -0.8em; position: relative; padding-left: 1.0em; } "
             "li:has(> input[type='checkbox']:checked) { text-decoration: line-through; opacity: 0.6; } "
-            "ul:has(input[type='checkbox']) ul { padding-left: 2.5em; } "
+            "li:has(> input[type='checkbox']) > p:first-of-type { display: inline; } "
+            "li:has(> input[type='checkbox']) > p:first-of-type + ul { margin-top: 0.1em; } "
+            "ul:has(input[type='checkbox']) ul { padding-left: 1.25em; } "
             "h1, h2, h3, h4, h5, h6 { margin: 0.5em 0 0 0; padding: 0; } "
             "ul, ol { margin: 0 0 1em 0; padding-left: 2em; } "
             "p { margin: 0.5em 0; } "
