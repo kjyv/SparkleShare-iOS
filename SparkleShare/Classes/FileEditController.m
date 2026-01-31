@@ -273,8 +273,13 @@
 
 - (void)performScheduledSave {
     if (_pendingSave) {
+        [self showSavingIndicator];
         [_file saveContent:self.textEditView.text];
         _pendingSave = NO;
+        // Hide indicator after a short delay
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self hideSavingIndicator];
+        });
     }
 }
 
@@ -283,9 +288,27 @@
     _saveTimer = nil;
 
     if (_pendingSave) {
+        [self showSavingIndicator];
         [_file saveContent:self.textEditView.text];
         _pendingSave = NO;
+        // Hide indicator after a short delay
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self hideSavingIndicator];
+        });
     }
+}
+
+- (void)showSavingIndicator {
+    if (!_savingIndicator) {
+        _savingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
+    }
+    self.navigationItem.titleView = _savingIndicator;
+    [_savingIndicator startAnimating];
+}
+
+- (void)hideSavingIndicator {
+    [_savingIndicator stopAnimating];
+    self.navigationItem.titleView = nil;
 }
 
 #pragma mark - Markdown Rendering
@@ -726,6 +749,22 @@
                           css, htmlBody, jsCode];
 
     [self.webView loadHTMLString:finalHtml baseURL:nil];
+}
+
+#pragma mark - WKNavigationDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
+    // If we're in editing mode, ensure the keyboard stays open by focusing the element
+    if (_editingGroupStart >= 0) {
+        // Make WebView first responder to enable keyboard
+        [self.webView becomeFirstResponder];
+
+        // Focus the editing element
+        [self.webView evaluateJavaScript:
+            @"var editingEl = document.querySelector('.group.editing');"
+            "if (editingEl) { editingEl.focus(); }"
+            completionHandler:nil];
+    }
 }
 
 #pragma mark - WKScriptMessageHandler

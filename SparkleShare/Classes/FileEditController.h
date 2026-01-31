@@ -24,6 +24,7 @@
     NSTimer *_saveTimer;           // Debounced save timer
     BOOL _pendingSave;             // Whether there are unsaved changes
     NSString *_originalContent;    // Content before editing started (for cancel)
+    UIActivityIndicatorView *_savingIndicator;  // Loading indicator for saving
 };
 - (id)initWithFile: (SSFile *) file;
 
