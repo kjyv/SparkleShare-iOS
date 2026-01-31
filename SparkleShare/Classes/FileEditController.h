@@ -23,6 +23,7 @@
     UIToolbar *_formatToolbar;
     NSTimer *_saveTimer;           // Debounced save timer
     BOOL _pendingSave;             // Whether there are unsaved changes
+    NSString *_originalContent;    // Content before editing started (for cancel)
 };
 - (id)initWithFile: (SSFile *) file;
 

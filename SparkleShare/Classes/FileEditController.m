@@ -31,11 +31,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     //TODO: improve loading the text, could be different encodings, binary, too large etc.
     [textEditView setText:[[NSString alloc] initWithData:_file.content encoding:NSUTF8StringEncoding]];
-    
+
     self.navigationItem.rightBarButtonItem = self.editButtonItem;
+
+    // Custom back button to intercept navigation when editing
+    [self updateBackButton];
     
     if (self.isMarkdownFile) {
         // Initialize WKWebView with script message handler for checkbox toggling
@@ -84,6 +87,81 @@
 
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+}
+
+- (void)handleBackButton {
+    // If inline editing is active, cancel and restore original content
+    if (_editingGroupStart >= 0) {
+        [self cancelEditing];
+        return;
+    }
+
+    // If in traditional edit mode (Edit button), cancel and restore
+    if (self.editing) {
+        [self cancelEditing];
+        return;
+    }
+
+    // Otherwise, navigate back to parent
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)cancelEditing {
+    // Cancel any pending saves
+    [_saveTimer invalidate];
+    _saveTimer = nil;
+    _pendingSave = NO;
+
+    // Restore original content
+    if (_originalContent) {
+        self.textEditView.text = _originalContent;
+        _originalContent = nil;
+    }
+    fileChanged = NO;
+
+    // Clear inline editing state
+    _editingGroupStart = -1;
+    _editingGroupEnd = -1;
+    [self hideFormatToolbar];
+
+    // Exit traditional edit mode if active
+    if (self.editing) {
+        [super setEditing:NO animated:YES];
+    }
+
+    // Return to preview mode for markdown files
+    if (self.isMarkdownFile) {
+        _isPreviewMode = YES;
+        self.textEditView.hidden = YES;
+        self.webView.hidden = NO;
+        [textEditView setEditable:NO];
+        [self renderMarkdownToWebView];
+    }
+
+    [self updateBackButton];
+}
+
+- (void)updateBackButton {
+    BOOL isEditing = (_editingGroupStart >= 0) || self.editing;
+
+    if (isEditing) {
+        // Show Cancel button when editing
+        NSBundle *uiKitBundle = [NSBundle bundleForClass:[UIButton class]];
+        NSString *cancelTitle = [uiKitBundle localizedStringForKey:@"Cancel" value:@"Cancel" table:nil];
+        UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:cancelTitle
+                                                                         style:UIBarButtonItemStylePlain
+                                                                        target:self
+                                                                        action:@selector(handleBackButton)];
+        self.navigationItem.leftBarButtonItem = cancelButton;
+    } else {
+        // Show back button with chevron when not editing
+        UIImage *chevron = [UIImage systemImageNamed:@"chevron.left"];
+        UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:chevron
+                                                                       style:UIBarButtonItemStylePlain
+                                                                      target:self
+                                                                      action:@selector(handleBackButton)];
+        self.navigationItem.leftBarButtonItem = backButton;
+    }
 }
 
 #pragma mark - Format Toolbar
@@ -695,9 +773,15 @@
 }
 
 - (void)startEditingGroupFrom:(NSInteger)start to:(NSInteger)end preserveScroll:(CGFloat)scrollY {
+    // Store original content for cancel functionality (only if not already editing)
+    if (_editingGroupStart < 0) {
+        _originalContent = [self.textEditView.text copy];
+    }
+
     _editingGroupStart = start;
     _editingGroupEnd = end;
     [self showFormatToolbar];
+    [self updateBackButton];
     [self renderMarkdownToWebViewPreservingScroll:scrollY];
 }
 
@@ -743,8 +827,14 @@
     _editingGroupStart = -1;
     _editingGroupEnd = -1;
 
+    // Clear original content since we're saving
+    _originalContent = nil;
+
     // Hide toolbar
     [self hideFormatToolbar];
+
+    // Update back button to show chevron
+    [self updateBackButton];
 
     // Schedule save and re-render, preserving scroll position
     [self scheduleSave];
@@ -889,12 +979,21 @@
             self.textEditView.hidden = NO;
             self.webView.hidden = YES;
             [textEditView setEditable:true];
-            
+
+            // Store original content for cancel functionality
+            _originalContent = [self.textEditView.text copy];
+
+            // Clear inline editing state
+            _editingGroupStart = -1;
+            _editingGroupEnd = -1;
+            [self hideFormatToolbar];
+
             // Reset content insets and scroll to top to ensure correct positioning
             self.textEditView.contentInset = UIEdgeInsetsZero;
             self.textEditView.scrollIndicatorInsets = UIEdgeInsetsZero;
             [self.textEditView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
 
+            [self updateBackButton];
         }
         else {
             // Exiting Edit Mode (and potentially saving)
@@ -904,6 +1003,9 @@
             [textEditView setEditable:false];
             [self renderMarkdownToWebView]; // Render updated markdown
 
+            // Clear original content since we're saving
+            _originalContent = nil;
+
             // Flush any pending saves
             [self saveImmediatelyIfNeeded];
             if (fileChanged) {
@@ -911,13 +1013,18 @@
                 [_file saveContent:textEditView.text];
                 fileChanged = false;
             }
+
+            [self updateBackButton];
         }
     } else {
         // For non-markdown files, just handle editing state without preview logic
         if (flag == YES) {
+            _originalContent = [self.textEditView.text copy];
             [textEditView setEditable:true];
+            [self updateBackButton];
         } else {
             [textEditView setEditable:false];
+            _originalContent = nil;
             // Flush any pending saves
             [self saveImmediatelyIfNeeded];
             if (fileChanged) {
@@ -925,6 +1032,7 @@
                 [_file saveContent:textEditView.text];
                 fileChanged = false;
             }
+            [self updateBackButton];
         }
     }
 }
