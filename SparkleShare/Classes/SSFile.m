@@ -9,6 +9,7 @@
 #import "SSFile.h"
 #import "NSString+urlencode.h"
 #import "AFHTTPRequestOperation.h"
+#import "AFSecurityPolicy.h"
 #import "SSConnection.h"
 #import "SSFolder.h"
 
@@ -46,13 +47,22 @@
     NSMutableURLRequest *request = [connection requestForPath:path];
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+
+    // Allow self-signed certificates if enabled in settings
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"allowSelfSignedCertificates"]) {
+        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+        securityPolicy.allowInvalidCertificates = YES;
+        securityPolicy.validatesDomainName = NO;
+        operation.securityPolicy = securityPolicy;
+    }
+
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         self.content = responseObject;
         [self.delegate fileContentLoaded:self content:self.content];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [self.delegate fileContentLoadingFailed:self];
     }];
-    
+
     [connection addOperation:operation];
 }
 

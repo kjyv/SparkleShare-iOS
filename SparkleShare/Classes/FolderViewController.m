@@ -22,6 +22,7 @@
 #import "SSRecentFile.h"
 #import "SSRecentFilesManager.h"
 #import "SparkleShareAppDelegate.h"
+#import "SettingsViewController.h"
 #import "SparkleShare-Swift.h"
 #import <objc/runtime.h>
 
@@ -63,6 +64,15 @@
 
     self.restorationIdentifier = @"folderViewID";
 
+    // Add settings button for root folder
+    if ([self.folder isKindOfClass:[SSRootFolder class]]) {
+        UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"gearshape"]
+                                                                           style:UIBarButtonItemStylePlain
+                                                                          target:self
+                                                                          action:@selector(settingsPressed)];
+        self.navigationItem.rightBarButtonItem = settingsButton;
+    }
+
     // Setup recent files view for root folder
     [self setupRecentFilesView];
 
@@ -71,6 +81,12 @@
                                              selector:@selector(recentFilesDidChange:)
                                                  name:SSRecentFilesDidChangeNotification
                                                object:nil];
+}
+
+- (void)settingsPressed {
+    SettingsViewController *settingsVC = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
+    [self presentViewController:navController animated:YES completion:nil];
 }
 
 - (void)dealloc {

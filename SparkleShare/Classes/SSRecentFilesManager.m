@@ -11,7 +11,7 @@
 NSString * const SSRecentFilesDidChangeNotification = @"SSRecentFilesDidChangeNotification";
 
 static NSString * const kRecentFilesKey = @"SSRecentFiles";
-static const NSInteger kMaxRecentFiles = 10;
+static const NSInteger kMaxRecentFiles = 20;
 
 @interface SSRecentFilesManager ()
 @property (nonatomic, strong) NSMutableArray<SSRecentFile *> *mutableRecentFiles;

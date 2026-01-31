@@ -11,6 +11,7 @@
 #import "ManualLoginInputViewController.h"
 #import "UIColor+ApplicationColors.h"
 #import "UIViewController+AutoPlatformNibName.h"
+#import "SettingsViewController.h"
 @interface SelectLoginInputViewController ()
 @property (strong, nonatomic) QRCodeLoginInputViewController *qrcodeLoginInputController;
 @property (strong, nonatomic) ManualLoginInputViewController *manualLoginInputViewController;
@@ -37,7 +38,21 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	// Do any additional setup after loading the view from its nib.
+
+	UIButton *settingsButton = [UIButton buttonWithType:UIButtonTypeSystem];
+	UIImage *gearImage = [UIImage systemImageNamed:@"gearshape.fill"];
+	[settingsButton setImage:gearImage forState:UIControlStateNormal];
+	settingsButton.tintColor = [UIColor whiteColor];
+	settingsButton.translatesAutoresizingMaskIntoConstraints = NO;
+	[settingsButton addTarget:self action:@selector(settingsPressed) forControlEvents:UIControlEventTouchUpInside];
+	[self.view addSubview:settingsButton];
+
+	[NSLayoutConstraint activateConstraints:@[
+		[settingsButton.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:16],
+		[settingsButton.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor constant:-16],
+		[settingsButton.widthAnchor constraintEqualToConstant:44],
+		[settingsButton.heightAnchor constraintEqualToConstant:44]
+	]];
 }
 
 - (void)viewDidUnload {
@@ -84,6 +99,12 @@
 		self.manualLoginInputViewController.delegate = self;
 	}
 	[self.navigationController pushViewController: self.manualLoginInputViewController animated: YES];
+}
+
+- (void)settingsPressed {
+	SettingsViewController *settingsVC = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settingsVC];
+	[self presentViewController:navController animated:YES completion:nil];
 }
 
 @end

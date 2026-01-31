@@ -7,6 +7,7 @@
 //
 
 #import "SSJSONRequestOperation.h"
+#import "AFSecurityPolicy.h"
 
 @implementation SSJSONRequestOperation
 
@@ -15,11 +16,19 @@
                                         failure:(void (^)(NSURLRequest *request, NSURLResponse *response, NSError *error, id JSON))failure
 {
     SSJSONRequestOperation *requestOperation = [(SSJSONRequestOperation *)[self alloc] initWithRequest:urlRequest];
-    
+
     AFJSONResponseSerializer *serializer = [AFJSONResponseSerializer serializer];
     serializer.readingOptions = NSJSONReadingAllowFragments;
     requestOperation.responseSerializer = serializer;
-    
+
+    // Allow self-signed certificates if enabled in settings
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"allowSelfSignedCertificates"]) {
+        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+        securityPolicy.allowInvalidCertificates = YES;
+        securityPolicy.validatesDomainName = NO;
+        requestOperation.securityPolicy = securityPolicy;
+    }
+
     [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (success) {
             success(operation.request, operation.response, responseObject);
@@ -29,7 +38,7 @@
             failure(operation.request, operation.response, error, operation.responseObject);
         }
     }];
-    
+
     return requestOperation;
 }
 

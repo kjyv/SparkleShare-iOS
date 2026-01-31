@@ -9,6 +9,7 @@
 #import "SSConnection.h"
 #import "SSJSONRequestOperation.h"
 #import "SSRootFolder.h"
+#import "AFSecurityPolicy.h"
 
 @interface SSConnection ()
 
@@ -73,7 +74,12 @@
 //{"ident":"qj7cGswA","authCode":"iteLARuURXKzGNJ...solGzbOutrWcfOWaUnm7ZIgNyn-"}
 - (void) linkDeviceWithAddress: (NSURL *) anAddress code: (NSString *) code {
 	address = anAddress;
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [address URLByAppendingPathComponent:  @"api/getAuthCode"]];
+	NSString *baseString = [address absoluteString];
+	while ([baseString hasSuffix:@"/"]) {
+		baseString = [baseString substringToIndex:baseString.length - 1];
+	}
+	NSString *urlString = [NSString stringWithFormat:@"%@/api/getAuthCode", baseString];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
 	[request setHTTPMethod: @"POST"];
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -133,8 +139,17 @@
 - (void) sendRequestWithString: (NSString *) string
         success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
         failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure {
-	NSString *urlRequest = [[address absoluteString] stringByAppendingString: string];
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString: urlRequest]];
+	// Build URL with proper slash handling
+	NSString *baseString = [address absoluteString];
+	while ([baseString hasSuffix:@"/"]) {
+		baseString = [baseString substringToIndex:baseString.length - 1];
+	}
+	while ([string hasPrefix:@"/"]) {
+		string = [string substringFromIndex:1];
+	}
+	NSString *urlString = [NSString stringWithFormat:@"%@/%@", baseString, string];
+	NSURL *requestURL = [NSURL URLWithString:urlString];
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:requestURL];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
 	[request setValue: identCode forHTTPHeaderField: @"X-SPARKLE-IDENT"];
 	[request setValue: authCode forHTTPHeaderField: @"X-SPARKLE-AUTH"];
@@ -148,8 +163,16 @@
         success: ( void (^)(NSURLRequest * request, NSURLResponse * response, id JSON) ) success
         failure: ( void (^)(NSURLRequest * request, NSURLResponse * response, NSError * error, id JSON) ) failure {
     //expects a string data with form of "key=value&key2=..."
-    NSString *urlRequest = [[address absoluteString] stringByAppendingString: string];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString: urlRequest]];
+    NSString *baseString = [address absoluteString];
+    while ([baseString hasSuffix:@"/"]) {
+        baseString = [baseString substringToIndex:baseString.length - 1];
+    }
+    while ([string hasPrefix:@"/"]) {
+        string = [string substringFromIndex:1];
+    }
+    NSString *urlString = [NSString stringWithFormat:@"%@/%@", baseString, string];
+    NSURL *requestURL = [NSURL URLWithString:urlString];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:requestURL];
     [request setValue: identCode forHTTPHeaderField: @"X-SPARKLE-IDENT"];
     [request setValue: authCode forHTTPHeaderField: @"X-SPARKLE-AUTH"];
     [request setHTTPMethod:@"POST"];
@@ -161,12 +184,21 @@
     [request setTimeoutInterval:60];
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+
+    // Allow self-signed certificates if enabled in settings
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"allowSelfSignedCertificates"]) {
+        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+        securityPolicy.allowInvalidCertificates = YES;
+        securityPolicy.validatesDomainName = NO;
+        operation.securityPolicy = securityPolicy;
+    }
+
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
         success(operation.request, operation.response, responseObject);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         failure(operation.request, operation.response, error, operation.responseObject);
     }];
-    
+
     [queue addOperation: operation];
 }
 
@@ -189,8 +221,16 @@
 }
 
 - (NSMutableURLRequest *)requestForPath:(NSString *)path {
-    NSString *urlRequest = [[address absoluteString] stringByAppendingString:path];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlRequest]];
+    NSString *baseString = [address absoluteString];
+    while ([baseString hasSuffix:@"/"]) {
+        baseString = [baseString substringToIndex:baseString.length - 1];
+    }
+    while ([path hasPrefix:@"/"]) {
+        path = [path substringFromIndex:1];
+    }
+    NSString *urlString = [NSString stringWithFormat:@"%@/%@", baseString, path];
+    NSURL *requestURL = [NSURL URLWithString:urlString];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:requestURL];
     [request setCachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData];
     [request setValue:identCode forHTTPHeaderField:@"X-SPARKLE-IDENT"];
     [request setValue:authCode forHTTPHeaderField:@"X-SPARKLE-AUTH"];
