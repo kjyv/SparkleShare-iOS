@@ -48,9 +48,11 @@
 static SVProgressHUD *sharedView = nil;
 
 - (void)dealloc {
-	
-	if(fadeOutTimer != nil)
-		[fadeOutTimer invalidate], [fadeOutTimer release], fadeOutTimer = nil;
+    if(fadeOutTimer != nil) {
+        [fadeOutTimer invalidate];
+        [fadeOutTimer release];
+        fadeOutTimer = nil;
+    }
 	
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
@@ -64,7 +66,6 @@ static SVProgressHUD *sharedView = nil;
 
 
 + (SVProgressHUD*)sharedView {
-	
 	if(sharedView == nil)
 		sharedView = [[SVProgressHUD alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
@@ -244,9 +245,12 @@ static SVProgressHUD *sharedView = nil;
 
 - (void)showWithStatus:(NSString*)string maskType:(SVProgressHUDMaskType)hudMaskType networkIndicator:(BOOL)show {
     
-	if(fadeOutTimer != nil)
-		[fadeOutTimer invalidate], [fadeOutTimer release], fadeOutTimer = nil;
-	
+    if(fadeOutTimer != nil) {
+        [fadeOutTimer invalidate];
+        [fadeOutTimer release];
+        fadeOutTimer = nil;
+    }
+
     self.showNetworkIndicator = show;
     
     if(self.showNetworkIndicator)
@@ -435,9 +439,12 @@ static SVProgressHUD *sharedView = nil;
 	
 	[self.spinnerView stopAnimating];
     
-	if(fadeOutTimer != nil)
-		[fadeOutTimer invalidate], [fadeOutTimer release], fadeOutTimer = nil;
-	
+    if(fadeOutTimer != nil) {
+        [fadeOutTimer invalidate];
+        [fadeOutTimer release];
+        fadeOutTimer = nil;
+    }
+
 	fadeOutTimer = [[NSTimer scheduledTimerWithTimeInterval:seconds target:self selector:@selector(dismiss) userInfo:nil repeats:NO] retain];
 }
 
@@ -457,7 +464,8 @@ static SVProgressHUD *sharedView = nil;
                          if(sharedView.alpha == 0) {
                              [[NSNotificationCenter defaultCenter] removeObserver:sharedView];
                              [sharedView.previousKeyWindow makeKeyWindow];
-                             [sharedView release], sharedView = nil;
+                             [sharedView release];
+                             sharedView = nil;
                              
                              // uncomment to make sure UIWindow is gone from app.windows
                              //NSLog(@"%@", [UIApplication sharedApplication].windows);

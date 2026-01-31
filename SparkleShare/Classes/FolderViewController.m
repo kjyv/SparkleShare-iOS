@@ -25,11 +25,15 @@
 #import "SparkleShare-Swift.h"
 #import <objc/runtime.h>
 
-@interface FolderViewController () <RecentFilesViewDelegate>
-@property (nonatomic, strong) SSFile *pendingRecentFile;
+@interface FolderViewController () <RecentFilesViewDelegate, SSFolderItemsDelegate>
 @property (nonatomic, strong) NSMutableArray *pendingPathComponents;
 @property (nonatomic, assign) NSInteger currentPathIndex;
 @property (nonatomic, strong) UITapGestureRecognizer *editModeDismissGesture;
+
+// For recent file navigation - load in background, then set full stack
+@property (nonatomic, strong) NSMutableArray<SSFolder *> *recentFilePathFolders;
+@property (nonatomic, strong) NSDictionary *recentFileInfo;
+@property (nonatomic, strong) SSFolder *currentlyLoadingFolder;
 @end
 
 @implementation FolderViewController
@@ -218,22 +222,24 @@
 }
 
 - (void) folder: (SSFolder *) folder itemsLoaded: (NSArray *) items {
+    // Check if this is a background load for recent file navigation
+    if (folder == self.currentlyLoadingFolder) {
+        [self folder:folder itemsLoadedForRecentFile:items];
+        return;
+    }
+
+    // Normal folder display loading
 	[self.tableView reloadData];
 	for (SSFolderItem *item in self.folder.items) {
 		if ([item isKindOfClass: [SSFolder class]]) {
-			SSFolder *folder = (SSFolder *)item;
-			folder.infoDelegate = self;
-			[folder loadRevision];
-			[folder loadCount];
+			SSFolder *subFolder = (SSFolder *)item;
+			subFolder.infoDelegate = self;
+			[subFolder loadRevision];
+			[subFolder loadCount];
 		}
 	}
 
-    // Continue navigation if we're navigating to a recent file
-    if (self.pendingPathComponents) {
-        [self continueNavigationAfterFolderLoad];
-    } else {
-        [SVProgressHUD dismiss];
-    }
+    [SVProgressHUD dismiss];
     [self.refreshControl endRefreshing];
 }
 
@@ -252,6 +258,10 @@
 }
 
 - (void) folderLoadingFailed: (SSFolder *) folder {
+    if (folder == self.currentlyLoadingFolder) {
+        [self recentFileNavigationFailed:@"Folder loading failed"];
+        return;
+    }
 	[SVProgressHUD dismissWithError:@"Folder data loading failed"];
     [self.refreshControl endRefreshing];
 }
@@ -272,9 +282,7 @@
 }
 
 - (void)fileContentLoaded: (SSFile *) file content: (NSData *) content {
-    [SVProgressHUD dismiss];
-
-    // Override some text mime types that otherwise would not be displayed as text
+    // Apply mime type overrides
     NSArray *overrideMime = @[@"application/x-tex",
                               @"application/x-latex",
                               @"application/javascript",
@@ -283,7 +291,6 @@
     if ([overrideMime containsObject:file.mime])
         file.mime = @"text/plain";
 
-    // A lot of files are detected as octet-stream while they are text based
     if ([file.mime isEqualToString:@"application/octet-stream"]) {
         if ([file.name hasPrefix:@"."] ||
             [file.name hasSuffix:@".py"] ||
@@ -297,20 +304,25 @@
         }
     }
 
-    // Override some file binary types that are detected as text
     if ([file.name hasSuffix:@".kdbx"]) {
         file.mime = @"application/octet-stream";
     }
+
+    // Check if this is for recent file navigation
+    if (self.recentFileInfo) {
+        [self openRecentFileWithContent:file];
+        return;
+    }
+
+    [SVProgressHUD dismiss];
 
     // Track this file as recently opened
     [self trackRecentFile:file];
 
     if ([file.mime hasPrefix:@"text/"]) {
-        // Open text editing view if file is text
         FileEditController *newFileEditController = [[FileEditController alloc] initWithFile:file];
         [self.navigationController pushViewController:newFileEditController animated:YES];
     } else {
-        // Preview file
         FilePreview *filePreview = [[FilePreview alloc] initWithFile:file];
         FileViewController *newFileViewController = [[FileViewController alloc] initWithFilePreview:filePreview filename:file.name];
         [self.navigationController pushViewController:newFileViewController animated:YES];
@@ -367,6 +379,10 @@
 }
 
 - (void) fileContentLoadingFailed: (SSFile *) file {
+    if (self.recentFileInfo) {
+        [self recentFileNavigationFailed:@"File content loading failed"];
+        return;
+    }
 	[SVProgressHUD dismissWithError:@"File content loading failed"];
 }
 
@@ -420,16 +436,16 @@
     SSRootFolder *rootFolder = conn.rootFolder;
 
     if (!rootFolder || !rootFolder.items) {
-        [SVProgressHUD show];
         [SVProgressHUD dismissWithError:@"Connection not ready" afterDelay:1];
         return;
     }
 
-    // Store pending file info
-    self.pendingPathComponents = [recentFile.pathComponents mutableCopy];
-    self.currentPathIndex = 0;
+    // Pop to root first
+    [self.navigationController popToRootViewControllerAnimated:NO];
 
-    // Store file metadata to reconstruct the file later
+    [SVProgressHUD show];
+
+    // Store file metadata
     NSMutableDictionary *fileInfo = [NSMutableDictionary dictionary];
     fileInfo[@"name"] = recentFile.fileName ?: @"";
     fileInfo[@"ssid"] = recentFile.fileSSID ?: @"";
@@ -439,134 +455,24 @@
     fileInfo[@"projectFolderSSID"] = recentFile.projectFolderSSID ?: @"";
     fileInfo[@"projectFolderName"] = recentFile.projectFolderName ?: @"";
 
-    // Pop to root first
-    [self.navigationController popToRootViewControllerAnimated:NO];
-
-    [SVProgressHUD show];
-
-    // Start navigation through path
+    // Start loading path in background from root
     FolderViewController *rootVC = self.navigationController.viewControllers.firstObject;
     if ([rootVC isKindOfClass:[FolderViewController class]]) {
-        [rootVC navigateToRecentFileWithPathComponents:[recentFile.pathComponents mutableCopy]
-                                           currentIndex:0
-                                               fileInfo:fileInfo
-                                     projectFolderSSID:recentFile.projectFolderSSID];
+        rootVC.recentFileInfo = fileInfo;
+        rootVC.recentFilePathFolders = [NSMutableArray array];
+        rootVC.pendingPathComponents = [recentFile.pathComponents mutableCopy];
+        rootVC.currentPathIndex = 0;
+        [rootVC startLoadingRecentFilePath];
     }
 }
 
-- (void)navigateToRecentFileWithPathComponents:(NSMutableArray *)pathComponents
-                                   currentIndex:(NSInteger)index
-                                       fileInfo:(NSDictionary *)fileInfo
-                             projectFolderSSID:(NSString *)projectFolderSSID {
+- (void)startLoadingRecentFilePath {
+    // Find project folder first
+    NSString *projectFolderName = self.recentFileInfo[@"projectFolderName"];
+    NSString *projectFolderSSID = self.recentFileInfo[@"projectFolderSSID"];
 
-    // First, find and navigate to the project folder
-    if (index == 0) {
-        // We're at root, find the project folder
-        SSFolder *projectFolder = nil;
-        NSString *projectFolderName = fileInfo[@"projectFolderName"];
-
-        for (SSFolderItem *item in self.folder.items) {
-            if ([item isKindOfClass:[SSFolder class]]) {
-                // Try to match by name first
-                if (projectFolderName && [item.name isEqualToString:projectFolderName]) {
-                    projectFolder = (SSFolder *)item;
-                    break;
-                }
-                // Fallback to SSID
-                if ([item.ssid isEqualToString:projectFolderSSID]) {
-                    projectFolder = (SSFolder *)item;
-                    break;
-                }
-            }
-        }
-
-        if (!projectFolder) {
-            [SVProgressHUD show];
-            [SVProgressHUD dismissWithError:@"Project folder not found" afterDelay:1];
-            return;
-        }
-
-        // Push project folder view controller
-        FolderViewController *projectFolderVC = [[FolderViewController alloc] initWithFolder:projectFolder];
-        [self.navigationController pushViewController:projectFolderVC animated:NO];
-
-        // Continue navigation from project folder once it loads
-        projectFolderVC.pendingPathComponents = pathComponents;
-        projectFolderVC.currentPathIndex = 0;
-
-        // Store file info for later use
-        objc_setAssociatedObject(projectFolderVC, "pendingFileInfo", fileInfo, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        objc_setAssociatedObject(projectFolderVC, "pendingProjectFolderSSID", projectFolderSSID, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-}
-
-- (void)continueNavigationAfterFolderLoad {
-    NSDictionary *fileInfo = objc_getAssociatedObject(self, "pendingFileInfo");
-    NSString *projectFolderSSID = objc_getAssociatedObject(self, "pendingProjectFolderSSID");
-
-    if (!self.pendingPathComponents || !fileInfo) {
-        [SVProgressHUD dismiss];
-        [self clearPendingNavigation];
-        return;
-    }
-
-    // If we've navigated through all path components, open the file
-    if (self.currentPathIndex >= self.pendingPathComponents.count) {
-        [self openFileFromInfo:fileInfo projectFolderSSID:projectFolderSSID];
-        [self clearPendingNavigation];
-        return;
-    }
-
-    // Find the next folder in the path
-    NSDictionary *nextComponent = self.pendingPathComponents[self.currentPathIndex];
-    NSString *folderSSID = nextComponent[@"ssid"];
-    NSString *folderName = nextComponent[@"name"];
-
-    SSFolder *nextFolder = nil;
-    for (SSFolderItem *item in self.folder.items) {
-        if ([item isKindOfClass:[SSFolder class]]) {
-            // Try matching by name first
-            if (folderName && [item.name isEqualToString:folderName]) {
-                nextFolder = (SSFolder *)item;
-                break;
-            }
-            if ([item.ssid isEqualToString:folderSSID]) {
-                nextFolder = (SSFolder *)item;
-                break;
-            }
-        }
-    }
-
-    if (!nextFolder) {
-        [SVProgressHUD show];
-        [SVProgressHUD dismissWithError:@"Path no longer exists" afterDelay:1];
-        [self clearPendingNavigation];
-        return;
-    }
-
-    // Push next folder view controller
-    FolderViewController *nextVC = [[FolderViewController alloc] initWithFolder:nextFolder];
-    [self.navigationController pushViewController:nextVC animated:NO];
-
-    // Pass navigation state to new controller
-    nextVC.pendingPathComponents = self.pendingPathComponents;
-    nextVC.currentPathIndex = self.currentPathIndex + 1;
-    objc_setAssociatedObject(nextVC, "pendingFileInfo", fileInfo, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    objc_setAssociatedObject(nextVC, "pendingProjectFolderSSID", projectFolderSSID, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-
-    [self clearPendingNavigation];
-}
-
-- (void)openFileFromInfo:(NSDictionary *)fileInfo projectFolderSSID:(NSString *)projectFolderSSID {
-    // Reconstruct the SSFile from stored metadata
-    SparkleShareAppDelegate *appDelegate = (SparkleShareAppDelegate *)[[UIApplication sharedApplication] delegate];
-    SSConnection *conn = appDelegate.connection;
-
-    // Find project folder for this file
     SSFolder *projectFolder = nil;
-    NSString *projectFolderName = fileInfo[@"projectFolderName"];
-
-    for (SSFolderItem *item in conn.rootFolder.items) {
+    for (SSFolderItem *item in self.folder.items) {
         if ([item isKindOfClass:[SSFolder class]]) {
             if (projectFolderName && [item.name isEqualToString:projectFolderName]) {
                 projectFolder = (SSFolder *)item;
@@ -580,15 +486,96 @@
     }
 
     if (!projectFolder) {
-        projectFolder = self.folder.projectFolder;
+        [self recentFileNavigationFailed:@"Project folder not found"];
+        return;
     }
 
-    // First, try to find the file in current folder's items
-    SSFile *file = nil;
-    NSString *fileSSID = fileInfo[@"ssid"];
-    NSString *fileName = fileInfo[@"name"];
+    [self.recentFilePathFolders addObject:projectFolder];
 
-    for (SSFolderItem *item in self.folder.items) {
+    // If no subfolders in path, load file directly from project folder
+    if (self.pendingPathComponents.count == 0) {
+        [self loadRecentFileFromFinalFolder:projectFolder];
+        return;
+    }
+
+    // Start loading the first subfolder
+    self.currentPathIndex = 0;
+    self.currentlyLoadingFolder = projectFolder;
+    projectFolder.delegate = self;
+    [projectFolder loadItems];
+}
+
+- (void)continueLoadingRecentFilePath {
+    SSFolder *currentFolder = self.currentlyLoadingFolder;
+
+    // Find next folder in path
+    NSDictionary *nextComponent = self.pendingPathComponents[self.currentPathIndex];
+    NSString *folderName = nextComponent[@"name"];
+    NSString *folderSSID = nextComponent[@"ssid"];
+
+    SSFolder *nextFolder = nil;
+    for (SSFolderItem *item in currentFolder.items) {
+        if ([item isKindOfClass:[SSFolder class]]) {
+            if (folderName && [item.name isEqualToString:folderName]) {
+                nextFolder = (SSFolder *)item;
+                break;
+            }
+            if ([item.ssid isEqualToString:folderSSID]) {
+                nextFolder = (SSFolder *)item;
+                break;
+            }
+        }
+    }
+
+    if (!nextFolder) {
+        [self recentFileNavigationFailed:@"Path no longer exists"];
+        return;
+    }
+
+    [self.recentFilePathFolders addObject:nextFolder];
+    self.currentPathIndex++;
+
+    // If we've traversed all path components, load the file
+    if (self.currentPathIndex >= self.pendingPathComponents.count) {
+        [self loadRecentFileFromFinalFolder:nextFolder];
+        return;
+    }
+
+    // Load next folder
+    self.currentlyLoadingFolder = nextFolder;
+    nextFolder.delegate = self;
+    [nextFolder loadItems];
+}
+
+- (void)loadRecentFileFromFinalFolder:(SSFolder *)folder {
+    // Load folder items to find the file
+    self.currentlyLoadingFolder = folder;
+    folder.delegate = self;
+    [folder loadItems];
+}
+
+// SSFolderItemsDelegate for background folder loading
+- (void)folder:(SSFolder *)folder itemsLoadedForRecentFile:(NSArray *)items {
+    if (folder != self.currentlyLoadingFolder) {
+        return; // Not our folder
+    }
+
+    // Check if we're still traversing path or at final folder
+    if (self.currentPathIndex < self.pendingPathComponents.count) {
+        [self continueLoadingRecentFilePath];
+    } else {
+        // At final folder - find and load file
+        [self findAndLoadRecentFile];
+    }
+}
+
+- (void)findAndLoadRecentFile {
+    SSFolder *finalFolder = self.currentlyLoadingFolder;
+    NSString *fileName = self.recentFileInfo[@"name"];
+    NSString *fileSSID = self.recentFileInfo[@"ssid"];
+
+    SSFile *file = nil;
+    for (SSFolderItem *item in finalFolder.items) {
         if ([item isKindOfClass:[SSFile class]]) {
             if (fileName && [item.name isEqualToString:fileName]) {
                 file = (SSFile *)item;
@@ -602,21 +589,62 @@
     }
 
     if (!file) {
-        [SVProgressHUD show];
-        [SVProgressHUD dismissWithError:@"File not found" afterDelay:1];
+        [self recentFileNavigationFailed:@"File not found"];
         return;
     }
 
-    // Load and open the file
+    // Load file content
     file.delegate = self;
     [file loadContent];
 }
 
-- (void)clearPendingNavigation {
+- (void)recentFileNavigationFailed:(NSString *)message {
+    self.recentFileInfo = nil;
+    self.recentFilePathFolders = nil;
     self.pendingPathComponents = nil;
-    self.currentPathIndex = 0;
-    objc_setAssociatedObject(self, "pendingFileInfo", nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    objc_setAssociatedObject(self, "pendingProjectFolderSSID", nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    self.currentlyLoadingFolder = nil;
+    [SVProgressHUD dismissWithError:message afterDelay:1];
+}
+
+- (void)openRecentFileWithContent:(SSFile *)file {
+    [SVProgressHUD dismiss];
+
+    // Build the full navigation stack
+    NSMutableArray *viewControllers = [NSMutableArray array];
+
+    // Add root (self)
+    [viewControllers addObject:self];
+
+    // Add folder view controllers for each folder in path
+    for (SSFolder *folder in self.recentFilePathFolders) {
+        FolderViewController *folderVC = [[FolderViewController alloc] initWithFolder:folder];
+        [viewControllers addObject:folderVC];
+    }
+
+    // Track file as recently opened (from the parent folder VC)
+    FolderViewController *parentFolderVC = [viewControllers lastObject];
+
+    // Create file view controller
+    UIViewController *fileVC;
+    if ([file.mime hasPrefix:@"text/"]) {
+        fileVC = [[FileEditController alloc] initWithFile:file];
+    } else {
+        FilePreview *filePreview = [[FilePreview alloc] initWithFile:file];
+        fileVC = [[FileViewController alloc] initWithFilePreview:filePreview filename:file.name];
+    }
+    [viewControllers addObject:fileVC];
+
+    // Set entire navigation stack at once
+    [self.navigationController setViewControllers:viewControllers animated:YES];
+
+    // Track as recent file
+    [parentFolderVC trackRecentFile:file];
+
+    // Clear state
+    self.recentFileInfo = nil;
+    self.recentFilePathFolders = nil;
+    self.pendingPathComponents = nil;
+    self.currentlyLoadingFolder = nil;
 }
 
 @end
