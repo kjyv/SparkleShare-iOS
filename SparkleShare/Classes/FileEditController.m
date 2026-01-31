@@ -565,7 +565,7 @@
             // Convert newlines to <br> for proper display in contenteditable
             escaped = [escaped stringByReplacingOccurrencesOfString:@"\n" withString:@"<br>"];
             // For multi-line, use a div that preserves newlines
-            [htmlBody appendFormat:@"<div class='group editing' data-start='%ld' data-end='%ld' data-type='%@' contenteditable='true'>%@</div>",
+            [htmlBody appendFormat:@"<div class='group editing' data-start='%ld' data-end='%ld' data-type='%@' contenteditable='true' autocorrect='off' autocapitalize='off' spellcheck='false' autocomplete='off'>%@</div>",
                 (long)start, (long)end, type, escaped];
         } else {
             // Render as HTML preview
@@ -612,7 +612,7 @@
         "body { font-family: -apple-system, ui-sans-serif, sans-serif; line-height: 1.5em; font-weight: 350; font-size: 20px; padding-left: 1em; padding-right: 1em; background-color: %@; color: %@; }"
         "@media (prefers-color-scheme: dark) { body { background-color: %@; color: %@; } } "
         ".group { padding: 2px 4px; border-radius: 4px; min-height: 1.5em; } "
-        ".group.editing { background-color: rgba(0,122,255,0.1); outline: none; font-family: ui-monospace, monospace; white-space: pre-wrap; } "
+        ".group.editing { background-color: rgba(0,122,255,0.1); outline: none; font-family: ui-monospace, monospace; white-space: pre-wrap; -webkit-user-modify: read-write-plaintext-only; }"
         ".group.empty { min-height: 1em; } "
         ".group.code { background-color: rgba(128,128,128,0.1); border-radius: 6px; padding: 8px; margin: 4px 0; } "
         ".group.table { margin: 4px 0; } "
@@ -641,13 +641,14 @@
     [jsCode appendString:@"  if (initialScroll >= 0) window.scrollTo(0, initialScroll);\n"];
     [jsCode appendString:@"  var editingEl = document.querySelector('.group.editing');\n"];
     [jsCode appendString:@"  if (editingEl) {\n"];
-    [jsCode appendString:@"    editingEl.focus();\n"];
+    [jsCode appendString:@"    editingEl.focus({ preventScroll: true });\n"];
     [jsCode appendString:@"    var range = document.createRange();\n"];
     [jsCode appendString:@"    range.selectNodeContents(editingEl);\n"];
     [jsCode appendString:@"    range.collapse(false);\n"];
     [jsCode appendString:@"    var sel = window.getSelection();\n"];
     [jsCode appendString:@"    sel.removeAllRanges();\n"];
     [jsCode appendString:@"    sel.addRange(range);\n"];
+    [jsCode appendString:@"    if (initialScroll < 0) editingEl.scrollIntoView({ block: 'nearest', behavior: 'instant' });\n"];
     [jsCode appendString:@"  }\n"];
     // Click handlers for non-editing groups
     [jsCode appendString:@"  document.querySelectorAll('.group:not(.editing)').forEach(function(el) {\n"];
@@ -759,10 +760,10 @@
         // Make WebView first responder to enable keyboard
         [self.webView becomeFirstResponder];
 
-        // Focus the editing element
+        // Focus the editing element without scrolling
         [self.webView evaluateJavaScript:
             @"var editingEl = document.querySelector('.group.editing');"
-            "if (editingEl) { editingEl.focus(); }"
+            "if (editingEl) { editingEl.focus({ preventScroll: true }); }"
             completionHandler:nil];
     }
 }
