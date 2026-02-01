@@ -5,6 +5,133 @@
 //  Created by Stefan Bethge on 12.12.14.
 //
 //
+//  ============================================================================
+//  MARKDOWN EDITOR WITH INLINE WYSIWYG EDITING
+//  ============================================================================
+//
+//  This controller provides two editing modes for text files:
+//  1. Traditional edit mode (UITextView) - for plain text and full-document editing
+//  2. Inline WYSIWYG mode (WKWebView) - for markdown files with live preview
+//
+//  ============================================================================
+//  ARCHITECTURE OVERVIEW
+//  ============================================================================
+//
+//  The inline editor uses a hybrid approach:
+//  - Content is stored in a hidden UITextView (textEditView) as the source of truth
+//  - A WKWebView renders the markdown preview and handles inline editing
+//  - JavaScript handles user interactions and communicates via WKScriptMessageHandler
+//  - Native code updates the model and triggers DOM updates
+//
+//  Data flow:
+//    User taps line -> JS sends lineSelected -> Native updates state -> JS updates DOM
+//    User types     -> JS sends lineChanged  -> Native updates textEditView
+//    User saves     -> Native reads textEditView -> Sends to server
+//
+//  ============================================================================
+//  LINE GROUPING SYSTEM
+//  ============================================================================
+//
+//  Markdown constructs that span multiple lines are grouped together:
+//  - Single lines: Each line is its own group (most common)
+//  - Code blocks: Lines between ``` or ~~~ fences form one group
+//  - Tables: Header + separator + data rows form one group
+//
+//  When editing a group, all lines in the group become editable together.
+//  This ensures code blocks and tables remain valid during editing.
+//
+//  See: -identifyLineGroups: and -findGroupForLine:inGroups:
+//
+//  ============================================================================
+//  KEYBOARD MANAGEMENT (CRITICAL)
+//  ============================================================================
+//
+//  Keeping the keyboard open while switching lines required several tricks:
+//
+//  1. IN-PLACE DOM UPDATES: Instead of reloading the page (which dismisses
+//     the keyboard), we update the DOM directly via JavaScript:
+//     - switchFromGroup:to:newEnd: - switches editing between lines
+//     - insertNewLineAtLine:beforeCursor:afterCursor: - handles Enter key
+//     - mergeLineWithPrevious:currentContent:preserveScroll: - handles Backspace
+//
+//  2. TOUCHSTART WITH PREVENTDEFAULT: Using 'click' events causes a brief
+//     focus loss before the handler runs. Using 'touchstart' with
+//     e.preventDefault() intercepts the touch before focus can shift.
+//     See: Group element event handlers in -renderMarkdownToWebViewPreservingScroll:
+//
+//  3. HANDLER DEDUPLICATION: When switching lines in-place, we dynamically
+//     add event handlers. To prevent duplicates (which caused multiple
+//     newlines on Enter), we track handlers with data-hasClickHandler and
+//     data-hasEditHandlers attributes.
+//
+//  4. BECAMEFIRSTRESPONDER: After DOM updates, we call [webView becomeFirstResponder]
+//     to ensure the WebView maintains keyboard focus.
+//
+//  ============================================================================
+//  DEBOUNCED SAVING
+//  ============================================================================
+//
+//  Changes are auto-saved after 5 seconds of inactivity:
+//  - scheduleSave: Resets the 5-second timer on each change
+//  - performScheduledSave: Executes the save when timer fires
+//  - saveImmediatelyIfNeeded: Flushes pending saves (used on navigation)
+//
+//  A UIActivityIndicatorView shows in the navigation bar during saves.
+//
+//  ============================================================================
+//  NATIVE FORMAT TOOLBAR
+//  ============================================================================
+//
+//  A UIToolbar appears at the top when editing, with formatting buttons:
+//  - Bold (**), Italic (*), Strikethrough (~~) - shown only when text selected
+//  - Indent/Outdent (using tabs for Obsidian compatibility)
+//  - Done button to finish editing
+//
+//  Selection state is tracked via 'selectionchange' events from JavaScript.
+//
+//  ============================================================================
+//  CANCEL VS SAVE BEHAVIOR
+//  ============================================================================
+//
+//  - Inline editing: Back button saves changes and navigates back
+//  - Traditional edit mode: Back button shows "Cancel", restores original content
+//  - Original content is stored in _originalContent when editing begins
+//
+//  ============================================================================
+//  DISABLING AUTO-FORMATTING
+//  ============================================================================
+//
+//  To get raw keyboard input without smart quotes, autocorrect, etc.:
+//  - HTML attributes: autocorrect='off' autocapitalize='off' spellcheck='false'
+//  - CSS: -webkit-user-modify: read-write-plaintext-only (in .editing class)
+//  - SSWebView subclass overrides canPerformAction:withSender: to hide
+//    formatting options from the cut/copy/paste menu
+//
+//  ============================================================================
+//  MARKDOWN RENDERING
+//  ============================================================================
+//
+//  Uses cmark-gfm (GitHub Flavored Markdown) C library for parsing:
+//  - Tables, strikethrough, task lists, autolinks extensions enabled
+//  - Nested list indentation is preprocessed to work around cmark quirks
+//  - Checkboxes are made interactive via JavaScript click handlers
+//
+//  See: -renderMarkdownToHTML: and -renderMarkdownLineToHTML:
+//
+//  ============================================================================
+//  JAVASCRIPT MESSAGE HANDLERS
+//  ============================================================================
+//
+//  Communication from JS to native via WKScriptMessageHandler:
+//  - checkboxToggle: Task list checkbox was toggled
+//  - lineSelected: User tapped a line to edit it
+//  - lineChanged: Content of editing line changed (for live model updates)
+//  - lineEditingDone: User finished editing (Escape, tap outside, Done button)
+//  - lineEnterPressed: Enter key pressed (insert new line)
+//  - lineBackspaceAtStart: Backspace at start of line (merge with previous)
+//  - selectionChanged: Text selection changed (show/hide format buttons)
+//
+//  ============================================================================
 
 #import "FileEditController.h"
 #import "SSFile.h"
@@ -684,20 +811,22 @@
     [jsCode appendString:@"    sel.addRange(range);\n"];
     [jsCode appendString:@"    if (initialScroll < 0) editingEl.scrollIntoView({ block: 'nearest', behavior: 'instant' });\n"];
     [jsCode appendString:@"  }\n"];
-    // Click handlers for non-editing groups
+    // Click handlers for non-editing groups (use touchstart to prevent focus shift)
     [jsCode appendString:@"  document.querySelectorAll('.group:not(.editing)').forEach(function(el) {\n"];
-    [jsCode appendString:@"    el.addEventListener('click', function(e) {\n"];
+    [jsCode appendString:@"    el.addEventListener('touchstart', function(e) {\n"];
     [jsCode appendString:@"      if (e.target.type === 'checkbox') return;\n"];
+    [jsCode appendString:@"      if (editingStart >= 0) e.preventDefault();\n"];  // Prevent focus shift only when editing
     [jsCode appendString:@"      var start = parseInt(this.dataset.start);\n"];
     [jsCode appendString:@"      var end = parseInt(this.dataset.end);\n"];
     [jsCode appendString:@"      var currentContent = '';\n"];
     [jsCode appendString:@"      var currentEl = document.querySelector('.group.editing');\n"];
     [jsCode appendString:@"      if (currentEl) { currentContent = currentEl.innerText; }\n"];
     [jsCode appendString:@"      webkit.messageHandlers.lineSelected.postMessage({start: start, end: end, scrollY: window.scrollY, currentContent: currentContent, currentStart: editingStart, currentEnd: editingEnd});\n"];
-    [jsCode appendString:@"    });\n"];
+    [jsCode appendString:@"    }, {passive: false});\n"];
     [jsCode appendString:@"  });\n"];
     // Editing group event handlers
     [jsCode appendString:@"  if (editingEl) {\n"];
+    [jsCode appendString:@"    editingEl.dataset.hasEditHandlers = 'true';\n"];
     [jsCode appendString:@"    editingEl.addEventListener('input', function(e) {\n"];
     [jsCode appendString:@"      webkit.messageHandlers.lineChanged.postMessage({start: editingStart, end: editingEnd, content: this.innerText});\n"];
     [jsCode appendString:@"    });\n"];
@@ -842,10 +971,19 @@
         NSInteger currentEnd = [message.body[@"currentEnd"] integerValue];
 
         // Save current content if switching from an editing state
-        if (_editingGroupStart >= 0 && currentContent) {
+        BOOL wasEditing = (_editingGroupStart >= 0);
+        NSInteger oldStart = _editingGroupStart;
+        if (wasEditing && currentContent) {
             [self updateGroupFrom:currentStart to:currentEnd withContent:currentContent];
         }
-        [self startEditingGroupFrom:start to:end preserveScroll:scrollY];
+
+        // Use lightweight switch if already editing (keeps keyboard open)
+        if (wasEditing) {
+            [self switchFromGroup:oldStart to:start newEnd:end];
+            [self scheduleSave];
+        } else {
+            [self startEditingGroupFrom:start to:end preserveScroll:scrollY];
+        }
     }
     else if ([message.name isEqualToString:@"lineChanged"]) {
         NSInteger start = [message.body[@"start"] integerValue];
@@ -898,6 +1036,150 @@
     [UIView setAnimationsEnabled:NO];
     _animationsDisabledForNavigation = YES;
     [self renderMarkdownToWebViewPreservingScroll:scrollY];
+}
+
+// Switch from one editing group to another without reloading the page (keeps keyboard open)
+- (void)switchFromGroup:(NSInteger)oldStart to:(NSInteger)newStart newEnd:(NSInteger)newEnd {
+    NSString *markdown = self.textEditView.text;
+    NSArray *lines = [markdown componentsSeparatedByString:@"\n"];
+
+    // Get raw markdown content for the new group to edit
+    NSMutableString *newGroupRaw = [NSMutableString string];
+    for (NSInteger i = newStart; i <= newEnd && i < (NSInteger)lines.count; i++) {
+        if (i > newStart) [newGroupRaw appendString:@"\n"];
+        [newGroupRaw appendString:lines[i]];
+    }
+
+    // Get rendered HTML for the old group (now just a single line since we saved it)
+    NSString *oldLine = (oldStart < (NSInteger)lines.count) ? lines[oldStart] : @"";
+    NSInteger indentLevel = [self indentLevelForLine:oldLine];
+    NSString *trimmedLine = [oldLine stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+    NSString *oldGroupHTML;
+    if (trimmedLine.length == 0) {
+        oldGroupHTML = @"&nbsp;";
+    } else {
+        oldGroupHTML = [self renderMarkdownLineToHTML:trimmedLine];
+        // Remove wrapping <p> tags for single lines
+        if ([oldGroupHTML hasPrefix:@"<p>"] && [oldGroupHTML hasSuffix:@"</p>\n"]) {
+            oldGroupHTML = [oldGroupHTML substringWithRange:NSMakeRange(3, oldGroupHTML.length - 8)];
+        }
+    }
+
+    // Update state
+    _editingGroupStart = newStart;
+    _editingGroupEnd = newEnd;
+
+    // Escape strings for JavaScript
+    NSString *escapedOldHTML = [self escapeForJavaScriptString:oldGroupHTML];
+    NSString *escapedNewRaw = [self escapeForJavaScriptString:[self escapeHTMLEntities:newGroupRaw]];
+
+    // Build JavaScript to switch groups in-place
+    NSString *js = [NSString stringWithFormat:
+        @"(function() {"
+        "  var oldEl = document.querySelector('.group.editing');"
+        "  var newEl = document.querySelector('.group[data-start=\"%ld\"]');"
+        "  if (oldEl && newEl) {"
+        // Revert old element to preview state
+        "    oldEl.classList.remove('editing');"
+        "    oldEl.removeAttribute('contenteditable');"
+        "    oldEl.removeAttribute('autocorrect');"
+        "    oldEl.removeAttribute('autocapitalize');"
+        "    oldEl.removeAttribute('spellcheck');"
+        "    oldEl.removeAttribute('autocomplete');"
+        "    oldEl.innerHTML = '%@';"
+        "    oldEl.style.marginLeft = '%ldpx';"
+        // Add touch handler to old element only if it doesn't have one
+        "    if (!oldEl.dataset.hasClickHandler) {"
+        "      oldEl.dataset.hasClickHandler = 'true';"
+        "      oldEl.addEventListener('touchstart', function(e) {"
+        "        if (e.target.type === 'checkbox') return;"
+        "        if (editingStart >= 0) e.preventDefault();"
+        "        var start = parseInt(this.dataset.start);"
+        "        var end = parseInt(this.dataset.end);"
+        "        var currentContent = '';"
+        "        var currentEl = document.querySelector('.group.editing');"
+        "        if (currentEl) { currentContent = currentEl.innerText; }"
+        "        webkit.messageHandlers.lineSelected.postMessage({start: start, end: end, scrollY: window.scrollY, currentContent: currentContent, currentStart: editingStart, currentEnd: editingEnd});"
+        "      }, {passive: false});"
+        "    }"
+        // Set up new element as editable
+        "    newEl.classList.add('editing');"
+        "    newEl.setAttribute('contenteditable', 'true');"
+        "    newEl.setAttribute('autocorrect', 'off');"
+        "    newEl.setAttribute('autocapitalize', 'off');"
+        "    newEl.setAttribute('spellcheck', 'false');"
+        "    newEl.setAttribute('autocomplete', 'off');"
+        "    newEl.innerHTML = '%@'.replace(/\\n/g, '<br>');"
+        "    newEl.style.marginLeft = '';"
+        // Update global tracking variables
+        "    editingStart = %ld;"
+        "    editingEnd = %ld;"
+        // Add input and keydown handlers only if not already attached
+        "    if (!newEl.dataset.hasEditHandlers) {"
+        "      newEl.dataset.hasEditHandlers = 'true';"
+        "      newEl.addEventListener('input', function(e) {"
+        "        webkit.messageHandlers.lineChanged.postMessage({start: editingStart, end: editingEnd, content: this.innerText});"
+        "      });"
+        "      newEl.addEventListener('keydown', function(e) {"
+        "        var isSingleLine = (editingStart === editingEnd);"
+        "        if (e.key === 'Enter' && !e.shiftKey && isSingleLine) {"
+        "          e.preventDefault();"
+        "          var sel = window.getSelection();"
+        "          var range = sel.getRangeAt(0);"
+        "          var preRange = document.createRange();"
+        "          preRange.setStart(this, 0);"
+        "          preRange.setEnd(range.startContainer, range.startOffset);"
+        "          var beforeCursor = preRange.toString();"
+        "          var afterCursor = this.innerText.substring(beforeCursor.length);"
+        "          webkit.messageHandlers.lineEnterPressed.postMessage({start: editingStart, beforeCursor: beforeCursor, afterCursor: afterCursor});"
+        "        } else if (e.key === 'Escape') {"
+        "          e.preventDefault();"
+        "          webkit.messageHandlers.lineEditingDone.postMessage({start: editingStart, end: editingEnd, content: this.innerText, direction: 0, scrollY: window.scrollY});"
+        "        } else if (e.key === 'Backspace' && isSingleLine) {"
+        "          var sel = window.getSelection();"
+        "          var range = sel.getRangeAt(0);"
+        "          var preRange = document.createRange();"
+        "          preRange.setStart(this, 0);"
+        "          preRange.setEnd(range.startContainer, range.startOffset);"
+        "          var cursorPos = preRange.toString().length;"
+        "          if (cursorPos === 0 && editingStart > 0) {"
+        "            e.preventDefault();"
+        "            webkit.messageHandlers.lineBackspaceAtStart.postMessage({start: editingStart, content: this.innerText, scrollY: window.scrollY});"
+        "          }"
+        "        }"
+        "      });"
+        "    }"
+        // Focus and position cursor at end
+        "    newEl.focus({ preventScroll: true });"
+        "    var range = document.createRange();"
+        "    range.selectNodeContents(newEl);"
+        "    range.collapse(false);"
+        "    var sel = window.getSelection();"
+        "    sel.removeAllRanges();"
+        "    sel.addRange(range);"
+        "  }"
+        "})();",
+        (long)newStart,
+        escapedOldHTML,
+        (long)(indentLevel * 20),
+        escapedNewRaw,
+        (long)newStart,
+        (long)newEnd];
+
+    // Ensure webview stays first responder
+    [self.webView becomeFirstResponder];
+    [self.webView evaluateJavaScript:js completionHandler:nil];
+}
+
+// Escape a string for use inside JavaScript single quotes
+- (NSString *)escapeForJavaScriptString:(NSString *)string {
+    NSMutableString *escaped = [string mutableCopy];
+    [escaped replaceOccurrencesOfString:@"\\" withString:@"\\\\" options:0 range:NSMakeRange(0, escaped.length)];
+    [escaped replaceOccurrencesOfString:@"'" withString:@"\\'" options:0 range:NSMakeRange(0, escaped.length)];
+    [escaped replaceOccurrencesOfString:@"\n" withString:@"\\n" options:0 range:NSMakeRange(0, escaped.length)];
+    [escaped replaceOccurrencesOfString:@"\r" withString:@"\\r" options:0 range:NSMakeRange(0, escaped.length)];
+    return escaped;
 }
 
 - (void)updateGroupFrom:(NSInteger)start to:(NSInteger)end withContent:(NSString *)content {
@@ -970,16 +1252,119 @@
         self.textEditView.text = newMarkdown;
         fileChanged = YES;
 
-        // Start editing the new line (as a single-line group)
+        // Update editing state to new line
         _editingGroupStart = lineIndex + 1;
         _editingGroupEnd = lineIndex + 1;
 
-        // Schedule save and re-render (disable animations to prevent keyboard flicker)
-        // Will be re-enabled in webView:didFinishNavigation:
+        // Schedule save
         [self scheduleSave];
-        [UIView setAnimationsEnabled:NO];
-        _animationsDisabledForNavigation = YES;
-        [self renderMarkdownToWebView];
+
+        // Do in-place DOM update to keep keyboard open
+        NSString *escapedBefore = [self escapeForJavaScriptString:[self escapeHTMLEntities:beforeCursor]];
+        NSString *escapedAfter = [self escapeForJavaScriptString:[self escapeHTMLEntities:afterCursor]];
+
+        NSString *js = [NSString stringWithFormat:
+            @"(function() {"
+            "  var editingEl = document.querySelector('.group.editing');"
+            "  if (!editingEl) return;"
+            // Update current element to beforeCursor content (no longer editing)
+            "  editingEl.classList.remove('editing');"
+            "  editingEl.removeAttribute('contenteditable');"
+            "  editingEl.innerHTML = '%@' || '&nbsp;';"
+            "  if (!editingEl.innerHTML || editingEl.innerHTML === '') editingEl.innerHTML = '&nbsp;';"
+            // Create new element for the new line
+            "  var newEl = document.createElement('div');"
+            "  newEl.className = 'group single editing';"
+            "  newEl.dataset.start = '%ld';"
+            "  newEl.dataset.end = '%ld';"
+            "  newEl.dataset.type = 'single';"
+            "  newEl.setAttribute('contenteditable', 'true');"
+            "  newEl.setAttribute('autocorrect', 'off');"
+            "  newEl.setAttribute('autocapitalize', 'off');"
+            "  newEl.setAttribute('spellcheck', 'false');"
+            "  newEl.setAttribute('autocomplete', 'off');"
+            "  newEl.innerHTML = '%@' || '&nbsp;';"
+            "  if (!newEl.innerHTML || newEl.innerHTML === '') newEl.innerHTML = '';"
+            // Insert after current element
+            "  editingEl.parentNode.insertBefore(newEl, editingEl.nextSibling);"
+            // Update data-start for all subsequent elements
+            "  var sibling = newEl.nextSibling;"
+            "  while (sibling) {"
+            "    if (sibling.dataset && sibling.dataset.start) {"
+            "      sibling.dataset.start = parseInt(sibling.dataset.start) + 1;"
+            "      sibling.dataset.end = parseInt(sibling.dataset.end) + 1;"
+            "    }"
+            "    sibling = sibling.nextSibling;"
+            "  }"
+            // Update global tracking
+            "  editingStart = %ld;"
+            "  editingEnd = %ld;"
+            // Add handlers to new element
+            "  newEl.dataset.hasEditHandlers = 'true';"
+            "  newEl.addEventListener('input', function(e) {"
+            "    webkit.messageHandlers.lineChanged.postMessage({start: editingStart, end: editingEnd, content: this.innerText});"
+            "  });"
+            "  newEl.addEventListener('keydown', function(e) {"
+            "    var isSingleLine = (editingStart === editingEnd);"
+            "    if (e.key === 'Enter' && !e.shiftKey && isSingleLine) {"
+            "      e.preventDefault();"
+            "      var sel = window.getSelection();"
+            "      var range = sel.getRangeAt(0);"
+            "      var preRange = document.createRange();"
+            "      preRange.setStart(this, 0);"
+            "      preRange.setEnd(range.startContainer, range.startOffset);"
+            "      var beforeCursor = preRange.toString();"
+            "      var afterCursor = this.innerText.substring(beforeCursor.length);"
+            "      webkit.messageHandlers.lineEnterPressed.postMessage({start: editingStart, beforeCursor: beforeCursor, afterCursor: afterCursor});"
+            "    } else if (e.key === 'Escape') {"
+            "      e.preventDefault();"
+            "      webkit.messageHandlers.lineEditingDone.postMessage({start: editingStart, end: editingEnd, content: this.innerText, direction: 0, scrollY: window.scrollY});"
+            "    } else if (e.key === 'Backspace' && isSingleLine) {"
+            "      var sel = window.getSelection();"
+            "      var range = sel.getRangeAt(0);"
+            "      var preRange = document.createRange();"
+            "      preRange.setStart(this, 0);"
+            "      preRange.setEnd(range.startContainer, range.startOffset);"
+            "      var cursorPos = preRange.toString().length;"
+            "      if (cursorPos === 0 && editingStart > 0) {"
+            "        e.preventDefault();"
+            "        webkit.messageHandlers.lineBackspaceAtStart.postMessage({start: editingStart, content: this.innerText, scrollY: window.scrollY});"
+            "      }"
+            "    }"
+            "  });"
+            // Add touch handler to old element
+            "  if (!editingEl.dataset.hasClickHandler) {"
+            "    editingEl.dataset.hasClickHandler = 'true';"
+            "    editingEl.addEventListener('touchstart', function(e) {"
+            "      if (e.target.type === 'checkbox') return;"
+            "      if (editingStart >= 0) e.preventDefault();"
+            "      var start = parseInt(this.dataset.start);"
+            "      var end = parseInt(this.dataset.end);"
+            "      var currentContent = '';"
+            "      var currentEl = document.querySelector('.group.editing');"
+            "      if (currentEl) { currentContent = currentEl.innerText; }"
+            "      webkit.messageHandlers.lineSelected.postMessage({start: start, end: end, scrollY: window.scrollY, currentContent: currentContent, currentStart: editingStart, currentEnd: editingEnd});"
+            "    }, {passive: false});"
+            "  }"
+            // Focus new element with cursor at start
+            "  newEl.focus({ preventScroll: true });"
+            "  var range = document.createRange();"
+            "  range.selectNodeContents(newEl);"
+            "  range.collapse(true);"
+            "  var sel = window.getSelection();"
+            "  sel.removeAllRanges();"
+            "  sel.addRange(range);"
+            "  newEl.scrollIntoView({ block: 'nearest', behavior: 'instant' });"
+            "})();",
+            escapedBefore,
+            (long)(lineIndex + 1),
+            (long)(lineIndex + 1),
+            escapedAfter,
+            (long)(lineIndex + 1),
+            (long)(lineIndex + 1)];
+
+        [self.webView becomeFirstResponder];
+        [self.webView evaluateJavaScript:js completionHandler:nil];
     }
 }
 
@@ -992,6 +1377,7 @@
     if (lineIndex < (NSInteger)lines.count) {
         // Get previous line content
         NSString *previousContent = lines[lineIndex - 1];
+        NSInteger cursorPosition = previousContent.length; // Cursor should be at end of previous content
 
         // Merge: previous line + current line content
         NSString *mergedContent = [previousContent stringByAppendingString:currentContent];
@@ -1006,16 +1392,100 @@
         self.textEditView.text = newMarkdown;
         fileChanged = YES;
 
-        // Start editing the previous line (as a single-line group)
+        // Update editing state to previous line
         _editingGroupStart = lineIndex - 1;
         _editingGroupEnd = lineIndex - 1;
 
-        // Schedule save and re-render (disable animations to prevent keyboard flicker)
-        // Will be re-enabled in webView:didFinishNavigation:
+        // Schedule save
         [self scheduleSave];
-        [UIView setAnimationsEnabled:NO];
-        _animationsDisabledForNavigation = YES;
-        [self renderMarkdownToWebViewPreservingScroll:scrollY];
+
+        // Do in-place DOM update to keep keyboard open
+        NSString *escapedMerged = [self escapeForJavaScriptString:[self escapeHTMLEntities:mergedContent]];
+
+        NSString *js = [NSString stringWithFormat:
+            @"(function() {"
+            "  var editingEl = document.querySelector('.group.editing');"
+            "  var prevEl = document.querySelector('.group[data-start=\"%ld\"]');"
+            "  if (!editingEl || !prevEl) return;"
+            // Remove current editing element
+            "  editingEl.parentNode.removeChild(editingEl);"
+            // Set up previous element as editable
+            "  prevEl.classList.add('editing');"
+            "  prevEl.setAttribute('contenteditable', 'true');"
+            "  prevEl.setAttribute('autocorrect', 'off');"
+            "  prevEl.setAttribute('autocapitalize', 'off');"
+            "  prevEl.setAttribute('spellcheck', 'false');"
+            "  prevEl.setAttribute('autocomplete', 'off');"
+            "  prevEl.innerHTML = '%@';"
+            "  prevEl.style.marginLeft = '';"
+            // Update data-start for all subsequent elements
+            "  var sibling = prevEl.nextSibling;"
+            "  while (sibling) {"
+            "    if (sibling.dataset && sibling.dataset.start) {"
+            "      sibling.dataset.start = parseInt(sibling.dataset.start) - 1;"
+            "      sibling.dataset.end = parseInt(sibling.dataset.end) - 1;"
+            "    }"
+            "    sibling = sibling.nextSibling;"
+            "  }"
+            // Update global tracking
+            "  editingStart = %ld;"
+            "  editingEnd = %ld;"
+            // Add handlers if needed
+            "  if (!prevEl.dataset.hasEditHandlers) {"
+            "    prevEl.dataset.hasEditHandlers = 'true';"
+            "    prevEl.addEventListener('input', function(e) {"
+            "      webkit.messageHandlers.lineChanged.postMessage({start: editingStart, end: editingEnd, content: this.innerText});"
+            "    });"
+            "    prevEl.addEventListener('keydown', function(e) {"
+            "      var isSingleLine = (editingStart === editingEnd);"
+            "      if (e.key === 'Enter' && !e.shiftKey && isSingleLine) {"
+            "        e.preventDefault();"
+            "        var sel = window.getSelection();"
+            "        var range = sel.getRangeAt(0);"
+            "        var preRange = document.createRange();"
+            "        preRange.setStart(this, 0);"
+            "        preRange.setEnd(range.startContainer, range.startOffset);"
+            "        var beforeCursor = preRange.toString();"
+            "        var afterCursor = this.innerText.substring(beforeCursor.length);"
+            "        webkit.messageHandlers.lineEnterPressed.postMessage({start: editingStart, beforeCursor: beforeCursor, afterCursor: afterCursor});"
+            "      } else if (e.key === 'Escape') {"
+            "        e.preventDefault();"
+            "        webkit.messageHandlers.lineEditingDone.postMessage({start: editingStart, end: editingEnd, content: this.innerText, direction: 0, scrollY: window.scrollY});"
+            "      } else if (e.key === 'Backspace' && isSingleLine) {"
+            "        var sel = window.getSelection();"
+            "        var range = sel.getRangeAt(0);"
+            "        var preRange = document.createRange();"
+            "        preRange.setStart(this, 0);"
+            "        preRange.setEnd(range.startContainer, range.startOffset);"
+            "        var cursorPos = preRange.toString().length;"
+            "        if (cursorPos === 0 && editingStart > 0) {"
+            "          e.preventDefault();"
+            "          webkit.messageHandlers.lineBackspaceAtStart.postMessage({start: editingStart, content: this.innerText, scrollY: window.scrollY});"
+            "        }"
+            "      }"
+            "    });"
+            "  }"
+            // Focus and position cursor at merge point
+            "  prevEl.focus({ preventScroll: true });"
+            "  var cursorPos = %ld;"
+            "  var textNode = prevEl.firstChild;"
+            "  if (textNode && textNode.nodeType === 3) {"
+            "    var range = document.createRange();"
+            "    range.setStart(textNode, Math.min(cursorPos, textNode.length));"
+            "    range.collapse(true);"
+            "    var sel = window.getSelection();"
+            "    sel.removeAllRanges();"
+            "    sel.addRange(range);"
+            "  }"
+            "})();",
+            (long)(lineIndex - 1),
+            escapedMerged,
+            (long)(lineIndex - 1),
+            (long)(lineIndex - 1),
+            (long)cursorPosition];
+
+        [self.webView becomeFirstResponder];
+        [self.webView evaluateJavaScript:js completionHandler:nil];
     }
 }
 
