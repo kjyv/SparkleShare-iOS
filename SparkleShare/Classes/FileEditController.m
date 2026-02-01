@@ -49,6 +49,7 @@
         [contentController addScriptMessageHandler:self name:@"lineEditingDone"];
         [contentController addScriptMessageHandler:self name:@"lineEnterPressed"];
         [contentController addScriptMessageHandler:self name:@"lineBackspaceAtStart"];
+        [contentController addScriptMessageHandler:self name:@"selectionChanged"];
         
         WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
         config.userContentController = contentController;
@@ -90,9 +91,9 @@
 }
 
 - (void)handleBackButton {
-    // If inline editing is active, cancel and restore original content
+    // If inline editing is active, save changes and navigate back
     if (_editingGroupStart >= 0) {
-        [self cancelEditing];
+        [self finishInlineEditingAndGoBack];
         return;
     }
 
@@ -104,6 +105,29 @@
 
     // Otherwise, navigate back to parent
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)finishInlineEditingAndGoBack {
+    // Save any pending changes from the current editing session
+    [self.webView evaluateJavaScript:
+        @"var editingEl = document.querySelector('.group.editing');"
+        "if (editingEl) { editingEl.innerText; } else { null; }"
+        completionHandler:^(id result, NSError *error) {
+            if (result && [result isKindOfClass:[NSString class]]) {
+                [self updateGroupFrom:self->_editingGroupStart to:self->_editingGroupEnd withContent:result];
+            }
+
+            // Clear editing state
+            self->_editingGroupStart = -1;
+            self->_editingGroupEnd = -1;
+            self->_originalContent = nil;
+
+            // Save immediately
+            [self saveImmediatelyIfNeeded];
+
+            // Navigate back
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
 }
 
 - (void)cancelEditing {
@@ -142,10 +166,9 @@
 }
 
 - (void)updateBackButton {
-    BOOL isEditing = (_editingGroupStart >= 0) || self.editing;
-
-    if (isEditing) {
-        // Show Cancel button when editing
+    // Only show Cancel for traditional edit mode (Edit button), not for inline line editing
+    if (self.editing) {
+        // Show Cancel button when in traditional edit mode
         NSBundle *uiKitBundle = [NSBundle bundleForClass:[UIButton class]];
         NSString *cancelTitle = [uiKitBundle localizedStringForKey:@"Cancel" value:@"Cancel" table:nil];
         UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:cancelTitle
@@ -154,7 +177,7 @@
                                                                         action:@selector(handleBackButton)];
         self.navigationItem.leftBarButtonItem = cancelButton;
     } else {
-        // Show back button with chevron when not editing
+        // Show back button with chevron (including during inline line editing)
         UIImage *chevron = [UIImage systemImageNamed:@"chevron.left"];
         UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:chevron
                                                                        style:UIBarButtonItemStylePlain
@@ -170,22 +193,38 @@
     _formatToolbar = [[UIToolbar alloc] init];
     _formatToolbar.translatesAutoresizingMaskIntoConstraints = NO;
 
-    // Create toolbar items
-    UIBarButtonItem *boldButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"bold"]
-                                                                   style:UIBarButtonItemStylePlain
-                                                                  target:self
-                                                                  action:@selector(formatBold)];
+    // Create formatting buttons (stored as ivars for show/hide based on selection)
+    _boldButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"bold"]
+                                                   style:UIBarButtonItemStylePlain
+                                                  target:self
+                                                  action:@selector(formatBold)];
 
-    UIBarButtonItem *italicButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"italic"]
-                                                                     style:UIBarButtonItemStylePlain
-                                                                    target:self
-                                                                    action:@selector(formatItalic)];
+    _italicButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"italic"]
+                                                     style:UIBarButtonItemStylePlain
+                                                    target:self
+                                                    action:@selector(formatItalic)];
 
-    UIBarButtonItem *strikeButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"strikethrough"]
-                                                                     style:UIBarButtonItemStylePlain
-                                                                    target:self
-                                                                    action:@selector(formatStrikethrough)];
+    _strikeButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"strikethrough"]
+                                                     style:UIBarButtonItemStylePlain
+                                                    target:self
+                                                    action:@selector(formatStrikethrough)];
 
+    _hasTextSelection = NO;
+    [self updateFormatToolbarItems];
+
+    [self.view addSubview:_formatToolbar];
+
+    // Position at top, initially hidden
+    [NSLayoutConstraint activateConstraints:@[
+        [_formatToolbar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
+        [_formatToolbar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+        [_formatToolbar.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor]
+    ]];
+
+    _formatToolbar.hidden = YES;
+}
+
+- (void)updateFormatToolbarItems {
     UIBarButtonItem *flexSpace1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 
     UIBarButtonItem *outdentButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"decrease.indent"]
@@ -204,21 +243,16 @@
                                                                                 target:self
                                                                                 action:@selector(formatDone)];
 
-    _formatToolbar.items = @[boldButton, italicButton, strikeButton, flexSpace1, outdentButton, indentButton, flexSpace2, doneButton];
-
-    [self.view addSubview:_formatToolbar];
-
-    // Position at bottom, initially hidden
-    [NSLayoutConstraint activateConstraints:@[
-        [_formatToolbar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
-        [_formatToolbar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
-        [_formatToolbar.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor]
-    ]];
-
-    _formatToolbar.hidden = YES;
+    if (_hasTextSelection) {
+        _formatToolbar.items = @[_boldButton, _italicButton, _strikeButton, flexSpace1, outdentButton, indentButton, flexSpace2, doneButton];
+    } else {
+        _formatToolbar.items = @[outdentButton, indentButton, flexSpace1, doneButton];
+    }
 }
 
 - (void)showFormatToolbar {
+    _hasTextSelection = NO;
+    [self updateFormatToolbarItems];
     _formatToolbar.hidden = NO;
 }
 
@@ -656,7 +690,10 @@
     [jsCode appendString:@"      if (e.target.type === 'checkbox') return;\n"];
     [jsCode appendString:@"      var start = parseInt(this.dataset.start);\n"];
     [jsCode appendString:@"      var end = parseInt(this.dataset.end);\n"];
-    [jsCode appendString:@"      webkit.messageHandlers.lineSelected.postMessage({start: start, end: end, scrollY: window.scrollY});\n"];
+    [jsCode appendString:@"      var currentContent = '';\n"];
+    [jsCode appendString:@"      var currentEl = document.querySelector('.group.editing');\n"];
+    [jsCode appendString:@"      if (currentEl) { currentContent = currentEl.innerText; }\n"];
+    [jsCode appendString:@"      webkit.messageHandlers.lineSelected.postMessage({start: start, end: end, scrollY: window.scrollY, currentContent: currentContent, currentStart: editingStart, currentEnd: editingEnd});\n"];
     [jsCode appendString:@"    });\n"];
     [jsCode appendString:@"  });\n"];
     // Editing group event handlers
@@ -694,6 +731,12 @@
     [jsCode appendString:@"      }\n"];
     [jsCode appendString:@"    });\n"];
     [jsCode appendString:@"  }\n"];
+    // Selection change detection for showing/hiding format buttons
+    [jsCode appendString:@"  document.addEventListener('selectionchange', function() {\n"];
+    [jsCode appendString:@"    var sel = window.getSelection();\n"];
+    [jsCode appendString:@"    var hasSelection = sel && sel.toString().length > 0;\n"];
+    [jsCode appendString:@"    webkit.messageHandlers.selectionChanged.postMessage({hasSelection: hasSelection});\n"];
+    [jsCode appendString:@"  });\n"];
     // Checkbox toggling
     [jsCode appendString:@"  document.querySelectorAll('input[type=\"checkbox\"]').forEach(function(cb, index) {\n"];
     [jsCode appendString:@"    cb.removeAttribute('disabled');\n"];
@@ -764,7 +807,19 @@
         [self.webView evaluateJavaScript:
             @"var editingEl = document.querySelector('.group.editing');"
             "if (editingEl) { editingEl.focus({ preventScroll: true }); }"
-            completionHandler:nil];
+            completionHandler:^(id result, NSError *error) {
+                // Re-enable animations after focus is restored
+                if (self->_animationsDisabledForNavigation) {
+                    self->_animationsDisabledForNavigation = NO;
+                    [UIView setAnimationsEnabled:YES];
+                }
+            }];
+    } else {
+        // Re-enable animations if they were disabled but we're not in editing mode
+        if (_animationsDisabledForNavigation) {
+            _animationsDisabledForNavigation = NO;
+            [UIView setAnimationsEnabled:YES];
+        }
     }
 }
 
@@ -782,6 +837,14 @@
         NSInteger start = [message.body[@"start"] integerValue];
         NSInteger end = [message.body[@"end"] integerValue];
         CGFloat scrollY = [message.body[@"scrollY"] floatValue];
+        NSString *currentContent = message.body[@"currentContent"];
+        NSInteger currentStart = [message.body[@"currentStart"] integerValue];
+        NSInteger currentEnd = [message.body[@"currentEnd"] integerValue];
+
+        // Save current content if switching from an editing state
+        if (_editingGroupStart >= 0 && currentContent) {
+            [self updateGroupFrom:currentStart to:currentEnd withContent:currentContent];
+        }
         [self startEditingGroupFrom:start to:end preserveScroll:scrollY];
     }
     else if ([message.name isEqualToString:@"lineChanged"]) {
@@ -810,6 +873,13 @@
         CGFloat scrollY = [message.body[@"scrollY"] floatValue];
         [self mergeLineWithPrevious:start currentContent:currentContent preserveScroll:scrollY];
     }
+    else if ([message.name isEqualToString:@"selectionChanged"]) {
+        BOOL hasSelection = [message.body[@"hasSelection"] boolValue];
+        if (hasSelection != _hasTextSelection) {
+            _hasTextSelection = hasSelection;
+            [self updateFormatToolbarItems];
+        }
+    }
 }
 
 - (void)startEditingGroupFrom:(NSInteger)start to:(NSInteger)end preserveScroll:(CGFloat)scrollY {
@@ -822,6 +892,11 @@
     _editingGroupEnd = end;
     [self showFormatToolbar];
     [self updateBackButton];
+
+    // Disable animations to prevent keyboard flicker during re-render
+    // Will be re-enabled in webView:didFinishNavigation:
+    [UIView setAnimationsEnabled:NO];
+    _animationsDisabledForNavigation = YES;
     [self renderMarkdownToWebViewPreservingScroll:scrollY];
 }
 
@@ -899,8 +974,11 @@
         _editingGroupStart = lineIndex + 1;
         _editingGroupEnd = lineIndex + 1;
 
-        // Schedule save and re-render
+        // Schedule save and re-render (disable animations to prevent keyboard flicker)
+        // Will be re-enabled in webView:didFinishNavigation:
         [self scheduleSave];
+        [UIView setAnimationsEnabled:NO];
+        _animationsDisabledForNavigation = YES;
         [self renderMarkdownToWebView];
     }
 }
@@ -932,8 +1010,11 @@
         _editingGroupStart = lineIndex - 1;
         _editingGroupEnd = lineIndex - 1;
 
-        // Schedule save and re-render
+        // Schedule save and re-render (disable animations to prevent keyboard flicker)
+        // Will be re-enabled in webView:didFinishNavigation:
         [self scheduleSave];
+        [UIView setAnimationsEnabled:NO];
+        _animationsDisabledForNavigation = YES;
         [self renderMarkdownToWebViewPreservingScroll:scrollY];
     }
 }
@@ -1169,6 +1250,11 @@
     // Flush any pending saves before dealloc
     [self saveImmediatelyIfNeeded];
 
+    // Ensure animations are re-enabled
+    if (_animationsDisabledForNavigation) {
+        [UIView setAnimationsEnabled:YES];
+    }
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.webView.configuration.userContentController removeScriptMessageHandlerForName:@"checkboxToggle"];
     [self.webView.configuration.userContentController removeScriptMessageHandlerForName:@"lineSelected"];
@@ -1176,6 +1262,7 @@
     [self.webView.configuration.userContentController removeScriptMessageHandlerForName:@"lineEditingDone"];
     [self.webView.configuration.userContentController removeScriptMessageHandlerForName:@"lineEnterPressed"];
     [self.webView.configuration.userContentController removeScriptMessageHandlerForName:@"lineBackspaceAtStart"];
+    [self.webView.configuration.userContentController removeScriptMessageHandlerForName:@"selectionChanged"];
 }
 
 // Helper to convert UIColor to rgba() string

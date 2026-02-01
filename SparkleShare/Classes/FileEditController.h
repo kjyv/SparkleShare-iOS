@@ -21,10 +21,15 @@
     NSInteger _editingGroupStart;  // Start line of editing group (-1 if not editing)
     NSInteger _editingGroupEnd;    // End line of editing group (inclusive)
     UIToolbar *_formatToolbar;
+    UIBarButtonItem *_boldButton;
+    UIBarButtonItem *_italicButton;
+    UIBarButtonItem *_strikeButton;
+    BOOL _hasTextSelection;        // Whether text is currently selected in editor
     NSTimer *_saveTimer;           // Debounced save timer
     BOOL _pendingSave;             // Whether there are unsaved changes
     NSString *_originalContent;    // Content before editing started (for cancel)
     UIActivityIndicatorView *_savingIndicator;  // Loading indicator for saving
+    BOOL _animationsDisabledForNavigation;  // Whether animations are disabled pending navigation
 };
 - (id)initWithFile: (SSFile *) file;
 
