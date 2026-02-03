@@ -72,7 +72,7 @@
 // //af500af126f8d?path=c%2Fd&hash=21efaca824f4705deeb9ef6025fd879c871a7117&name=d" --data "data=This is a nice test."
 - (void) saveContent: (NSString *) text {
     NSString* postString = [NSString stringWithFormat:@"data=%@", [text urlencode]];
-        
+
     [self sendPostRequestWithMethodAndData: @"putFile" data: postString success:
      ^(NSURLRequest * request, NSURLResponse * response, id responseObject) {
          [self.delegate fileContentSaved:self];

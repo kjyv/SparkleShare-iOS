@@ -409,7 +409,6 @@
 - (void) fileContentSavingFailed: (SSFile *) file error: (NSError *) error {
     [SVProgressHUD show];
     [SVProgressHUD dismissWithError:@"Saving file failed"];
-    NSLog(@"Error %@", [error localizedRecoverySuggestion]);
 }
 
 #pragma mark - RecentFilesViewDelegate

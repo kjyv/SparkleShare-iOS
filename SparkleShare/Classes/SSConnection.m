@@ -177,12 +177,12 @@
     [request setValue: authCode forHTTPHeaderField: @"X-SPARKLE-AUTH"];
     [request setHTTPMethod:@"POST"];
     [request addValue: @"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    
+
     NSData *encodedData = [data dataUsingEncoding:NSUTF8StringEncoding];
-    [request setHTTPBody: encodedData];    
+    [request setHTTPBody: encodedData];
 
     [request setTimeoutInterval:60];
-    
+
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
 
     // Allow self-signed certificates if enabled in settings
