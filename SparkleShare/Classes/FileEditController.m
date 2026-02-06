@@ -130,6 +130,12 @@
         return;
     }
 
+    // Save any unsaved changes before navigating back
+    if (fileChanged) {
+        [_file saveContent:self.textEditView.text];
+        fileChanged = NO;
+    }
+
     // Otherwise, navigate back to parent
     [self.navigationController popViewControllerAnimated:YES];
 }
