@@ -27,6 +27,9 @@ struct MarkdownTextEditor: UIViewRepresentable {
         textView.text = text
         textView.layer.cornerRadius = 4
         textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        textView.inputAccessoryView = Self.makeKeyboardToolbar(target: context.coordinator,
+                                                                action: #selector(Coordinator.dismissKeyboard))
+        context.coordinator.setTextView(textView)
 
         // Become first responder to show keyboard
         DispatchQueue.main.async {
@@ -46,12 +49,73 @@ struct MarkdownTextEditor: UIViewRepresentable {
         Coordinator(self)
     }
 
+    static func makeKeyboardToolbar(target: Any, action: Selector) -> UIView {
+        let container = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 36))
+        container.backgroundColor = .clear
+
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium)
+        let image = UIImage(systemName: "keyboard.chevron.compact.down", withConfiguration: config)
+
+        let button = UIButton(type: .system)
+        button.setImage(image, for: .normal)
+        button.addTarget(target, action: action, for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        container.addSubview(button)
+        NSLayoutConstraint.activate([
+            button.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -12),
+            button.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            button.widthAnchor.constraint(equalToConstant: 44),
+            button.heightAnchor.constraint(equalToConstant: 36)
+        ])
+
+        container.layer.zPosition = 9999
+        container.isHidden = true
+        return container
+    }
+
     class Coordinator: NSObject, UITextViewDelegate {
         var parent: MarkdownTextEditor
         var isEditing = false
+        private var keyboardObservers: [Any] = []
 
         init(_ parent: MarkdownTextEditor) {
             self.parent = parent
+            super.init()
+            let showObs = NotificationCenter.default.addObserver(
+                forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main
+            ) { [weak self] notification in
+                // Only show toolbar when software keyboard is present (not just prediction bar)
+                if let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+                   frame.height > 120 {
+                    self?.setToolbarHidden(false)
+                }
+            }
+            let hideObs = NotificationCenter.default.addObserver(
+                forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main
+            ) { [weak self] _ in
+                self?.setToolbarHidden(true)
+            }
+            keyboardObservers = [showObs, hideObs]
+        }
+
+        deinit {
+            keyboardObservers.forEach { NotificationCenter.default.removeObserver($0) }
+        }
+
+        private weak var textView: UITextView?
+
+        func setTextView(_ tv: UITextView) {
+            textView = tv
+        }
+
+        private func setToolbarHidden(_ hidden: Bool) {
+            textView?.inputAccessoryView?.isHidden = hidden
+        }
+
+        @objc func dismissKeyboard() {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                            to: nil, from: nil, for: nil)
         }
 
         func textViewDidBeginEditing(_ textView: UITextView) {

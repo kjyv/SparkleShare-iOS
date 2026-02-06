@@ -36,6 +36,7 @@ class MarkdownEditingContext: ObservableObject {
     var onDeleteEmptyLine: (Int) -> Void = { _ in }
     var onSplitEmptyLine: (Int, String, String) -> Void = { _, _, _ in }
     var onMergeEmptyLineWithPrevious: (Int, String) -> Void = { _, _ in }
+    var onRetainKeyboard: (() -> Void)?
 
     /// Update markdown content after a parse. Refreshes cached line data.
     func updateMarkdown(_ markdown: String, locations: [String: (start: Int, end: Int)]) {
@@ -56,6 +57,7 @@ class MarkdownEditingContext: ObservableObject {
 
     /// Start editing a node by ID (dismisses any current editing first)
     func startEditing(nodeId: String) {
+        if editingNodeId != nil { onRetainKeyboard?() }
         dismissEditing()
         if let loc = nodeLocations[nodeId] {
             editingText = extractLines(start: loc.start, end: loc.end)
@@ -65,6 +67,7 @@ class MarkdownEditingContext: ObservableObject {
 
     /// Start editing an empty line (dismisses any current editing first)
     func startEditingEmptyLine(_ lineNumber: Int) {
+        if editingNodeId != nil { onRetainKeyboard?() }
         dismissEditing()
         editingText = ""
         editingNodeId = "emptyline_\(lineNumber)"
@@ -106,6 +109,7 @@ struct MarkdownView: View {
             .frame(maxWidth: .infinity, alignment: .topLeading)
         }
         .background(Color(UIColor.systemBackground))
+        .scrollDismissesKeyboard(.interactively)
     }
 }
 
@@ -184,12 +188,14 @@ struct MarkdownNodeView: View {
                 onReturn: { before, after in
                     context.editingNodeId = nil
                     context.editingText = ""
+                    context.onRetainKeyboard?()
                     context.onInsertLineAfter(nodeId, loc.start, loc.end, before, after)
                 },
                 onBackspaceAtStart: {
                     let text = context.editingText
                     context.editingNodeId = nil
                     context.editingText = ""
+                    context.onRetainKeyboard?()
                     context.onMergeWithPrevious(nodeId, loc.start, loc.end, text)
                 },
                 onDismiss: {
@@ -345,17 +351,20 @@ struct MarkdownNodeView: View {
                 onReturn: { before, after in
                     context.editingNodeId = nil
                     context.editingText = ""
+                    context.onRetainKeyboard?()
                     context.onSplitEmptyLine(lineNumber, before, after)
                 },
                 onBackspaceAtStart: {
                     if context.editingText.isEmpty {
                         context.editingNodeId = nil
                         context.editingText = ""
+                        context.onRetainKeyboard?()
                         context.onDeleteEmptyLine(lineNumber)
                     } else {
                         let text = context.editingText
                         context.editingNodeId = nil
                         context.editingText = ""
+                        context.onRetainKeyboard?()
                         context.onMergeEmptyLineWithPrevious(lineNumber, text)
                     }
                 },

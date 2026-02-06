@@ -37,6 +37,11 @@ import UIKit
     // Editing state that persists across re-renders
     private var pendingEditingLineNumber: Int? = nil
 
+    // Hidden text field that holds first responder during editor transitions
+    // to prevent the keyboard from dismissing and re-appearing
+    private var keyboardAnchor: UITextField!
+    private var keyboardObservers: [Any] = []
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -49,8 +54,38 @@ import UIKit
 
     private func setupView() {
         backgroundColor = .systemBackground
+
+        // Create a tiny, invisible text field to hold keyboard focus during transitions
+        keyboardAnchor = UITextField(frame: CGRect(x: 0, y: 0, width: 1, height: 1))
+        keyboardAnchor.autocorrectionType = .default
+        keyboardAnchor.autocapitalizationType = .sentences
+        keyboardAnchor.alpha = 0.01
+        keyboardAnchor.inputAccessoryView = MarkdownTextEditor.makeKeyboardToolbar(
+            target: self, action: #selector(dismissKeyboard))
+        addSubview(keyboardAnchor)
+
+        let showObs = NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main
+        ) { [weak self] notification in
+            // Only show toolbar when software keyboard is present (not just prediction bar)
+            if let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+               frame.height > 120 {
+                self?.keyboardAnchor.inputAccessoryView?.isHidden = false
+            }
+        }
+        let hideObs = NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.keyboardAnchor.inputAccessoryView?.isHidden = true
+        }
+        keyboardObservers = [showObs, hideObs]
+
         setupCallbacks()
         createHostingController()
+    }
+
+    deinit {
+        keyboardObservers.forEach { NotificationCenter.default.removeObserver($0) }
     }
 
     @objc func updateWithMarkdown(_ markdown: String) {
@@ -66,6 +101,10 @@ import UIKit
     /// Clear any pending editing state
     @objc func clearPendingEditing() {
         self.pendingEditingLineNumber = nil
+    }
+
+    @objc private func dismissKeyboard() {
+        endEditing(true)
     }
 
     // MARK: - Setup
@@ -109,6 +148,19 @@ import UIKit
             guard let self = self else { return }
             self.delegate?.markdownView(self, didMergeEmptyLineWithPrevious: lineNumber,
                                        text: text)
+        }
+
+        context.onRetainKeyboard = { [weak self] in
+            guard let self = self else { return }
+            // Grab focus with the hidden anchor to keep keyboard visible
+            self.keyboardAnchor.becomeFirstResponder()
+            // Release after a short delay if no new editor has taken over
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                guard let self = self else { return }
+                if self.keyboardAnchor.isFirstResponder {
+                    self.keyboardAnchor.resignFirstResponder()
+                }
+            }
         }
     }
 

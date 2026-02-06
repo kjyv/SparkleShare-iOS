@@ -138,6 +138,9 @@
         return;
     }
 
+    // Dismiss keyboard immediately to avoid it lingering during transition
+    [self.view endEditing:YES];
+
     // Flush any pending debounced save and save explicitly before navigating back
     [_saveTimer invalidate];
     _saveTimer = nil;
