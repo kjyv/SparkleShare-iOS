@@ -155,6 +155,287 @@
     [self toggleCheckboxAtIndex:index toChecked:checked];
 }
 
+- (void)markdownView:(UIView *)view didFinishEditingAtStartLine:(NSInteger)startLine
+             endLine:(NSInteger)endLine newText:(NSString *)newText {
+    NSLog(@"DEBUG FINISH: didFinishEditingAtStartLine called - startLine=%ld, endLine=%ld", (long)startLine, (long)endLine);
+    NSLog(@"DEBUG FINISH: newText has %lu lines", (unsigned long)[[newText componentsSeparatedByString:@"\n"] count]);
+    [self replaceLines:startLine toLine:endLine withText:newText];
+    [_file saveContent:self.textEditView.text];
+    [self renderMarkdownToView];
+}
+
+- (void)markdownView:(UIView *)view didInsertLineAfterStartLine:(NSInteger)startLine
+             endLine:(NSInteger)endLine textBefore:(NSString *)textBefore textAfter:(NSString *)textAfter {
+    NSLog(@"DEBUG INSERT: didInsertLineAfterStartLine called - startLine=%ld, endLine=%ld", (long)startLine, (long)endLine);
+    NSLog(@"DEBUG INSERT: textBefore='%@', textAfter='%@'", textBefore, textAfter);
+
+    NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
+    NSLog(@"DEBUG INSERT: Original lines count=%lu", (unsigned long)lines.count);
+
+    NSMutableArray *result = [NSMutableArray array];
+
+    // Lines before the paragraph (lines 0 to startLine-2, which is indices 0 to startLine-2)
+    for (NSInteger i = 0; i < startLine - 1; i++) {
+        [result addObject:lines[i]];
+    }
+    NSLog(@"DEBUG INSERT: After adding lines before paragraph, result count=%lu", (unsigned long)result.count);
+
+    // Add the edited content (textBefore may contain multiple lines)
+    [result addObjectsFromArray:[textBefore componentsSeparatedByString:@"\n"]];
+    NSLog(@"DEBUG INSERT: After adding textBefore, result count=%lu", (unsigned long)result.count);
+
+    // Insert new line(s) with textAfter (textAfter may also contain multiple lines)
+    // Splitting by \n handles all cases:
+    // - "" splits to [""] (one empty line - cursor was at end)
+    // - "\nnice" splits to ["", "nice"] (empty line + content that was after cursor)
+    [result addObjectsFromArray:[textAfter componentsSeparatedByString:@"\n"]];
+    NSLog(@"DEBUG INSERT: After adding textAfter lines, result count=%lu", (unsigned long)result.count);
+
+    // Lines after the paragraph (starting from endLine, which is index endLine)
+    for (NSInteger i = endLine; i < (NSInteger)lines.count; i++) {
+        [result addObject:lines[i]];
+    }
+    NSLog(@"DEBUG INSERT: After adding lines after paragraph, result count=%lu", (unsigned long)result.count);
+
+    self.textEditView.text = [result componentsJoinedByString:@"\n"];
+    fileChanged = YES;
+
+    // Debug: show the markdown being saved
+    NSArray *debugLines = [self.textEditView.text componentsSeparatedByString:@"\n"];
+    NSLog(@"DEBUG INSERT: Saving markdown with %lu lines", (unsigned long)debugLines.count);
+    for (NSInteger i = 18; i <= 28 && i < (NSInteger)debugLines.count; i++) {
+        NSLog(@"DEBUG INSERT: Line %ld: '%@' (length: %lu)", (long)(i+1), debugLines[i], (unsigned long)[debugLines[i] length]);
+    }
+
+    [_file saveContent:self.textEditView.text];
+    [self renderMarkdownToView];
+}
+
+- (void)markdownView:(UIView *)view didRequestMergeLineAtStart:(NSInteger)startLine
+             endLine:(NSInteger)endLine {
+    if (startLine <= 1) return; // Can't merge first paragraph
+
+    NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
+    NSMutableArray *result = [NSMutableArray array];
+
+    // Find the previous line and merge with the first line of current paragraph
+    NSString *prevLine = (startLine >= 2 && startLine - 2 < (NSInteger)lines.count) ? lines[startLine - 2] : @"";
+    NSString *currentFirstLine = (startLine >= 1 && startLine - 1 < (NSInteger)lines.count) ? lines[startLine - 1] : @"";
+    NSString *merged = [NSString stringWithFormat:@"%@%@", prevLine, currentFirstLine];
+
+    // Lines before the previous line
+    for (NSInteger i = 0; i < startLine - 2; i++) {
+        [result addObject:lines[i]];
+    }
+
+    // Add merged line
+    [result addObject:merged];
+
+    // Skip the current first line (merged), add rest of current paragraph if multi-line
+    for (NSInteger i = startLine; i < endLine; i++) {
+        if (i < (NSInteger)lines.count) {
+            [result addObject:lines[i]];
+        }
+    }
+
+    // Lines after
+    for (NSInteger i = endLine; i < (NSInteger)lines.count; i++) {
+        [result addObject:lines[i]];
+    }
+
+    self.textEditView.text = [result componentsJoinedByString:@"\n"];
+    fileChanged = YES;
+    [_file saveContent:self.textEditView.text];
+    [self renderMarkdownToView];
+}
+
+- (void)markdownView:(UIView *)view didInsertTextAtEmptyLine:(NSInteger)lineNumber
+             newText:(NSString *)newText {
+    NSLog(@"DEBUG EMPTYLINE: didInsertTextAtEmptyLine called - lineNumber=%ld, newText='%@'", (long)lineNumber, newText);
+
+    NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
+    NSMutableArray *result = [NSMutableArray array];
+
+    // Lines before the empty line (indices 0 to lineNumber-2)
+    for (NSInteger i = 0; i < lineNumber - 1; i++) {
+        [result addObject:lines[i]];
+    }
+
+    // Insert the new text at the empty line position (may be multiple lines)
+    [result addObjectsFromArray:[newText componentsSeparatedByString:@"\n"]];
+
+    // Lines after the empty line (starting from index lineNumber, which was the next line)
+    for (NSInteger i = lineNumber; i < (NSInteger)lines.count; i++) {
+        [result addObject:lines[i]];
+    }
+
+    self.textEditView.text = [result componentsJoinedByString:@"\n"];
+    fileChanged = YES;
+    [_file saveContent:self.textEditView.text];
+    [self renderMarkdownToView];
+}
+
+- (void)markdownView:(UIView *)view didDeleteEmptyLine:(NSInteger)lineNumber {
+    NSLog(@"DEBUG EMPTYLINE: didDeleteEmptyLine called - lineNumber=%ld", (long)lineNumber);
+
+    NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
+    NSMutableArray *result = [NSMutableArray array];
+
+    // Add all lines except the one at lineNumber
+    for (NSInteger i = 0; i < (NSInteger)lines.count; i++) {
+        if (i != lineNumber - 1) { // lineNumber is 1-based, i is 0-based
+            [result addObject:lines[i]];
+        }
+    }
+
+    self.textEditView.text = [result componentsJoinedByString:@"\n"];
+    fileChanged = YES;
+    [_file saveContent:self.textEditView.text];
+
+    // Stay in edit mode on the same line (which is now the next line after deletion)
+    // or previous line if we deleted the last line
+    NSInteger nextEditLine = lineNumber;
+    if (nextEditLine > (NSInteger)result.count) {
+        nextEditLine = result.count; // Focus the last line if we deleted beyond
+    }
+    if (nextEditLine > 0) {
+        // Check if the line at nextEditLine is empty (so we can edit it)
+        NSString *lineContent = result[nextEditLine - 1];
+        if ([lineContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length == 0) {
+            [self.markdownView setPendingEditingLine:nextEditLine];
+        }
+    }
+
+    [self renderMarkdownToView];
+}
+
+- (void)markdownView:(UIView *)view didSplitEmptyLine:(NSInteger)lineNumber
+          textBefore:(NSString *)textBefore textAfter:(NSString *)textAfter {
+    NSLog(@"DEBUG EMPTYLINE: didSplitEmptyLine called - lineNumber=%ld, before='%@', after='%@'", (long)lineNumber, textBefore, textAfter);
+
+    NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
+    NSMutableArray *result = [NSMutableArray array];
+
+    // Lines before the empty line (indices 0 to lineNumber-2)
+    for (NSInteger i = 0; i < lineNumber - 1; i++) {
+        [result addObject:lines[i]];
+    }
+
+    // Add the text before cursor (replaces the empty line)
+    NSArray *textBeforeLines = [textBefore componentsSeparatedByString:@"\n"];
+    [result addObjectsFromArray:textBeforeLines];
+
+    // Track where the new empty line will be
+    NSInteger newEmptyLineNumber = result.count + 1;
+
+    // Add a new empty line (the split point)
+    [result addObject:@""];
+
+    // Add the text after cursor (if any)
+    if (textAfter.length > 0) {
+        // textAfter starts with \n from the cursor position, split and add
+        NSArray *afterLines = [textAfter componentsSeparatedByString:@"\n"];
+        // Skip the first empty element if textAfter started with \n
+        for (NSInteger i = (afterLines.count > 0 && [afterLines[0] length] == 0) ? 1 : 0; i < (NSInteger)afterLines.count; i++) {
+            [result addObject:afterLines[i]];
+        }
+    }
+
+    // Lines after the original empty line (starting from index lineNumber)
+    for (NSInteger i = lineNumber; i < (NSInteger)lines.count; i++) {
+        [result addObject:lines[i]];
+    }
+
+    self.textEditView.text = [result componentsJoinedByString:@"\n"];
+    fileChanged = YES;
+    [_file saveContent:self.textEditView.text];
+
+    // Stay in edit mode on the new empty line
+    [self.markdownView setPendingEditingLine:newEmptyLineNumber];
+
+    [self renderMarkdownToView];
+}
+
+- (void)markdownView:(UIView *)view didMergeEmptyLineWithPrevious:(NSInteger)lineNumber
+                text:(NSString *)text {
+    NSLog(@"DEBUG EMPTYLINE: didMergeEmptyLineWithPrevious called - lineNumber=%ld, text='%@'", (long)lineNumber, text);
+
+    if (lineNumber <= 1) return; // Can't merge with line before first line
+
+    NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
+    NSMutableArray *result = [NSMutableArray array];
+
+    // Lines before the previous line
+    for (NSInteger i = 0; i < lineNumber - 2; i++) {
+        [result addObject:lines[i]];
+    }
+
+    // Merge: previous line content + text from current line
+    NSString *prevLine = (lineNumber >= 2 && lineNumber - 2 < (NSInteger)lines.count) ? lines[lineNumber - 2] : @"";
+    NSString *merged = [NSString stringWithFormat:@"%@%@", prevLine, text];
+    [result addObject:merged];
+
+    // The merged line is now at position lineNumber - 1
+    NSInteger mergedLineNumber = lineNumber - 1;
+
+    // Skip the current line (it's merged), add rest
+    for (NSInteger i = lineNumber; i < (NSInteger)lines.count; i++) {
+        [result addObject:lines[i]];
+    }
+
+    self.textEditView.text = [result componentsJoinedByString:@"\n"];
+    fileChanged = YES;
+    [_file saveContent:self.textEditView.text];
+
+    // Check if the merged line is empty (to stay in empty line edit mode)
+    if ([merged stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length == 0) {
+        [self.markdownView setPendingEditingLine:mergedLineNumber];
+    }
+    // Note: If the merged line has content, it becomes a regular paragraph/element,
+    // so we don't set pending editing (that would need different handling)
+
+    [self renderMarkdownToView];
+}
+
+#pragma mark - Line Operations
+
+- (void)replaceLines:(NSInteger)startLine toLine:(NSInteger)endLine withText:(NSString *)newText {
+    NSLog(@"DEBUG REPLACE: replaceLines called - startLine=%ld, endLine=%ld", (long)startLine, (long)endLine);
+    NSLog(@"DEBUG REPLACE: newText='%@'", newText);
+
+    NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
+    NSLog(@"DEBUG REPLACE: Original lines count=%lu", (unsigned long)lines.count);
+
+    NSMutableArray *result = [NSMutableArray array];
+
+    // Lines before the range
+    for (NSInteger i = 0; i < startLine - 1; i++) {
+        [result addObject:lines[i]];
+    }
+    NSLog(@"DEBUG REPLACE: After adding lines before (0 to %ld), result count=%lu", (long)(startLine - 2), (unsigned long)result.count);
+
+    // Add the new text (may be multiple lines)
+    NSArray *newTextLines = [newText componentsSeparatedByString:@"\n"];
+    NSLog(@"DEBUG REPLACE: newText splits into %lu lines", (unsigned long)newTextLines.count);
+    [result addObjectsFromArray:newTextLines];
+    NSLog(@"DEBUG REPLACE: After adding newText, result count=%lu", (unsigned long)result.count);
+
+    // Lines after the range
+    NSLog(@"DEBUG REPLACE: Adding lines after from index %ld to %lu", (long)endLine, (unsigned long)lines.count - 1);
+    for (NSInteger i = endLine; i < (NSInteger)lines.count; i++) {
+        [result addObject:lines[i]];
+    }
+    NSLog(@"DEBUG REPLACE: After adding lines after, result count=%lu", (unsigned long)result.count);
+
+    // Debug: show the result around the area of interest
+    for (NSInteger i = 18; i <= 28 && i < (NSInteger)result.count; i++) {
+        NSLog(@"DEBUG REPLACE: Result line %ld: '%@'", (long)(i+1), result[i]);
+    }
+
+    self.textEditView.text = [result componentsJoinedByString:@"\n"];
+    fileChanged = YES;
+}
+
 - (void)toggleCheckboxAtIndex:(NSInteger)index toChecked:(BOOL)checked {
     NSString *markdown = self.textEditView.text;
     NSMutableString *result = [NSMutableString string];

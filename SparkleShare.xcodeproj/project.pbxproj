@@ -1984,6 +1984,9 @@ F8DB21712F3F000100A8D5BE /* MarkdownParser.swift in Sources */ = {isa = PBXBuild
 		F8DB21792F3F000300A8D5BE /* MarkdownHostingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21782F3F000300A8D5BE /* MarkdownHostingView.swift */; };
 		F8DB217A2F3F000300A8D5BE /* MarkdownHostingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21782F3F000300A8D5BE /* MarkdownHostingView.swift */; };
 		F8DB217B2F3F000300A8D5BE /* MarkdownHostingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21782F3F000300A8D5BE /* MarkdownHostingView.swift */; };
+		F8DB217C2F3F000400A8D5BE /* MarkdownTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB217D2F3F000400A8D5BE /* MarkdownTextEditor.swift */; };
+		F8DB217E2F3F000400A8D5BE /* MarkdownTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB217D2F3F000400A8D5BE /* MarkdownTextEditor.swift */; };
+		F8DB217F2F3F000400A8D5BE /* MarkdownTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB217D2F3F000400A8D5BE /* MarkdownTextEditor.swift */; };
 		F8DB21152F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210D2F2CFA4800A8D5BE /* SSRecentFilesManager.m */; };
 		F8DB21162F2CFA4800A8D5BE /* SSRecentFile.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */; };
 /* End PBXBuildFile section */
@@ -2736,6 +2739,7 @@ F8DB21712F3F000100A8D5BE /* MarkdownParser.swift in Sources */ = {isa = PBXBuild
 F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownParser.swift; sourceTree = "<group>"; };
 		F8DB21742F3F000200A8D5BE /* MarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownView.swift; sourceTree = "<group>"; };
 		F8DB21782F3F000300A8D5BE /* MarkdownHostingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownHostingView.swift; sourceTree = "<group>"; };
+		F8DB217D2F3F000400A8D5BE /* MarkdownTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextEditor.swift; sourceTree = "<group>"; };
 		F8DB210A2F2CFA4800A8D5BE /* SSRecentFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSRecentFile.h; sourceTree = "<group>"; };
 		F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSRecentFile.m; sourceTree = "<group>"; };
 		F8DB210C2F2CFA4800A8D5BE /* SSRecentFilesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSRecentFilesManager.h; sourceTree = "<group>"; };
@@ -2991,6 +2995,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */ = {isa = PBXFileReference; l
 F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 				F8DB21742F3F000200A8D5BE /* MarkdownView.swift */,
 				F8DB21782F3F000300A8D5BE /* MarkdownHostingView.swift */,
+				F8DB217D2F3F000400A8D5BE /* MarkdownTextEditor.swift */,
 				F8DB210A2F2CFA4800A8D5BE /* SSRecentFile.h */,
 				F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */,
 				F8DB210C2F2CFA4800A8D5BE /* SSRecentFilesManager.h */,
@@ -5752,6 +5757,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 				F8DB21712F3F000100A8D5BE /* MarkdownParser.swift in Sources */,
 				F8DB21752F3F000200A8D5BE /* MarkdownView.swift in Sources */,
 				F8DB21792F3F000300A8D5BE /* MarkdownHostingView.swift in Sources */,
+				F8DB217C2F3F000400A8D5BE /* MarkdownTextEditor.swift in Sources */,
 				F8DB21152F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */,
 				A50ECBD5F7754E3CAC09B4E1 /* SettingsViewController.m in Sources */,
 				F8DB21162F2CFA4800A8D5BE /* SSRecentFile.m in Sources */,
@@ -5792,6 +5798,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 				F8DB21722F3F000100A8D5BE /* MarkdownParser.swift in Sources */,
 				F8DB21762F3F000200A8D5BE /* MarkdownView.swift in Sources */,
 				F8DB217A2F3F000300A8D5BE /* MarkdownHostingView.swift in Sources */,
+				F8DB217E2F3F000400A8D5BE /* MarkdownTextEditor.swift in Sources */,
 				F8DB21122F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */,
 				CDBC14CF57F445CE9D80982A /* SettingsViewController.m in Sources */,
 				F8DB21132F2CFA4800A8D5BE /* SSRecentFile.m in Sources */,
@@ -5841,6 +5848,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 				F8DB21732F3F000100A8D5BE /* MarkdownParser.swift in Sources */,
 				F8DB21772F3F000200A8D5BE /* MarkdownView.swift in Sources */,
 				F8DB217B2F3F000300A8D5BE /* MarkdownHostingView.swift in Sources */,
+				F8DB217F2F3F000400A8D5BE /* MarkdownTextEditor.swift in Sources */,
 				F8DB210F2F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */,
 				B283A45F14EC414A90CB2D42 /* SettingsViewController.m in Sources */,
 				F8DB21102F2CFA4800A8D5BE /* SSRecentFile.m in Sources */,
