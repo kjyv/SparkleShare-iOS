@@ -7,89 +7,98 @@
 
 import SwiftUI
 
+// MARK: - Editing Context (shared via EnvironmentObject)
+
+/// Holds all editing state, callbacks, and cached data for the markdown editing system.
+/// Injected as @EnvironmentObject so MarkdownNodeView doesn't need parameter threading.
+class MarkdownEditingContext: ObservableObject {
+    // AST (published to trigger re-renders)
+    @Published var ast: MarkdownNode = .document(id: "empty", children: [])
+
+    // Editing state
+    @Published var editingNodeId: String?
+    @Published var editingText: String = ""
+
+    // Data (not @Published — updated together with ast)
+    var nodeLocations: [String: (start: Int, end: Int)] = [:]
+    var originalMarkdown: String = ""
+
+    // Cached line data (recomputed on each markdown update)
+    private(set) var lines: [String] = []
+    private(set) var emptyLineNumbers: Set<Int> = Set()
+
+    // Callbacks (set once by MarkdownHostingView)
+    var onCheckboxToggle: (Int, Bool) -> Void = { _, _ in }
+    var onEditComplete: (String, Int, Int, String) -> Void = { _, _, _, _ in }
+    var onInsertLineAfter: (String, Int, Int, String, String) -> Void = { _, _, _, _, _ in }
+    var onMergeWithPrevious: (String, Int, Int, String) -> Void = { _, _, _, _ in }
+    var onInsertAtEmptyLine: (Int, String) -> Void = { _, _ in }
+    var onDeleteEmptyLine: (Int) -> Void = { _ in }
+    var onSplitEmptyLine: (Int, String, String) -> Void = { _, _, _ in }
+    var onMergeEmptyLineWithPrevious: (Int, String) -> Void = { _, _ in }
+
+    /// Update markdown content after a parse. Refreshes cached line data.
+    func updateMarkdown(_ markdown: String, locations: [String: (start: Int, end: Int)]) {
+        originalMarkdown = markdown
+        nodeLocations = locations
+        lines = markdown.components(separatedBy: "\n")
+        emptyLineNumbers = Set(lines.enumerated()
+            .filter { $0.element.trimmingCharacters(in: .whitespaces).isEmpty }
+            .map { $0.offset + 1 })
+    }
+
+    /// Extract raw markdown lines for a given range (1-based, inclusive)
+    func extractLines(start: Int, end: Int) -> String {
+        guard start >= 1, end >= start, start <= lines.count else { return "" }
+        let endIndex = min(end, lines.count)
+        return lines[(start-1)..<endIndex].joined(separator: "\n")
+    }
+
+    /// Start editing a node by ID (dismisses any current editing first)
+    func startEditing(nodeId: String) {
+        dismissEditing()
+        if let loc = nodeLocations[nodeId] {
+            editingText = extractLines(start: loc.start, end: loc.end)
+            editingNodeId = nodeId
+        }
+    }
+
+    /// Start editing an empty line (dismisses any current editing first)
+    func startEditingEmptyLine(_ lineNumber: Int) {
+        dismissEditing()
+        editingText = ""
+        editingNodeId = "emptyline_\(lineNumber)"
+    }
+
+    /// Dismiss current editing, saving changes via the appropriate callback
+    func dismissEditing() {
+        guard let nodeId = editingNodeId else { return }
+        let text = editingText
+        // Clear state BEFORE calling callbacks to prevent double-save
+        // from textViewDidEndEditing firing during view rebuild
+        editingNodeId = nil
+        editingText = ""
+
+        if nodeId.hasPrefix("emptyline_"),
+           let lineNum = Int(nodeId.dropFirst("emptyline_".count)) {
+            if !text.isEmpty {
+                onInsertAtEmptyLine(lineNum, text)
+            }
+        } else if let loc = nodeLocations[nodeId] {
+            onEditComplete(nodeId, loc.start, loc.end, text)
+        }
+    }
+}
+
+// MARK: - Root View
+
 struct MarkdownView: View {
-    let node: MarkdownNode
-    let nodeLocations: [String: (start: Int, end: Int)]
-    let originalMarkdown: String
-    let onCheckboxToggle: (Int, Bool) -> Void
-
-    // Editing callbacks
-    let onEditComplete: (String, Int, Int, String) -> Void      // (id, startLine, endLine, newText)
-    let onInsertLineAfter: (String, Int, Int, String, String) -> Void // (id, startLine, endLine, textBefore, textAfter)
-    let onMergeWithPrevious: (String, Int, Int, String) -> Void  // (id, startLine, endLine, currentText)
-    let onInsertAtEmptyLine: (Int, String) -> Void              // (lineNumber, newText) - for editing empty lines
-    let onDeleteEmptyLine: (Int) -> Void                        // (lineNumber) - delete empty line
-    let onSplitEmptyLine: (Int, String, String) -> Void         // (lineNumber, textBefore, textAfter) - split on Enter
-    let onMergeEmptyLineWithPrevious: (Int, String) -> Void     // (lineNumber, text) - merge with previous on Backspace
-
-    // Editing state (shared with MarkdownHostingView via model)
-    @Binding var editingNodeId: String?
-    @Binding var editingText: String
+    @EnvironmentObject var context: MarkdownEditingContext
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                MarkdownNodeView(
-                    node: node,
-                    nodeLocations: nodeLocations,
-                    originalMarkdown: originalMarkdown,
-                    onCheckboxToggle: onCheckboxToggle,
-                    editingNodeId: $editingNodeId,
-                    editingText: $editingText,
-                    onEditComplete: { nodeId, startLine, endLine, newText in
-                        editingNodeId = nil
-                        editingText = ""
-                        onEditComplete(nodeId, startLine, endLine, newText)
-                    },
-                    onInsertLineAfter: { nodeId, startLine, endLine, textBefore, textAfter in
-                        editingNodeId = nil
-                        editingText = ""
-                        onInsertLineAfter(nodeId, startLine, endLine, textBefore, textAfter)
-                    },
-                    onMergeWithPrevious: { nodeId, startLine, endLine, currentText in
-                        editingNodeId = nil
-                        editingText = ""
-                        onMergeWithPrevious(nodeId, startLine, endLine, currentText)
-                    },
-                    onInsertAtEmptyLine: { lineNumber, newText in
-                        editingNodeId = nil
-                        editingText = ""
-                        onInsertAtEmptyLine(lineNumber, newText)
-                    },
-                    onDeleteEmptyLine: { lineNumber in
-                        editingNodeId = nil
-                        editingText = ""
-                        onDeleteEmptyLine(lineNumber)
-                    },
-                    onSplitEmptyLine: { lineNumber, textBefore, textAfter in
-                        editingNodeId = nil
-                        editingText = ""
-                        onSplitEmptyLine(lineNumber, textBefore, textAfter)
-                    },
-                    onMergeEmptyLineWithPrevious: { lineNumber, text in
-                        editingNodeId = nil
-                        editingText = ""
-                        onMergeEmptyLineWithPrevious(lineNumber, text)
-                    },
-                    dismissEditing: {
-                        guard let nodeId = editingNodeId else { return }
-                        let text = editingText
-                        // Clear state BEFORE calling callbacks to prevent double-save
-                        // from textViewDidEndEditing firing during view rebuild
-                        editingNodeId = nil
-                        editingText = ""
-
-                        if nodeId.hasPrefix("emptyline_"),
-                           let lineNum = Int(nodeId.dropFirst("emptyline_".count)) {
-                            // Empty line editing - save if text was entered
-                            if !text.isEmpty {
-                                onInsertAtEmptyLine(lineNum, text)
-                            }
-                        } else if let loc = nodeLocations[nodeId] {
-                            onEditComplete(nodeId, loc.start, loc.end, text)
-                        }
-                    }
-                )
+                MarkdownNodeView(node: context.ast)
             }
             .padding(.horizontal, 16)
             .padding(.top, 8)
@@ -100,25 +109,17 @@ struct MarkdownView: View {
     }
 }
 
+// MARK: - Node View
+
 struct MarkdownNodeView: View {
     let node: MarkdownNode
-    let nodeLocations: [String: (start: Int, end: Int)]
-    let originalMarkdown: String
-    let onCheckboxToggle: (Int, Bool) -> Void
+    @EnvironmentObject var context: MarkdownEditingContext
 
-    // Editing state
-    @Binding var editingNodeId: String?
-    @Binding var editingText: String
+    var body: some View {
+        nodeView
+    }
 
-    // Editing callbacks
-    let onEditComplete: (String, Int, Int, String) -> Void
-    let onInsertLineAfter: (String, Int, Int, String, String) -> Void
-    let onMergeWithPrevious: (String, Int, Int, String) -> Void
-    let onInsertAtEmptyLine: (Int, String) -> Void
-    let onDeleteEmptyLine: (Int) -> Void
-    let onSplitEmptyLine: (Int, String, String) -> Void
-    let onMergeEmptyLineWithPrevious: (Int, String) -> Void
-    let dismissEditing: () -> Void
+    // MARK: - Helpers
 
     /// Get the node ID from a MarkdownNode
     private func getNodeId(_ node: MarkdownNode) -> String? {
@@ -133,106 +134,30 @@ struct MarkdownNodeView: View {
         }
     }
 
-    var body: some View {
-        nodeView
-    }
-
-    /// Extract lines from markdown for editing
-    private func extractLines(start: Int, end: Int) -> String {
-        let lines = originalMarkdown.components(separatedBy: "\n")
-        guard start >= 1, end >= start, start <= lines.count else {
-            return ""
-        }
-        let endIndex = min(end, lines.count)
-        return lines[(start-1)..<endIndex].joined(separator: "\n")
-    }
-
-    /// Get all empty line numbers (1-based) from the original markdown
-    private func getEmptyLineNumbers() -> Set<Int> {
-        let lines = originalMarkdown.components(separatedBy: "\n")
-        return Set(lines.enumerated()
-            .filter { $0.element.trimmingCharacters(in: .whitespaces).isEmpty }
-            .map { $0.offset + 1 })
-    }
-
     /// Find actual content end (last non-empty line) within a node's range
-    private func actualContentEnd(nodeId: String?, emptyLines: Set<Int>) -> Int? {
-        guard let id = nodeId, let loc = nodeLocations[id] else { return nil }
+    private func actualContentEnd(nodeId: String?) -> Int? {
+        guard let id = nodeId, let loc = context.nodeLocations[id] else { return nil }
         for line in stride(from: loc.end, through: loc.start, by: -1) {
-            if !emptyLines.contains(line) {
-                return line
-            }
+            if !context.emptyLineNumbers.contains(line) { return line }
         }
         return loc.start
     }
 
     /// Find actual content start (first non-empty line) within a node's range
-    private func actualContentStart(nodeId: String?, emptyLines: Set<Int>) -> Int? {
-        guard let id = nodeId, let loc = nodeLocations[id] else { return nil }
+    private func actualContentStart(nodeId: String?) -> Int? {
+        guard let id = nodeId, let loc = context.nodeLocations[id] else { return nil }
         for line in loc.start...loc.end {
-            if !emptyLines.contains(line) {
-                return line
-            }
+            if !context.emptyLineNumbers.contains(line) { return line }
         }
         return loc.end
     }
 
-    /// View for an empty line that can be tapped to edit
-    @ViewBuilder
-    private func emptyLineView(lineNumber: Int) -> some View {
-        let emptyLineId = "emptyline_\(lineNumber)"
-
-        if editingNodeId == emptyLineId {
-            // Edit mode for empty line
-            MarkdownTextEditor(
-                text: $editingText,
-                onReturn: { before, after in
-                    // Split: text before cursor stays on this line, text after goes to new line below
-                    onSplitEmptyLine(lineNumber, before, after)
-                },
-                onBackspaceAtStart: {
-                    if editingText.isEmpty {
-                        // No text - delete the empty line
-                        onDeleteEmptyLine(lineNumber)
-                    } else {
-                        // Has text - merge with previous line
-                        onMergeEmptyLineWithPrevious(lineNumber, editingText)
-                    }
-                },
-                onDismiss: {
-                    // Only save if we're still the active editor
-                    guard editingNodeId == emptyLineId else { return }
-                    // If text was entered, save it (replaces the empty line)
-                    if !editingText.isEmpty {
-                        onInsertAtEmptyLine(lineNumber, editingText)
-                    }
-                    // If empty, just dismiss (keep the empty line as is)
-                    editingNodeId = nil
-                    editingText = ""
-                }
-            )
-            .fixedSize(horizontal: false, vertical: true)
-        } else {
-            // Tappable empty line - height of one line of text
-            HStack {
-                Spacer()
-            }
-            .frame(height: 22) // Approximate height of one line of text
-            .contentShape(Rectangle())
-            .onTapGesture {
-                dismissEditing()
-                editingText = ""
-                editingNodeId = emptyLineId
-            }
-        }
-    }
-
-
     /// Check if a node or any of its children is being edited
     private func isNodeOrChildBeingEdited(_ node: MarkdownNode) -> Bool {
         switch node {
-        case .paragraph(let id, _), .heading(let id, _, _):
-            return editingNodeId == id
+        case .paragraph(let id, _), .heading(let id, _, _),
+             .codeBlock(let id, _, _), .blockquote(let id, _), .table(let id, _, _):
+            return context.editingNodeId == id
         case .listItem(_, let children), .taskListItem(_, _, _, let children):
             return children.contains { isNodeOrChildBeingEdited($0) }
         default:
@@ -243,63 +168,72 @@ struct MarkdownNodeView: View {
     /// Get the paragraph node ID from a list item's children
     private func getParagraphIdFromChildren(_ children: [MarkdownNode]) -> String? {
         for child in children {
-            if case .paragraph(let id, _) = child {
-                return id
-            }
+            if case .paragraph(let id, _) = child { return id }
         }
         return nil
     }
+
+    // MARK: - Shared Editor
+
+    /// Editor for any block-level node (paragraph, heading, codeBlock, blockquote, table)
+    @ViewBuilder
+    private func nodeEditor(nodeId: String) -> some View {
+        if let loc = context.nodeLocations[nodeId] {
+            MarkdownTextEditor(
+                text: $context.editingText,
+                onReturn: { before, after in
+                    context.editingNodeId = nil
+                    context.editingText = ""
+                    context.onInsertLineAfter(nodeId, loc.start, loc.end, before, after)
+                },
+                onBackspaceAtStart: {
+                    let text = context.editingText
+                    context.editingNodeId = nil
+                    context.editingText = ""
+                    context.onMergeWithPrevious(nodeId, loc.start, loc.end, text)
+                },
+                onDismiss: {
+                    guard context.editingNodeId == nodeId else { return }
+                    let text = context.editingText
+                    context.editingNodeId = nil
+                    context.editingText = ""
+                    context.onEditComplete(nodeId, loc.start, loc.end, text)
+                }
+            )
+            .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    // MARK: - Node Rendering
 
     @ViewBuilder
     private var nodeView: some View {
         switch node {
         case .document(_, let children):
-            // Find all empty lines in the original markdown
-            let emptyLineNumbers = getEmptyLineNumbers()
-
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { index, child in
-                    // Check for empty lines before this child based on actual markdown content
                     let childId = getNodeId(child)
                     let prevChild = index > 0 ? children[index - 1] : nil
                     let prevId = prevChild.flatMap { getNodeId($0) }
 
-                    // Use actual content boundaries, not cmark's extended ranges
-                    let prevActualEnd = actualContentEnd(nodeId: prevId, emptyLines: emptyLineNumbers)
-                    let currActualStart = actualContentStart(nodeId: childId, emptyLines: emptyLineNumbers)
+                    let prevEnd = actualContentEnd(nodeId: prevId)
+                    let currStart = actualContentStart(nodeId: childId)
 
-                    // Find empty lines between previous element's actual content and this one's actual content
-                    if let prevEnd = prevActualEnd, let currStart = currActualStart {
-                        let emptyLinesInGap = emptyLineNumbers.filter { $0 > prevEnd && $0 < currStart }.sorted()
+                    // Empty lines between elements
+                    if let prevEnd = prevEnd, let currStart = currStart {
+                        let emptyLinesInGap = context.emptyLineNumbers.filter { $0 > prevEnd && $0 < currStart }.sorted()
                         ForEach(emptyLinesInGap, id: \.self) { lineNum in
                             emptyLineView(lineNumber: lineNum)
                         }
-                    } else if index == 0, let currStart = currActualStart {
-                        // Check for empty lines at the start of document
-                        let emptyLinesAtStart = emptyLineNumbers.filter { $0 < currStart }.sorted()
+                    } else if index == 0, let currStart = currStart {
+                        let emptyLinesAtStart = context.emptyLineNumbers.filter { $0 < currStart }.sorted()
                         ForEach(emptyLinesAtStart, id: \.self) { lineNum in
                             emptyLineView(lineNumber: lineNum)
                         }
                     }
 
-                    // Render the child with standard spacing
-                    MarkdownNodeView(
-                        node: child,
-                        nodeLocations: nodeLocations,
-                        originalMarkdown: originalMarkdown,
-                        onCheckboxToggle: onCheckboxToggle,
-                        editingNodeId: $editingNodeId,
-                        editingText: $editingText,
-                        onEditComplete: onEditComplete,
-                        onInsertLineAfter: onInsertLineAfter,
-                        onMergeWithPrevious: onMergeWithPrevious,
-                        onInsertAtEmptyLine: onInsertAtEmptyLine,
-                        onDeleteEmptyLine: onDeleteEmptyLine,
-                        onSplitEmptyLine: onSplitEmptyLine,
-                        onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                        dismissEditing: dismissEditing
-                    )
-                    .padding(.vertical, 8)
+                    MarkdownNodeView(node: child)
+                        .padding(.vertical, 8)
                 }
             }
 
@@ -318,22 +252,7 @@ struct MarkdownNodeView: View {
         case .listItem(_, let children):
             VStack(alignment: .leading, spacing: 4) {
                 ForEach(Array(children.enumerated()), id: \.offset) { _, child in
-                    MarkdownNodeView(
-                        node: child,
-                        nodeLocations: nodeLocations,
-                        originalMarkdown: originalMarkdown,
-                        onCheckboxToggle: onCheckboxToggle,
-                        editingNodeId: $editingNodeId,
-                        editingText: $editingText,
-                        onEditComplete: onEditComplete,
-                        onInsertLineAfter: onInsertLineAfter,
-                        onMergeWithPrevious: onMergeWithPrevious,
-                        onInsertAtEmptyLine: onInsertAtEmptyLine,
-                        onDeleteEmptyLine: onDeleteEmptyLine,
-                        onSplitEmptyLine: onSplitEmptyLine,
-                        onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                        dismissEditing: dismissEditing
-                    )
+                    MarkdownNodeView(node: child)
                 }
             }
 
@@ -358,45 +277,15 @@ struct MarkdownNodeView: View {
         case .tableRow(_, let children):
             HStack(spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { _, child in
-                    MarkdownNodeView(
-                        node: child,
-                        nodeLocations: nodeLocations,
-                        originalMarkdown: originalMarkdown,
-                        onCheckboxToggle: onCheckboxToggle,
-                        editingNodeId: $editingNodeId,
-                        editingText: $editingText,
-                        onEditComplete: onEditComplete,
-                        onInsertLineAfter: onInsertLineAfter,
-                        onMergeWithPrevious: onMergeWithPrevious,
-                        onInsertAtEmptyLine: onInsertAtEmptyLine,
-                        onDeleteEmptyLine: onDeleteEmptyLine,
-                        onSplitEmptyLine: onSplitEmptyLine,
-                        onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                        dismissEditing: dismissEditing
-                    )
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    MarkdownNodeView(node: child)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
 
         case .tableCell(_, let children):
             VStack(alignment: .leading) {
                 ForEach(Array(children.enumerated()), id: \.offset) { _, child in
-                    MarkdownNodeView(
-                        node: child,
-                        nodeLocations: nodeLocations,
-                        originalMarkdown: originalMarkdown,
-                        onCheckboxToggle: onCheckboxToggle,
-                        editingNodeId: $editingNodeId,
-                        editingText: $editingText,
-                        onEditComplete: onEditComplete,
-                        onInsertLineAfter: onInsertLineAfter,
-                        onMergeWithPrevious: onMergeWithPrevious,
-                        onInsertAtEmptyLine: onInsertAtEmptyLine,
-                        onDeleteEmptyLine: onDeleteEmptyLine,
-                        onSplitEmptyLine: onSplitEmptyLine,
-                        onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                        dismissEditing: dismissEditing
-                    )
+                    MarkdownNodeView(node: child)
                 }
             }
             .padding(6)
@@ -447,6 +336,54 @@ struct MarkdownNodeView: View {
     // MARK: - Component Views
 
     @ViewBuilder
+    private func emptyLineView(lineNumber: Int) -> some View {
+        let emptyLineId = "emptyline_\(lineNumber)"
+
+        if context.editingNodeId == emptyLineId {
+            MarkdownTextEditor(
+                text: $context.editingText,
+                onReturn: { before, after in
+                    context.editingNodeId = nil
+                    context.editingText = ""
+                    context.onSplitEmptyLine(lineNumber, before, after)
+                },
+                onBackspaceAtStart: {
+                    if context.editingText.isEmpty {
+                        context.editingNodeId = nil
+                        context.editingText = ""
+                        context.onDeleteEmptyLine(lineNumber)
+                    } else {
+                        let text = context.editingText
+                        context.editingNodeId = nil
+                        context.editingText = ""
+                        context.onMergeEmptyLineWithPrevious(lineNumber, text)
+                    }
+                },
+                onDismiss: {
+                    guard context.editingNodeId == emptyLineId else { return }
+                    if !context.editingText.isEmpty {
+                        let text = context.editingText
+                        context.editingNodeId = nil
+                        context.editingText = ""
+                        context.onInsertAtEmptyLine(lineNumber, text)
+                    } else {
+                        context.editingNodeId = nil
+                        context.editingText = ""
+                    }
+                }
+            )
+            .fixedSize(horizontal: false, vertical: true)
+        } else {
+            HStack { Spacer() }
+                .frame(height: 22)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    context.startEditingEmptyLine(lineNumber)
+                }
+        }
+    }
+
+    @ViewBuilder
     private func headingView(nodeId: String, level: Int, children: [MarkdownNode]) -> some View {
         let font: Font = {
             switch level {
@@ -459,35 +396,12 @@ struct MarkdownNodeView: View {
             }
         }()
 
-        if editingNodeId == nodeId, let loc = nodeLocations[nodeId] {
-            // Edit mode
-            MarkdownTextEditor(
-                text: $editingText,
-                onReturn: { before, after in
-                    onInsertLineAfter(nodeId, loc.start, loc.end, before, after)
-                },
-                onBackspaceAtStart: {
-                    if editingText.isEmpty {
-                        // Empty text - delete the heading
-                        onEditComplete(nodeId, loc.start, loc.end, "")
-                    } else {
-                        // Non-empty text - merge with previous line
-                        onMergeWithPrevious(nodeId, loc.start, loc.end, editingText)
-                    }
-                },
-                onDismiss: {
-                    // Only save if we're still the active editor (not dismissed by Return/Backspace)
-                    guard editingNodeId == nodeId else { return }
-                    onEditComplete(nodeId, loc.start, loc.end, editingText)
-                }
-            )
-            .fixedSize(horizontal: false, vertical: true)
+        if context.editingNodeId == nodeId {
+            nodeEditor(nodeId: nodeId)
         } else {
-            // View mode with tap gesture - use HStack to ensure full width hit area
             let combinedText = children.reduce(Text("")) { result, child in
                 result + inlineNodeText(child)
             }
-
             HStack {
                 combinedText
                     .font(font)
@@ -497,43 +411,15 @@ struct MarkdownNodeView: View {
             .padding(.top, level <= 2 ? 8 : 4)
             .padding(.bottom, 4)
             .contentShape(Rectangle())
-            .onTapGesture {
-                dismissEditing()
-                if let loc = nodeLocations[nodeId] {
-                    editingText = extractLines(start: loc.start, end: loc.end)
-                    editingNodeId = nodeId
-                }
-            }
+            .onTapGesture { context.startEditing(nodeId: nodeId) }
         }
     }
 
     @ViewBuilder
     private func paragraphView(nodeId: String, children: [MarkdownNode]) -> some View {
-        if editingNodeId == nodeId, let loc = nodeLocations[nodeId] {
-            // Edit mode
-            MarkdownTextEditor(
-                text: $editingText,
-                onReturn: { before, after in
-                    onInsertLineAfter(nodeId, loc.start, loc.end, before, after)
-                },
-                onBackspaceAtStart: {
-                    if editingText.isEmpty {
-                        // Empty text - delete the paragraph
-                        onEditComplete(nodeId, loc.start, loc.end, "")
-                    } else {
-                        // Non-empty text - merge with previous line (pass current edited text)
-                        onMergeWithPrevious(nodeId, loc.start, loc.end, editingText)
-                    }
-                },
-                onDismiss: {
-                    // Only save if we're still the active editor (not dismissed by Return/Backspace)
-                    guard editingNodeId == nodeId else { return }
-                    onEditComplete(nodeId, loc.start, loc.end, editingText)
-                }
-            )
-            .fixedSize(horizontal: false, vertical: true)
+        if context.editingNodeId == nodeId {
+            nodeEditor(nodeId: nodeId)
         } else {
-            // View mode with tap gesture - use HStack to ensure full width hit area
             let combinedText = children.reduce(Text("")) { result, child in
                 result + inlineNodeText(child)
             }
@@ -542,15 +428,9 @@ struct MarkdownNodeView: View {
                     .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 0)
             }
-            .frame(minHeight: 22) // Ensure tappable area even for empty paragraphs
+            .frame(minHeight: 22)
             .contentShape(Rectangle())
-            .onTapGesture {
-                dismissEditing()
-                if let loc = nodeLocations[nodeId] {
-                    editingText = extractLines(start: loc.start, end: loc.end)
-                    editingNodeId = nodeId
-                }
-            }
+            .onTapGesture { context.startEditing(nodeId: nodeId) }
         }
     }
 
@@ -558,48 +438,14 @@ struct MarkdownNodeView: View {
     private func listView(ordered: Bool, start: Int, children: [MarkdownNode]) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             ForEach(Array(children.enumerated()), id: \.offset) { index, child in
-                // Check if the child is a task list item
                 if case .taskListItem = child {
-                    MarkdownNodeView(
-                        node: child,
-                        nodeLocations: nodeLocations,
-                        originalMarkdown: originalMarkdown,
-                        onCheckboxToggle: onCheckboxToggle,
-                        editingNodeId: $editingNodeId,
-                        editingText: $editingText,
-                        onEditComplete: onEditComplete,
-                        onInsertLineAfter: onInsertLineAfter,
-                        onMergeWithPrevious: onMergeWithPrevious,
-                        onInsertAtEmptyLine: onInsertAtEmptyLine,
-                        onDeleteEmptyLine: onDeleteEmptyLine,
-                        onSplitEmptyLine: onSplitEmptyLine,
-                        onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                        dismissEditing: dismissEditing
-                    )
+                    MarkdownNodeView(node: child)
                 } else if case .listItem(_, let itemChildren) = child {
-                    // Check if this list item's paragraph is being edited
                     let isEditing = isNodeOrChildBeingEdited(child)
 
                     if isEditing {
-                        // When editing, show only the editor (no bullet)
-                        MarkdownNodeView(
-                            node: child,
-                            nodeLocations: nodeLocations,
-                            originalMarkdown: originalMarkdown,
-                            onCheckboxToggle: onCheckboxToggle,
-                            editingNodeId: $editingNodeId,
-                            editingText: $editingText,
-                            onEditComplete: onEditComplete,
-                            onInsertLineAfter: onInsertLineAfter,
-                            onMergeWithPrevious: onMergeWithPrevious,
-                            onInsertAtEmptyLine: onInsertAtEmptyLine,
-                            onDeleteEmptyLine: onDeleteEmptyLine,
-                            onSplitEmptyLine: onSplitEmptyLine,
-                            onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                            dismissEditing: dismissEditing
-                        )
+                        MarkdownNodeView(node: child)
                     } else {
-                        // Normal view with bullet/number
                         HStack(alignment: .top, spacing: 8) {
                             if ordered {
                                 Text("\(start + index).")
@@ -610,37 +456,18 @@ struct MarkdownNodeView: View {
                                     .foregroundColor(.secondary)
                                     .frame(minWidth: 24, alignment: .center)
                             }
-                            MarkdownNodeView(
-                                node: child,
-                                nodeLocations: nodeLocations,
-                                originalMarkdown: originalMarkdown,
-                                onCheckboxToggle: onCheckboxToggle,
-                                editingNodeId: $editingNodeId,
-                                editingText: $editingText,
-                                onEditComplete: onEditComplete,
-                                onInsertLineAfter: onInsertLineAfter,
-                                onMergeWithPrevious: onMergeWithPrevious,
-                                onInsertAtEmptyLine: onInsertAtEmptyLine,
-                                onDeleteEmptyLine: onDeleteEmptyLine,
-                                onSplitEmptyLine: onSplitEmptyLine,
-                                onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                                dismissEditing: dismissEditing
-                            )
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            MarkdownNodeView(node: child)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            // Tap on the row (number/bullet area) — find the paragraph and edit it
                             if let paraId = getParagraphIdFromChildren(itemChildren),
-                               let loc = nodeLocations[paraId] {
-                                dismissEditing()
-                                editingText = extractLines(start: loc.start, end: loc.end)
-                                editingNodeId = paraId
+                               let _ = context.nodeLocations[paraId] {
+                                context.startEditing(nodeId: paraId)
                             }
                         }
                     }
                 } else {
-                    // Fallback for other node types
                     HStack(alignment: .top, spacing: 8) {
                         if ordered {
                             Text("\(start + index).")
@@ -651,23 +478,8 @@ struct MarkdownNodeView: View {
                                 .foregroundColor(.secondary)
                                 .frame(minWidth: 24, alignment: .center)
                         }
-                        MarkdownNodeView(
-                            node: child,
-                            nodeLocations: nodeLocations,
-                            originalMarkdown: originalMarkdown,
-                            onCheckboxToggle: onCheckboxToggle,
-                            editingNodeId: $editingNodeId,
-                            editingText: $editingText,
-                            onEditComplete: onEditComplete,
-                            onInsertLineAfter: onInsertLineAfter,
-                            onMergeWithPrevious: onMergeWithPrevious,
-                            onInsertAtEmptyLine: onInsertAtEmptyLine,
-                            onDeleteEmptyLine: onDeleteEmptyLine,
-                            onSplitEmptyLine: onSplitEmptyLine,
-                            onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                            dismissEditing: dismissEditing
-                        )
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        MarkdownNodeView(node: child)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
             }
@@ -677,36 +489,18 @@ struct MarkdownNodeView: View {
 
     @ViewBuilder
     private func taskListItemView(index: Int, checked: Bool, children: [MarkdownNode]) -> some View {
-        // Check if any child paragraph is being edited
         let isEditing = children.contains { isNodeOrChildBeingEdited($0) }
 
         if isEditing {
-            // When editing, show only the editor (no checkbox)
             VStack(alignment: .leading, spacing: 4) {
                 ForEach(Array(children.enumerated()), id: \.offset) { _, child in
-                    MarkdownNodeView(
-                        node: child,
-                        nodeLocations: nodeLocations,
-                        originalMarkdown: originalMarkdown,
-                        onCheckboxToggle: onCheckboxToggle,
-                        editingNodeId: $editingNodeId,
-                        editingText: $editingText,
-                        onEditComplete: onEditComplete,
-                        onInsertLineAfter: onInsertLineAfter,
-                        onMergeWithPrevious: onMergeWithPrevious,
-                        onInsertAtEmptyLine: onInsertAtEmptyLine,
-                        onDeleteEmptyLine: onDeleteEmptyLine,
-                        onSplitEmptyLine: onSplitEmptyLine,
-                        onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                        dismissEditing: dismissEditing
-                    )
+                    MarkdownNodeView(node: child)
                 }
             }
         } else {
-            // Normal view with checkbox
             HStack(alignment: .top, spacing: 8) {
                 Button(action: {
-                    onCheckboxToggle(index, !checked)
+                    context.onCheckboxToggle(index, !checked)
                 }) {
                     Image(systemName: checked ? "checkmark.square.fill" : "square")
                         .foregroundColor(checked ? .blue : .gray)
@@ -718,24 +512,9 @@ struct MarkdownNodeView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(Array(children.enumerated()), id: \.offset) { _, child in
-                        MarkdownNodeView(
-                            node: child,
-                            nodeLocations: nodeLocations,
-                            originalMarkdown: originalMarkdown,
-                            onCheckboxToggle: onCheckboxToggle,
-                            editingNodeId: $editingNodeId,
-                            editingText: $editingText,
-                            onEditComplete: onEditComplete,
-                            onInsertLineAfter: onInsertLineAfter,
-                            onMergeWithPrevious: onMergeWithPrevious,
-                            onInsertAtEmptyLine: onInsertAtEmptyLine,
-                            onDeleteEmptyLine: onDeleteEmptyLine,
-                            onSplitEmptyLine: onSplitEmptyLine,
-                            onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                            dismissEditing: dismissEditing
-                        )
-                        .strikethrough(checked)
-                        .foregroundColor(checked ? .secondary : .primary)
+                        MarkdownNodeView(node: child)
+                            .strikethrough(checked)
+                            .foregroundColor(checked ? .secondary : .primary)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -745,65 +524,25 @@ struct MarkdownNodeView: View {
 
     @ViewBuilder
     private func codeBlockView(nodeId: String, literal: String) -> some View {
-        if editingNodeId == nodeId, let loc = nodeLocations[nodeId] {
-            MarkdownTextEditor(
-                text: $editingText,
-                onReturn: { before, after in
-                    onInsertLineAfter(nodeId, loc.start, loc.end, before, after)
-                },
-                onBackspaceAtStart: {
-                    if editingText.isEmpty {
-                        onEditComplete(nodeId, loc.start, loc.end, "")
-                    } else {
-                        onMergeWithPrevious(nodeId, loc.start, loc.end, editingText)
-                    }
-                },
-                onDismiss: {
-                    guard editingNodeId == nodeId else { return }
-                    onEditComplete(nodeId, loc.start, loc.end, editingText)
-                }
-            )
-            .fixedSize(horizontal: false, vertical: true)
+        if context.editingNodeId == nodeId {
+            nodeEditor(nodeId: nodeId)
         } else {
             Text(literal.trimmingCharacters(in: .newlines))
                 .font(.system(.body, design: .monospaced))
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(8)
-            .padding(.vertical, 4)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                dismissEditing()
-                if let loc = nodeLocations[nodeId] {
-                    editingText = extractLines(start: loc.start, end: loc.end)
-                    editingNodeId = nodeId
-                }
-            }
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(8)
+                .padding(.vertical, 4)
+                .contentShape(Rectangle())
+                .onTapGesture { context.startEditing(nodeId: nodeId) }
         }
     }
 
     @ViewBuilder
     private func blockquoteView(nodeId: String, children: [MarkdownNode]) -> some View {
-        if editingNodeId == nodeId, let loc = nodeLocations[nodeId] {
-            MarkdownTextEditor(
-                text: $editingText,
-                onReturn: { before, after in
-                    onInsertLineAfter(nodeId, loc.start, loc.end, before, after)
-                },
-                onBackspaceAtStart: {
-                    if editingText.isEmpty {
-                        onEditComplete(nodeId, loc.start, loc.end, "")
-                    } else {
-                        onMergeWithPrevious(nodeId, loc.start, loc.end, editingText)
-                    }
-                },
-                onDismiss: {
-                    guard editingNodeId == nodeId else { return }
-                    onEditComplete(nodeId, loc.start, loc.end, editingText)
-                }
-            )
-            .fixedSize(horizontal: false, vertical: true)
+        if context.editingNodeId == nodeId {
+            nodeEditor(nodeId: nodeId)
         } else {
             HStack(alignment: .top, spacing: 8) {
                 Rectangle()
@@ -811,80 +550,25 @@ struct MarkdownNodeView: View {
                     .frame(width: 4)
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(Array(children.enumerated()), id: \.offset) { _, child in
-                        MarkdownNodeView(
-                            node: child,
-                            nodeLocations: nodeLocations,
-                            originalMarkdown: originalMarkdown,
-                            onCheckboxToggle: onCheckboxToggle,
-                            editingNodeId: $editingNodeId,
-                            editingText: $editingText,
-                            onEditComplete: onEditComplete,
-                            onInsertLineAfter: onInsertLineAfter,
-                            onMergeWithPrevious: onMergeWithPrevious,
-                            onInsertAtEmptyLine: onInsertAtEmptyLine,
-                            onDeleteEmptyLine: onDeleteEmptyLine,
-                            onSplitEmptyLine: onSplitEmptyLine,
-                            onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                            dismissEditing: dismissEditing
-                        )
+                        MarkdownNodeView(node: child)
                     }
                 }
             }
             .padding(.vertical, 4)
             .contentShape(Rectangle())
-            .onTapGesture {
-                dismissEditing()
-                if let loc = nodeLocations[nodeId] {
-                    editingText = extractLines(start: loc.start, end: loc.end)
-                    editingNodeId = nodeId
-                }
-            }
+            .onTapGesture { context.startEditing(nodeId: nodeId) }
         }
     }
 
     @ViewBuilder
     private func tableView(nodeId: String, children: [MarkdownNode]) -> some View {
-        if editingNodeId == nodeId, let loc = nodeLocations[nodeId] {
-            // Edit mode - show raw markdown for the entire table
-            MarkdownTextEditor(
-                text: $editingText,
-                onReturn: { before, after in
-                    onInsertLineAfter(nodeId, loc.start, loc.end, before, after)
-                },
-                onBackspaceAtStart: {
-                    if editingText.isEmpty {
-                        onEditComplete(nodeId, loc.start, loc.end, "")
-                    } else {
-                        onMergeWithPrevious(nodeId, loc.start, loc.end, editingText)
-                    }
-                },
-                onDismiss: {
-                    guard editingNodeId == nodeId else { return }
-                    onEditComplete(nodeId, loc.start, loc.end, editingText)
-                }
-            )
-            .fixedSize(horizontal: false, vertical: true)
+        if context.editingNodeId == nodeId {
+            nodeEditor(nodeId: nodeId)
         } else {
-            // View mode with tap gesture
             VStack(spacing: 0) {
                 ForEach(Array(children.enumerated()), id: \.offset) { index, child in
-                    MarkdownNodeView(
-                        node: child,
-                        nodeLocations: nodeLocations,
-                        originalMarkdown: originalMarkdown,
-                        onCheckboxToggle: onCheckboxToggle,
-                        editingNodeId: $editingNodeId,
-                        editingText: $editingText,
-                        onEditComplete: onEditComplete,
-                        onInsertLineAfter: onInsertLineAfter,
-                        onMergeWithPrevious: onMergeWithPrevious,
-                        onInsertAtEmptyLine: onInsertAtEmptyLine,
-                        onDeleteEmptyLine: onDeleteEmptyLine,
-                        onSplitEmptyLine: onSplitEmptyLine,
-                        onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-                        dismissEditing: dismissEditing
-                    )
-                    .background(index == 0 ? Color.gray.opacity(0.1) : Color.clear)
+                    MarkdownNodeView(node: child)
+                        .background(index == 0 ? Color.gray.opacity(0.1) : Color.clear)
                 }
             }
             .overlay(
@@ -893,13 +577,7 @@ struct MarkdownNodeView: View {
             )
             .padding(.vertical, 4)
             .contentShape(Rectangle())
-            .onTapGesture {
-                dismissEditing()
-                if let loc = nodeLocations[nodeId] {
-                    editingText = extractLines(start: loc.start, end: loc.end)
-                    editingNodeId = nodeId
-                }
-            }
+            .onTapGesture { context.startEditing(nodeId: nodeId) }
         }
     }
 
@@ -960,7 +638,6 @@ struct MarkdownNodeView: View {
         let text = children.reduce(Text("")) { result, child in
             result + inlineNodeText(child)
         }
-
         text
             .italic(italic)
             .bold(bold)
@@ -991,7 +668,6 @@ struct MarkdownNodeView: View {
                 .strikethrough()
 
         case .link(_, _, let children):
-            // Links in Text can't be interactive, so just show the text in blue
             return children.reduce(Text("")) { $0 + inlineNodeText($1) }
                 .foregroundColor(.blue)
 

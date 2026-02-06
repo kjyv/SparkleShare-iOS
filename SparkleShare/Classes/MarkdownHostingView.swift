@@ -25,57 +25,13 @@ import UIKit
                       text: String)
 }
 
-// MARK: - Observable model for markdown content
-
-/// Holds the parsed markdown state. Updating properties triggers SwiftUI re-render
-/// without recreating the hosting controller, preserving scroll position.
-class MarkdownContentModel: ObservableObject {
-    @Published var ast: MarkdownNode = .document(id: "empty", children: [])
-    @Published var nodeLocations: [String: (start: Int, end: Int)] = [:]
-    @Published var originalMarkdown: String = ""
-    @Published var editingNodeId: String? = nil
-    @Published var editingText: String = ""
-}
-
-// MARK: - Container view bridging model to MarkdownView
-
-struct MarkdownContentView: View {
-    @ObservedObject var model: MarkdownContentModel
-    let onCheckboxToggle: (Int, Bool) -> Void
-    let onEditComplete: (String, Int, Int, String) -> Void
-    let onInsertLineAfter: (String, Int, Int, String, String) -> Void
-    let onMergeWithPrevious: (String, Int, Int, String) -> Void
-    let onInsertAtEmptyLine: (Int, String) -> Void
-    let onDeleteEmptyLine: (Int) -> Void
-    let onSplitEmptyLine: (Int, String, String) -> Void
-    let onMergeEmptyLineWithPrevious: (Int, String) -> Void
-
-    var body: some View {
-        MarkdownView(
-            node: model.ast,
-            nodeLocations: model.nodeLocations,
-            originalMarkdown: model.originalMarkdown,
-            onCheckboxToggle: onCheckboxToggle,
-            onEditComplete: onEditComplete,
-            onInsertLineAfter: onInsertLineAfter,
-            onMergeWithPrevious: onMergeWithPrevious,
-            onInsertAtEmptyLine: onInsertAtEmptyLine,
-            onDeleteEmptyLine: onDeleteEmptyLine,
-            onSplitEmptyLine: onSplitEmptyLine,
-            onMergeEmptyLineWithPrevious: onMergeEmptyLineWithPrevious,
-            editingNodeId: $model.editingNodeId,
-            editingText: $model.editingText
-        )
-    }
-}
-
 // MARK: - UIKit Hosting View
 
 @objc class MarkdownHostingView: UIView {
     @objc weak var delegate: MarkdownViewDelegate?
 
     private var hostingController: UIHostingController<AnyView>?
-    private var contentModel = MarkdownContentModel()
+    private var context = MarkdownEditingContext()
     private var originalMarkdown: String = ""
 
     // Editing state that persists across re-renders
@@ -93,6 +49,7 @@ struct MarkdownContentView: View {
 
     private func setupView() {
         backgroundColor = .systemBackground
+        setupCallbacks()
         createHostingController()
     }
 
@@ -109,6 +66,50 @@ struct MarkdownContentView: View {
     /// Clear any pending editing state
     @objc func clearPendingEditing() {
         self.pendingEditingLineNumber = nil
+    }
+
+    // MARK: - Setup
+
+    /// Wire up all delegate callbacks on the context (done once)
+    private func setupCallbacks() {
+        context.onCheckboxToggle = { [weak self] index, checked in
+            guard let self = self else { return }
+            self.delegate?.markdownView(self, didToggleCheckboxAtIndex: index, checked: checked)
+        }
+        context.onEditComplete = { [weak self] _, startLine, endLine, newText in
+            guard let self = self else { return }
+            self.delegate?.markdownView(self, didFinishEditingAtStartLine: startLine,
+                                       endLine: endLine, newText: newText)
+        }
+        context.onInsertLineAfter = { [weak self] _, startLine, endLine, textBefore, textAfter in
+            guard let self = self else { return }
+            self.delegate?.markdownView(self, didInsertLineAfterStartLine: startLine,
+                                       endLine: endLine, textBefore: textBefore, textAfter: textAfter)
+        }
+        context.onMergeWithPrevious = { [weak self] _, startLine, endLine, currentText in
+            guard let self = self else { return }
+            self.delegate?.markdownView(self, didRequestMergeLineAtStart: startLine,
+                                       endLine: endLine, currentText: currentText)
+        }
+        context.onInsertAtEmptyLine = { [weak self] lineNumber, newText in
+            guard let self = self else { return }
+            self.delegate?.markdownView(self, didInsertTextAtEmptyLine: lineNumber,
+                                       newText: newText)
+        }
+        context.onDeleteEmptyLine = { [weak self] lineNumber in
+            guard let self = self else { return }
+            self.delegate?.markdownView(self, didDeleteEmptyLine: lineNumber)
+        }
+        context.onSplitEmptyLine = { [weak self] lineNumber, textBefore, textAfter in
+            guard let self = self else { return }
+            self.delegate?.markdownView(self, didSplitEmptyLine: lineNumber,
+                                       textBefore: textBefore, textAfter: textAfter)
+        }
+        context.onMergeEmptyLineWithPrevious = { [weak self] lineNumber, text in
+            guard let self = self else { return }
+            self.delegate?.markdownView(self, didMergeEmptyLineWithPrevious: lineNumber,
+                                       text: text)
+        }
     }
 
     /// Walk the AST to find an editable node at the given line number.
@@ -136,49 +137,10 @@ struct MarkdownContentView: View {
         }
     }
 
-    /// Create the hosting controller once with a container view that observes the model
+    /// Create the hosting controller once with the context as environment object
     private func createHostingController() {
-        let view = MarkdownContentView(
-            model: contentModel,
-            onCheckboxToggle: { [weak self] index, checked in
-                guard let self = self else { return }
-                self.delegate?.markdownView(self, didToggleCheckboxAtIndex: index, checked: checked)
-            },
-            onEditComplete: { [weak self] nodeId, startLine, endLine, newText in
-                guard let self = self else { return }
-                self.delegate?.markdownView(self, didFinishEditingAtStartLine: startLine,
-                                           endLine: endLine, newText: newText)
-            },
-            onInsertLineAfter: { [weak self] nodeId, startLine, endLine, textBefore, textAfter in
-                guard let self = self else { return }
-                self.delegate?.markdownView(self, didInsertLineAfterStartLine: startLine,
-                                           endLine: endLine, textBefore: textBefore, textAfter: textAfter)
-            },
-            onMergeWithPrevious: { [weak self] nodeId, startLine, endLine, currentText in
-                guard let self = self else { return }
-                self.delegate?.markdownView(self, didRequestMergeLineAtStart: startLine,
-                                           endLine: endLine, currentText: currentText)
-            },
-            onInsertAtEmptyLine: { [weak self] lineNumber, newText in
-                guard let self = self else { return }
-                self.delegate?.markdownView(self, didInsertTextAtEmptyLine: lineNumber,
-                                           newText: newText)
-            },
-            onDeleteEmptyLine: { [weak self] lineNumber in
-                guard let self = self else { return }
-                self.delegate?.markdownView(self, didDeleteEmptyLine: lineNumber)
-            },
-            onSplitEmptyLine: { [weak self] lineNumber, textBefore, textAfter in
-                guard let self = self else { return }
-                self.delegate?.markdownView(self, didSplitEmptyLine: lineNumber,
-                                           textBefore: textBefore, textAfter: textAfter)
-            },
-            onMergeEmptyLineWithPrevious: { [weak self] lineNumber, text in
-                guard let self = self else { return }
-                self.delegate?.markdownView(self, didMergeEmptyLineWithPrevious: lineNumber,
-                                           text: text)
-            }
-        )
+        let view = MarkdownView()
+            .environmentObject(context)
 
         let hosting = UIHostingController(rootView: AnyView(view))
         hosting.view.translatesAutoresizingMaskIntoConstraints = false
@@ -196,7 +158,7 @@ struct MarkdownContentView: View {
         hostingController = hosting
     }
 
-    /// Update the model with new markdown content (triggers SwiftUI re-render in-place)
+    /// Update the context with new markdown content (triggers SwiftUI re-render in-place)
     private func updateContent() {
         let parseResult = MarkdownParser.parseWithLocations(originalMarkdown)
 
@@ -216,7 +178,6 @@ struct MarkdownContentView: View {
                 resolvedNodeId = "emptyline_\(lineNum)"
                 resolvedText = ""
             } else {
-                // Walk the AST to find an editable node at this line
                 if let nodeId = findEditableNodeAtLine(lineNum, in: parseResult.ast,
                                                        nodeLocations: parseResult.nodeLocations) {
                     if let loc = parseResult.nodeLocations[nodeId] {
@@ -228,14 +189,14 @@ struct MarkdownContentView: View {
             }
         }
 
-        // Update model — SwiftUI re-renders in-place, preserving scroll position
-        contentModel.ast = parseResult.ast
-        contentModel.nodeLocations = parseResult.nodeLocations
-        contentModel.originalMarkdown = originalMarkdown
+        // Update context — SwiftUI re-renders in-place, preserving scroll position
+        context.updateMarkdown(originalMarkdown, locations: parseResult.nodeLocations)
+        context.ast = parseResult.ast
+
         // Set editing state directly (only when there's a pending edit to activate)
         if resolvedNodeId != nil {
-            contentModel.editingNodeId = resolvedNodeId
-            contentModel.editingText = resolvedText
+            context.editingNodeId = resolvedNodeId
+            context.editingText = resolvedText
         }
     }
 }

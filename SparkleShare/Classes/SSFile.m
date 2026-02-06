@@ -13,7 +13,9 @@
 #import "SSConnection.h"
 #import "SSFolder.h"
 
-@implementation SSFile
+@implementation SSFile {
+    NSInteger _saveGeneration;
+}
 @synthesize delegate = _delegate;
 @synthesize content = _content;
 @synthesize filesize = _filesize;
@@ -71,15 +73,38 @@
 // //"http://localhost:3000/api/putFile/c0acdbe1e1fec3290db71beecc9\
 // //af500af126f8d?path=c%2Fd&hash=21efaca824f4705deeb9ef6025fd879c871a7117&name=d" --data "data=This is a nice test."
 - (void) saveContent: (NSString *) text {
+    _saveGeneration++;
+    NSInteger generation = _saveGeneration;
+
     NSString* postString = [NSString stringWithFormat:@"data=%@", [text urlencode]];
 
     [self sendPostRequestWithMethodAndData: @"putFile" data: postString success:
      ^(NSURLRequest * request, NSURLResponse * response, id responseObject) {
-         [self.delegate fileContentSaved:self];
+         if (generation == self->_saveGeneration) {
+             [self.delegate fileContentSaved:self];
+         }
      }
      failure:
      ^(NSURLRequest * request, NSURLResponse * response, NSError * error, id responseObject) {
-         [self.delegate fileContentSavingFailed: self error: error];
+         if (generation == self->_saveGeneration) {
+             [self.delegate fileContentSavingFailed: self error: error];
+         }
+     }
+     ];
+}
+
+- (void) saveContentQuietly: (NSString *) text completion:(void (^)(void))completion {
+    _saveGeneration++;
+
+    NSString* postString = [NSString stringWithFormat:@"data=%@", [text urlencode]];
+
+    [self sendPostRequestWithMethodAndData: @"putFile" data: postString success:
+     ^(NSURLRequest * request, NSURLResponse * response, id responseObject) {
+         if (completion) completion();
+     }
+     failure:
+     ^(NSURLRequest * request, NSURLResponse * response, NSError * error, id responseObject) {
+         if (completion) completion();
      }
      ];
 }

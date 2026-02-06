@@ -114,6 +114,15 @@ struct MarkdownTextEditor: UIViewRepresentable {
             return nil
         }
 
+        /// Check if a trimmed line is just a list prefix with no content after it
+        private func isJustListPrefix(_ trimmed: String) -> Bool {
+            if trimmed == "-" || trimmed == "*" || trimmed == "+" { return true }
+            if trimmed == "- [ ]" || trimmed == "- [x]" || trimmed == "- [X]" { return true }
+            let digits = trimmed.prefix(while: { $0.isNumber })
+            if !digits.isEmpty, trimmed.dropFirst(digits.count) == "." { return true }
+            return false
+        }
+
         func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
             // Return key
             if text == "\n" {
@@ -121,6 +130,30 @@ struct MarkdownTextEditor: UIViewRepresentable {
                 if let continuation = listContinuation(for: textView, cursorPosition: range.location) {
                     let currentText = textView.text ?? ""
                     let cursorPos = range.location
+
+                    // Check if the current line is an empty list item (just prefix, no content)
+                    let cursorIndex = currentText.index(currentText.startIndex, offsetBy: cursorPos)
+                    let lineStart: String.Index
+                    if let lastNL = currentText[..<cursorIndex].lastIndex(of: "\n") {
+                        lineStart = currentText.index(after: lastNL)
+                    } else {
+                        lineStart = currentText.startIndex
+                    }
+                    let lineEnd: String.Index
+                    if let nextNL = currentText[cursorIndex...].firstIndex(of: "\n") {
+                        lineEnd = nextNL
+                    } else {
+                        lineEnd = currentText.endIndex
+                    }
+                    let currentLine = String(currentText[lineStart..<lineEnd])
+                    if isJustListPrefix(currentLine.trimmingCharacters(in: .whitespaces)) {
+                        // Replace empty list prefix with empty line and exit editing
+                        textView.text = ""
+                        parent.text = ""
+                        parent.onDismiss?()
+                        return false
+                    }
+
                     let splitIndex = currentText.index(currentText.startIndex, offsetBy: min(cursorPos, currentText.count))
                     let textBefore = String(currentText[currentText.startIndex..<splitIndex])
                     let textAfter = continuation + String(currentText[splitIndex...])

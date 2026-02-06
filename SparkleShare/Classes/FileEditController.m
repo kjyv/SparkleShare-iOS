@@ -28,7 +28,10 @@
 #import "SVProgressHUD.h"
 #import "SparkleShare-Swift.h"
 
-@interface FileEditController () <MarkdownViewDelegate>
+@interface FileEditController () <MarkdownViewDelegate> {
+    NSTimer *_saveTimer;
+    UIActivityIndicatorView *_saveSpinner;
+}
 @end
 
 @implementation FileEditController
@@ -97,6 +100,11 @@
         self.textEditView.hidden = NO;
     }
 
+    // Save spinner in nav bar center
+    _saveSpinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
+    _saveSpinner.hidesWhenStopped = YES;
+    self.navigationItem.titleView = _saveSpinner;
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:)
         name:UIKeyboardWillShowNotification object:nil];
 
@@ -130,7 +138,9 @@
         return;
     }
 
-    // Save any unsaved changes before navigating back
+    // Flush any pending debounced save and save explicitly before navigating back
+    [_saveTimer invalidate];
+    _saveTimer = nil;
     if (fileChanged) {
         [_file saveContent:self.textEditView.text];
         fileChanged = NO;
@@ -141,6 +151,8 @@
 }
 
 - (void)cancelEditing {
+    [_saveTimer invalidate];
+    _saveTimer = nil;
     fileChanged = NO;
 
     // Exit traditional edit mode if active
@@ -198,26 +210,27 @@
 - (void)markdownView:(UIView *)view didFinishEditingAtStartLine:(NSInteger)startLine
              endLine:(NSInteger)endLine newText:(NSString *)newText {
     if (newText.length == 0) {
-        // Empty text - delete the lines entirely (paragraph/heading removed)
+        // Check if the next line is already empty — delete instead of replacing
+        // with empty to avoid duplicate empty lines
         NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
-        NSMutableArray *result = [NSMutableArray array];
-        for (NSInteger i = 0; i < (NSInteger)lines.count; i++) {
-            if (i < startLine - 1 || i >= endLine) {
-                [result addObject:lines[i]];
+        BOOL nextLineEmpty = NO;
+        if (endLine < (NSInteger)lines.count) {
+            nextLineEmpty = [[lines[endLine] stringByTrimmingCharactersInSet:
+                [NSCharacterSet whitespaceCharacterSet]] length] == 0;
+        }
+        if (nextLineEmpty) {
+            NSMutableArray *result = [NSMutableArray array];
+            for (NSInteger i = 0; i < (NSInteger)lines.count; i++) {
+                if (i < startLine - 1 || i >= endLine) {
+                    [result addObject:lines[i]];
+                }
             }
+            [self commitLines:result pendingEditLine:0];
+            return;
         }
-        self.textEditView.text = [result componentsJoinedByString:@"\n"];
-        fileChanged = YES;
-
-        // Start editing the previous line (the line above the deleted one)
-        if (startLine > 1) {
-            [self.markdownView setPendingEditingLine:startLine - 1];
-        }
-    } else {
-        [self replaceLines:startLine toLine:endLine withText:newText];
     }
-
-    [_file saveContent:self.textEditView.text];
+    [self replaceLines:startLine toLine:endLine withText:newText];
+    [self scheduleSave];
     [self renderMarkdownToView];
 }
 
@@ -226,73 +239,43 @@
     NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
     NSMutableArray *result = [NSMutableArray array];
 
-    // Lines before the paragraph (lines 0 to startLine-2, which is indices 0 to startLine-2)
     for (NSInteger i = 0; i < startLine - 1; i++) {
         [result addObject:lines[i]];
     }
-
-    // Add the edited content (textBefore may contain multiple lines)
     [result addObjectsFromArray:[textBefore componentsSeparatedByString:@"\n"]];
-
-    // Insert new line(s) with textAfter (textAfter may also contain multiple lines)
     [result addObjectsFromArray:[textAfter componentsSeparatedByString:@"\n"]];
-
-    // Lines after the paragraph (starting from endLine, which is index endLine)
     for (NSInteger i = endLine; i < (NSInteger)lines.count; i++) {
         [result addObject:lines[i]];
     }
 
-    self.textEditView.text = [result componentsJoinedByString:@"\n"];
-    fileChanged = YES;
-
-    [_file saveContent:self.textEditView.text];
-
-    // Calculate where the new line (textAfter) starts and set it for editing
     NSInteger textBeforeLineCount = [[textBefore componentsSeparatedByString:@"\n"] count];
-    NSInteger newEditLine = startLine + textBeforeLineCount;
-    [self.markdownView setPendingEditingLine:newEditLine];
-
-    [self renderMarkdownToView];
+    [self commitLines:result pendingEditLine:startLine + textBeforeLineCount];
 }
 
 - (void)markdownView:(UIView *)view didRequestMergeLineAtStart:(NSInteger)startLine
              endLine:(NSInteger)endLine currentText:(NSString *)currentText {
-    if (startLine <= 1) return; // Can't merge first paragraph
+    if (startLine <= 1) return;
 
     NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
     NSMutableArray *result = [NSMutableArray array];
 
-    // Use the actual edited text (not stale file content) for the current paragraph
     NSArray *currentLines = [currentText componentsSeparatedByString:@"\n"];
     NSString *prevLine = (startLine >= 2 && startLine - 2 < (NSInteger)lines.count) ? lines[startLine - 2] : @"";
     NSString *currentFirstLine = currentLines.count > 0 ? currentLines[0] : @"";
     NSString *merged = [NSString stringWithFormat:@"%@%@", prevLine, currentFirstLine];
 
-    // Lines before the previous line
     for (NSInteger i = 0; i < startLine - 2; i++) {
         [result addObject:lines[i]];
     }
-
-    // Add merged line
     [result addObject:merged];
-
-    // Add rest of current edited text (if multi-line)
     for (NSInteger i = 1; i < (NSInteger)currentLines.count; i++) {
         [result addObject:currentLines[i]];
     }
-
-    // Lines after the original paragraph
     for (NSInteger i = endLine; i < (NSInteger)lines.count; i++) {
         [result addObject:lines[i]];
     }
 
-    self.textEditView.text = [result componentsJoinedByString:@"\n"];
-    fileChanged = YES;
-    [_file saveContent:self.textEditView.text];
-
-    // Continue editing the merged line
-    [self.markdownView setPendingEditingLine:startLine - 1];
-    [self renderMarkdownToView];
+    [self commitLines:result pendingEditLine:startLine - 1];
 }
 
 - (void)markdownView:(UIView *)view didInsertTextAtEmptyLine:(NSInteger)lineNumber
@@ -300,64 +283,43 @@
     NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
     NSMutableArray *result = [NSMutableArray array];
 
-    // Lines before the empty line (indices 0 to lineNumber-2)
     for (NSInteger i = 0; i < lineNumber - 1; i++) {
         [result addObject:lines[i]];
     }
-
-    // Insert the new text at the empty line position (may be multiple lines)
     [result addObjectsFromArray:[newText componentsSeparatedByString:@"\n"]];
-
-    // Lines after the empty line (starting from index lineNumber, which was the next line)
     for (NSInteger i = lineNumber; i < (NSInteger)lines.count; i++) {
         [result addObject:lines[i]];
     }
 
-    self.textEditView.text = [result componentsJoinedByString:@"\n"];
-    fileChanged = YES;
-    [_file saveContent:self.textEditView.text];
-    [self renderMarkdownToView];
+    [self commitLines:result pendingEditLine:0];
 }
 
 - (void)markdownView:(UIView *)view didDeleteEmptyLine:(NSInteger)lineNumber {
     NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
     NSMutableArray *result = [NSMutableArray array];
 
-    // Add all lines except the one at lineNumber
     for (NSInteger i = 0; i < (NSInteger)lines.count; i++) {
-        if (i != lineNumber - 1) { // lineNumber is 1-based, i is 0-based
+        if (i != lineNumber - 1) {
             [result addObject:lines[i]];
         }
     }
 
-    self.textEditView.text = [result componentsJoinedByString:@"\n"];
-    fileChanged = YES;
-    [_file saveContent:self.textEditView.text];
-
-    // Try to stay in edit mode - prefer the previous line (above), then current position (below)
+    // Try to stay in edit mode on an adjacent empty line
     NSInteger nextEditLine = 0;
-
-    // First try the previous line (the one above)
     if (lineNumber > 1) {
-        NSString *prevLineContent = result[lineNumber - 2]; // lineNumber-1 is current, lineNumber-2 is previous (0-indexed)
-        if ([prevLineContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length == 0) {
+        NSString *prevLine = result[lineNumber - 2];
+        if ([prevLine stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length == 0) {
             nextEditLine = lineNumber - 1;
         }
     }
-
-    // If previous line wasn't empty, try the current position (which is now what was below)
     if (nextEditLine == 0 && lineNumber <= (NSInteger)result.count) {
-        NSString *currLineContent = result[lineNumber - 1]; // 0-indexed
-        if ([currLineContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length == 0) {
+        NSString *currLine = result[lineNumber - 1];
+        if ([currLine stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length == 0) {
             nextEditLine = lineNumber;
         }
     }
 
-    if (nextEditLine > 0) {
-        [self.markdownView setPendingEditingLine:nextEditLine];
-    }
-
-    [self renderMarkdownToView];
+    [self commitLines:result pendingEditLine:nextEditLine];
 }
 
 - (void)markdownView:(UIView *)view didSplitEmptyLine:(NSInteger)lineNumber
@@ -365,99 +327,99 @@
     NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
     NSMutableArray *result = [NSMutableArray array];
 
-    // Lines before the empty line (indices 0 to lineNumber-2)
     for (NSInteger i = 0; i < lineNumber - 1; i++) {
         [result addObject:lines[i]];
     }
+    [result addObjectsFromArray:[textBefore componentsSeparatedByString:@"\n"]];
 
-    // Add the text before cursor (replaces the empty line)
-    NSArray *textBeforeLines = [textBefore componentsSeparatedByString:@"\n"];
-    [result addObjectsFromArray:textBeforeLines];
-
-    // Track where the new empty line will be
     NSInteger newEmptyLineNumber = result.count + 1;
-
-    // Add a new empty line (the split point)
     [result addObject:@""];
 
-    // Add the text after cursor (if any)
     if (textAfter.length > 0) {
-        // textAfter starts with \n from the cursor position, split and add
         NSArray *afterLines = [textAfter componentsSeparatedByString:@"\n"];
-        // Skip the first empty element if textAfter started with \n
         for (NSInteger i = (afterLines.count > 0 && [afterLines[0] length] == 0) ? 1 : 0; i < (NSInteger)afterLines.count; i++) {
             [result addObject:afterLines[i]];
         }
     }
-
-    // Lines after the original empty line (starting from index lineNumber)
     for (NSInteger i = lineNumber; i < (NSInteger)lines.count; i++) {
         [result addObject:lines[i]];
     }
 
-    self.textEditView.text = [result componentsJoinedByString:@"\n"];
-    fileChanged = YES;
-    [_file saveContent:self.textEditView.text];
-
-    // Stay in edit mode on the new empty line
-    [self.markdownView setPendingEditingLine:newEmptyLineNumber];
-
-    [self renderMarkdownToView];
+    [self commitLines:result pendingEditLine:newEmptyLineNumber];
 }
 
 - (void)markdownView:(UIView *)view didMergeEmptyLineWithPrevious:(NSInteger)lineNumber
                 text:(NSString *)text {
-    if (lineNumber <= 1) return; // Can't merge with line before first line
+    if (lineNumber <= 1) return;
 
     NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
     NSMutableArray *result = [NSMutableArray array];
 
-    // Lines before the previous line
     for (NSInteger i = 0; i < lineNumber - 2; i++) {
         [result addObject:lines[i]];
     }
 
-    // Merge: previous line content + text from current line
     NSString *prevLine = (lineNumber >= 2 && lineNumber - 2 < (NSInteger)lines.count) ? lines[lineNumber - 2] : @"";
     NSString *merged = [NSString stringWithFormat:@"%@%@", prevLine, text];
     [result addObject:merged];
 
-    // The merged line is now at position lineNumber - 1
-    NSInteger mergedLineNumber = lineNumber - 1;
-
-    // Skip the current line (it's merged), add rest
     for (NSInteger i = lineNumber; i < (NSInteger)lines.count; i++) {
         [result addObject:lines[i]];
     }
 
-    self.textEditView.text = [result componentsJoinedByString:@"\n"];
-    fileChanged = YES;
-    [_file saveContent:self.textEditView.text];
-
-    // Check if the merged line is empty (to stay in empty line edit mode)
+    // Stay in edit mode if the merged line is empty
+    NSInteger editLine = 0;
     if ([merged stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]].length == 0) {
-        [self.markdownView setPendingEditingLine:mergedLineNumber];
+        editLine = lineNumber - 1;
     }
+    [self commitLines:result pendingEditLine:editLine];
+}
 
-    [self renderMarkdownToView];
+#pragma mark - Debounced Save
+
+- (void)scheduleSave {
+    [_saveTimer invalidate];
+    _saveTimer = [NSTimer scheduledTimerWithTimeInterval:5.0
+                                                 target:self
+                                               selector:@selector(performSave)
+                                               userInfo:nil
+                                                repeats:NO];
+}
+
+- (void)performSave {
+    [_saveTimer invalidate];
+    _saveTimer = nil;
+    [_saveSpinner startAnimating];
+    [_file saveContentQuietly:self.textEditView.text completion:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self->_saveSpinner stopAnimating];
+            self->fileChanged = NO;
+        });
+    }];
 }
 
 #pragma mark - Line Operations
+
+/// Common tail for all line-manipulation delegate methods: join result lines,
+/// save the file, optionally set a pending editing line, and re-render.
+- (void)commitLines:(NSMutableArray *)result pendingEditLine:(NSInteger)editLine {
+    self.textEditView.text = [result componentsJoinedByString:@"\n"];
+    fileChanged = YES;
+    [self scheduleSave];
+    if (editLine > 0) {
+        [self.markdownView setPendingEditingLine:editLine];
+    }
+    [self renderMarkdownToView];
+}
 
 - (void)replaceLines:(NSInteger)startLine toLine:(NSInteger)endLine withText:(NSString *)newText {
     NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
     NSMutableArray *result = [NSMutableArray array];
 
-    // Lines before the range
     for (NSInteger i = 0; i < startLine - 1; i++) {
         [result addObject:lines[i]];
     }
-
-    // Add the new text (may be multiple lines)
-    NSArray *newTextLines = [newText componentsSeparatedByString:@"\n"];
-    [result addObjectsFromArray:newTextLines];
-
-    // Lines after the range
+    [result addObjectsFromArray:[newText componentsSeparatedByString:@"\n"]];
     for (NSInteger i = endLine; i < (NSInteger)lines.count; i++) {
         [result addObject:lines[i]];
     }
@@ -489,8 +451,7 @@
         self.textEditView.text = result;
         fileChanged = YES;
 
-        // Save immediately
-        [_file saveContent:self.textEditView.text];
+        [self scheduleSave];
 
         // Re-render the markdown view
         [self renderMarkdownToView];
@@ -530,6 +491,8 @@
 {
     [super setEditing:flag animated:animated];
     [self updateEditButton];
+    [_saveTimer invalidate];
+    _saveTimer = nil;
     if (self.isMarkdownFile) {
         if (flag == YES){
             // Entering Edit Mode
@@ -605,6 +568,7 @@
 
 -(void)dealloc
 {
+    [_saveTimer invalidate];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 

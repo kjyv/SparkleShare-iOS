@@ -33,4 +33,5 @@
 @property (weak) id <SSFileDelegate> delegate;
 - (void)loadContent;
 - (void)saveContent: (NSString *) text;
+- (void)saveContentQuietly: (NSString *) text completion:(void (^)(void))completion;
 @end
