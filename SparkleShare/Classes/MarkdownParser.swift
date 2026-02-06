@@ -91,13 +91,6 @@ class MarkdownParser {
         // Preprocess markdown for nested lists (this also builds lineMapping)
         let preprocessed = preprocessMarkdownForNestedLists(markdown)
 
-        // Debug: show preprocessed lines around the area of interest
-        let prepLines = preprocessed.components(separatedBy: "\n")
-        print("DEBUG PARSER: Preprocessed markdown has \(prepLines.count) lines")
-        for (i, line) in prepLines.enumerated() where i >= 18 && i <= 28 {
-            print("DEBUG PARSER: Preprocessed line \(i+1): '\(line)' (length: \(line.count))")
-        }
-
         // Register GFM extensions
         cmark_gfm_core_extensions_ensure_registered()
 
@@ -163,6 +156,17 @@ class MarkdownParser {
         return "node_\(nodeIdCounter)"
     }
 
+    /// Infer the next content line by advancing past empty lines from lastSeenEndLine
+    private static func inferNextContentLine() -> Int {
+        var line = lastSeenEndLine + 1
+        let origLines = originalMarkdown.components(separatedBy: "\n")
+        while line <= origLines.count,
+              origLines[line - 1].trimmingCharacters(in: .whitespaces).isEmpty {
+            line += 1
+        }
+        return line
+    }
+
     private static func convertNode(_ node: UnsafeMutablePointer<cmark_node>) -> MarkdownNode {
         let nodeType = cmark_node_get_type(node)
         let nodeId = generateNodeId()
@@ -198,16 +202,49 @@ class MarkdownParser {
             if startLine > 0 && endLine > 0 {
                 nodeLocations[nodeId] = (start: origStartLine, end: origEndLine)
                 lastSeenEndLine = origEndLine
-                print("DEBUG PARSER: Paragraph \(nodeId) - preprocessed lines \(startLine)-\(endLine) -> original \(origStartLine)-\(origEndLine)")
             } else {
                 // cmark returned 0-0, try to infer position from text content
                 let textContent = extractTextFromNode(node)
-                let lineCount = max(1, textContent.components(separatedBy: "\n").count)
-                let inferredStart = lastSeenEndLine + 1
-                let inferredEnd = inferredStart + lineCount - 1
-                nodeLocations[nodeId] = (start: inferredStart, end: inferredEnd)
-                lastSeenEndLine = inferredEnd
-                print("DEBUG PARSER: Paragraph \(nodeId) - lines \(startLine)-\(endLine) INFERRED as \(inferredStart)-\(inferredEnd)")
+
+                if textContent.trimmingCharacters(in: .whitespaces).isEmpty {
+                    // Empty paragraph (e.g., inside a list item with no text after checkbox)
+                    // Share the parent's position since it's on the same line
+                    nodeLocations[nodeId] = (start: lastSeenEndLine, end: lastSeenEndLine)
+                } else {
+                    let lineCount = max(1, textContent.components(separatedBy: "\n").count)
+                    let origLines = originalMarkdown.components(separatedBy: "\n")
+                    var inferredStart: Int
+
+                    // Check if the parent line is a list item — if so, the paragraph
+                    // is its child and shares the same line
+                    let parentIsListItem: Bool
+                    if lastSeenEndLine > 0 && lastSeenEndLine <= origLines.count {
+                        let trimmedLine = origLines[lastSeenEndLine - 1]
+                            .trimmingCharacters(in: .whitespaces)
+                        parentIsListItem = trimmedLine.hasPrefix("- ") ||
+                            trimmedLine.hasPrefix("* ") ||
+                            trimmedLine.hasPrefix("+ ") ||
+                            trimmedLine.hasPrefix("- [") ||
+                            trimmedLine.range(of: "^\\d+\\. ", options: .regularExpression) != nil
+                    } else {
+                        parentIsListItem = false
+                    }
+
+                    if parentIsListItem {
+                        inferredStart = lastSeenEndLine
+                    } else {
+                        inferredStart = lastSeenEndLine + 1
+                        // Skip empty lines to find actual content start
+                        while inferredStart <= origLines.count,
+                              origLines[inferredStart - 1].trimmingCharacters(in: .whitespaces).isEmpty {
+                            inferredStart += 1
+                        }
+                    }
+
+                    let inferredEnd = inferredStart + lineCount - 1
+                    nodeLocations[nodeId] = (start: inferredStart, end: inferredEnd)
+                    lastSeenEndLine = inferredEnd
+                }
             }
             return .paragraph(id: nodeId, children: convertChildren(node))
 
@@ -244,16 +281,43 @@ class MarkdownParser {
                 if startLine > 0 && endLine > 0 {
                     nodeLocations[nodeId] = (start: origStartLine, end: origEndLine)
                     lastSeenEndLine = origEndLine
+                } else {
+                    // Infer position for task list items with 0-0
+                    let inferredLine = inferNextContentLine()
+                    nodeLocations[nodeId] = (start: inferredLine, end: inferredLine)
+                    lastSeenEndLine = inferredLine
                 }
-                return .taskListItem(id: nodeId, index: index, checked: checked, children: convertChildren(node))
+                let taskChildren = convertChildren(node)
+                if taskChildren.isEmpty {
+                    // cmark doesn't create children for empty task list items — synthesize an empty paragraph
+                    let syntheticParaId = generateNodeId()
+                    let loc = nodeLocations[nodeId] ?? (start: lastSeenEndLine, end: lastSeenEndLine)
+                    nodeLocations[syntheticParaId] = loc
+                    return .taskListItem(id: nodeId, index: index, checked: checked,
+                                         children: [.paragraph(id: syntheticParaId, children: [])])
+                }
+                return .taskListItem(id: nodeId, index: index, checked: checked, children: taskChildren)
             }
 
             // Track list item location
             if startLine > 0 && endLine > 0 {
                 nodeLocations[nodeId] = (start: origStartLine, end: origEndLine)
                 lastSeenEndLine = origEndLine
+            } else {
+                // Infer position for list items with 0-0
+                let inferredLine = inferNextContentLine()
+                nodeLocations[nodeId] = (start: inferredLine, end: inferredLine)
+                lastSeenEndLine = inferredLine
             }
-            return .listItem(id: nodeId, children: convertChildren(node))
+            let itemChildren = convertChildren(node)
+            if itemChildren.isEmpty {
+                // cmark doesn't create children for empty list items — synthesize an empty paragraph
+                let syntheticParaId = generateNodeId()
+                let loc = nodeLocations[nodeId] ?? (start: lastSeenEndLine, end: lastSeenEndLine)
+                nodeLocations[syntheticParaId] = loc
+                return .listItem(id: nodeId, children: [.paragraph(id: syntheticParaId, children: [])])
+            }
+            return .listItem(id: nodeId, children: itemChildren)
 
         case CMARK_NODE_CODE_BLOCK:
             let info = cmark_node_get_fence_info(node).flatMap { String(cString: $0) }
@@ -440,11 +504,7 @@ class MarkdownParser {
 
     /// Map a preprocessed line number to the original line number
     private static func mapToOriginalLine(_ preprocessedLine: Int) -> Int {
-        let mapped = lineMapping[preprocessedLine] ?? preprocessedLine
-        if mapped != preprocessedLine {
-            print("DEBUG LINEMAP: preprocessed line \(preprocessedLine) -> original line \(mapped)")
-        }
-        return mapped
+        return lineMapping[preprocessedLine] ?? preprocessedLine
     }
 
     /// Preprocess markdown to fix nested list parsing for cmark-gfm
@@ -481,10 +541,17 @@ class MarkdownParser {
             }
             indentLevel += (spaceCount + 1) / 3
 
-            let trimmedLine = line.trimmingCharacters(in: .whitespaces)
+            // Only strip leading whitespace — preserve trailing whitespace so that
+            // empty numbered list items like "4. " stay valid for cmark (needs trailing space).
+            let trimmedLine = String(line.drop(while: { $0 == " " || $0 == "\t" }))
 
+            let isNumberedListItem: Bool = {
+                let digits = trimmedLine.prefix(while: { $0.isNumber })
+                return !digits.isEmpty && trimmedLine.dropFirst(digits.count).hasPrefix(". ")
+            }()
             let isListItem = trimmedLine.hasPrefix("- ") || trimmedLine.hasPrefix("* ") ||
-                             trimmedLine.hasPrefix("+ ") || trimmedLine.hasPrefix("- [")
+                             trimmedLine.hasPrefix("+ ") || trimmedLine.hasPrefix("- [") ||
+                             isNumberedListItem
 
             if isListItem {
                 if indentLevel > prevIndentLevel && prevIndentLevel >= 0 {
@@ -501,7 +568,7 @@ class MarkdownParser {
                 newLine += trimmedLine
                 processedLines.append(newLine)
                 lineMapping[processedLines.count] = currentOriginalLine
-            } else if trimmedLine.isEmpty {
+            } else if trimmedLine.trimmingCharacters(in: .whitespaces).isEmpty {
                 prevIndentLevel = -1
                 processedLines.append(line)
                 lineMapping[processedLines.count] = currentOriginalLine
@@ -514,13 +581,6 @@ class MarkdownParser {
                 processedLines.append(newLine)
                 lineMapping[processedLines.count] = currentOriginalLine
             }
-        }
-
-        // Debug: print full line mapping if any extra lines were added
-        let extraLines = processedLines.count - originalMarkdown.components(separatedBy: "\n").count
-        if extraLines > 0 {
-            print("DEBUG PREPROCESS: Added \(extraLines) extra lines during preprocessing")
-            print("DEBUG PREPROCESS: Line mapping: \(lineMapping.sorted(by: { $0.key < $1.key }))")
         }
 
         return processedLines.joined(separator: "\n")

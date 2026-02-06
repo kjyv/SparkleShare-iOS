@@ -69,27 +69,70 @@ struct MarkdownTextEditor: UIViewRepresentable {
             parent.text = textView.text
         }
 
-        func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-            // Detect Return key
-            if text == "\n" {
-                let currentText = textView.text ?? ""
-                let cursorPosition = range.location
+        /// Check if the current line is a list item and return the continuation prefix
+        private func listContinuation(for textView: UITextView, cursorPosition: Int) -> String? {
+            let currentText = textView.text ?? ""
+            guard !currentText.isEmpty else { return nil }
 
-                // Split text at cursor position
-                let startIndex = currentText.startIndex
-                let splitIndex = currentText.index(startIndex, offsetBy: min(cursorPosition, currentText.count))
-                let textBefore = String(currentText[startIndex..<splitIndex])
-                let textAfter = String(currentText[splitIndex...])
-
-                print("DEBUG RETURN: Detected Return key press")
-                print("DEBUG RETURN: cursorPosition=\(cursorPosition), textBefore='\(textBefore)', textAfter='\(textAfter)'")
-                parent.onReturn(textBefore, textAfter)
-                return false
+            // Find the start of the current line
+            let before = currentText.prefix(cursorPosition)
+            let lineStart: String.Index
+            if let lastNL = before.lastIndex(of: "\n") {
+                lineStart = currentText.index(after: lastNL)
+            } else {
+                lineStart = currentText.startIndex
             }
 
-            // Detect Backspace at start of text
+            // Find the end of the current line
+            let cursorIndex = currentText.index(currentText.startIndex, offsetBy: cursorPosition)
+            let lineEnd: String.Index
+            if let nextNL = currentText[cursorIndex...].firstIndex(of: "\n") {
+                lineEnd = nextNL
+            } else {
+                lineEnd = currentText.endIndex
+            }
+
+            let fullLine = String(currentText[lineStart..<lineEnd])
+            let indent = String(fullLine.prefix(while: { $0 == " " || $0 == "\t" }))
+            let trimmed = fullLine.drop(while: { $0 == " " || $0 == "\t" })
+
+            // Task list: - [ ] or - [x]
+            if trimmed.hasPrefix("- [ ] ") || trimmed.hasPrefix("- [x] ") || trimmed.hasPrefix("- [X] ") {
+                return "\(indent)- [ ] "
+            }
+            // Bullet list
+            if trimmed.hasPrefix("- ") { return "\(indent)- " }
+            if trimmed.hasPrefix("* ") { return "\(indent)* " }
+            if trimmed.hasPrefix("+ ") { return "\(indent)+ " }
+            // Numbered list: "1. ", "2. ", etc.
+            let digits = trimmed.prefix(while: { $0.isNumber })
+            if !digits.isEmpty, trimmed.dropFirst(digits.count).hasPrefix(". "),
+               let num = Int(digits) {
+                return "\(indent)\(num + 1). "
+            }
+
+            return nil
+        }
+
+        func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+            // Return key
+            if text == "\n" {
+                // For list lines, end editing and create a new list item
+                if let continuation = listContinuation(for: textView, cursorPosition: range.location) {
+                    let currentText = textView.text ?? ""
+                    let cursorPos = range.location
+                    let splitIndex = currentText.index(currentText.startIndex, offsetBy: min(cursorPos, currentText.count))
+                    let textBefore = String(currentText[currentText.startIndex..<splitIndex])
+                    let textAfter = continuation + String(currentText[splitIndex...])
+                    parent.onReturn(textBefore, textAfter)
+                    return false
+                }
+                // For non-list lines, just insert newline and stay in edit mode
+                return true
+            }
+
+            // Detect Backspace at start of text (no selection)
             if text.isEmpty && range.location == 0 && range.length == 0 {
-                print("DEBUG BACKSPACE: Detected backspace at start")
                 parent.onBackspaceAtStart()
                 return false
             }
