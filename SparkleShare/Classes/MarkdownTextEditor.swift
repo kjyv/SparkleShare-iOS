@@ -15,6 +15,12 @@ struct MarkdownTextEditor: UIViewRepresentable {
     let onBackspaceAtStart: () -> Void
     var onDismiss: (() -> Void)? = nil
 
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UITextView, context: Context) -> CGSize? {
+        let width = proposal.width ?? UIView.layoutFittingExpandedSize.width
+        let size = uiView.sizeThatFits(CGSize(width: width, height: CGFloat.greatestFiniteMagnitude))
+        return CGSize(width: width, height: max(size.height, 36))
+    }
+
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
         textView.delegate = context.coordinator
@@ -131,6 +137,7 @@ struct MarkdownTextEditor: UIViewRepresentable {
 
         func textViewDidChange(_ textView: UITextView) {
             parent.text = textView.text
+            textView.invalidateIntrinsicContentSize()
         }
 
         /// Check if the current line is a list item and return the continuation prefix

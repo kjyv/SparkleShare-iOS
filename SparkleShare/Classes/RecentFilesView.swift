@@ -40,9 +40,9 @@ struct RecentFileItem: View {
                     .font(.caption2)
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
-                    .frame(width: 60)
+                    .frame(width: 60, alignment: .top)
             }
-            .frame(width: 70, height: 80)
+            .frame(width: 70, height: 80, alignment: .top)
 
             if isEditMode {
                 Button(action: onDelete) {

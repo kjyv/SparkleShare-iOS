@@ -27,7 +27,9 @@
 - (BOOL)application: (UIApplication *) application didFinishLaunchingWithOptions: (NSDictionary *) launchOptions
 {
 	self.window = [[UIWindow alloc] init];
-    
+
+	self.window.backgroundColor = [UIColor systemBackgroundColor];
+
 	StartingViewController *startingViewController = [[StartingViewController alloc] init];
 
 	self.window.rootViewController = startingViewController;

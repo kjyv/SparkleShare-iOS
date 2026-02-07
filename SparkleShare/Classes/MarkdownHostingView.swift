@@ -52,6 +52,25 @@ import UIKit
         setupView()
     }
 
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        // Add hosting controller as child VC so safe area insets propagate
+        // (needed for content to start below the translucent navbar)
+        guard let hosting = hostingController, hosting.parent == nil,
+              let parentVC = findViewController() else { return }
+        parentVC.addChild(hosting)
+        hosting.didMove(toParent: parentVC)
+    }
+
+    private func findViewController() -> UIViewController? {
+        var responder: UIResponder? = self
+        while let next = responder?.next {
+            if let vc = next as? UIViewController { return vc }
+            responder = next
+        }
+        return nil
+    }
+
     private func setupView() {
         backgroundColor = .systemBackground
 

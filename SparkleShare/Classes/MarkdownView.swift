@@ -432,14 +432,12 @@ struct MarkdownNodeView: View {
             let combinedText = children.reduce(Text("")) { result, child in
                 result + inlineNodeText(child)
             }
-            HStack {
-                combinedText
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
-            }
-            .frame(minHeight: 22)
-            .contentShape(Rectangle())
-            .onTapGesture { context.startEditing(nodeId: nodeId) }
+            combinedText
+                .lineLimit(nil)
+                .frame(maxWidth: .infinity, minHeight: 22, alignment: .topLeading)
+                .fixedSize(horizontal: false, vertical: true)
+                .contentShape(Rectangle())
+                .onTapGesture { context.startEditing(nodeId: nodeId) }
         }
     }
 

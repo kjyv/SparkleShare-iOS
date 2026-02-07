@@ -43,6 +43,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    self.view.backgroundColor = [UIColor systemBackgroundColor];
+
     [textEditView setText:[[NSString alloc] initWithData:_file.content encoding:NSUTF8StringEncoding]];
 
     // Fix textEditView to start below the nav bar (XIB pins to topMargin=0)
@@ -60,7 +62,7 @@
     }
     [NSLayoutConstraint deactivateConstraints:toDeactivate];
     [NSLayoutConstraint activateConstraints:@[
-        [self.textEditView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
+        [self.textEditView.topAnchor constraintEqualToAnchor:self.view.topAnchor],
         [self.textEditView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor]
     ]];
 
@@ -81,9 +83,9 @@
         [self.view addSubview:self.markdownView];
         [self.view sendSubviewToBack:self.markdownView];
 
-        // Constrain to safe area
+        // Constrain to view edges (extends behind translucent navbar)
         [NSLayoutConstraint activateConstraints:@[
-            [self.markdownView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
+            [self.markdownView.topAnchor constraintEqualToAnchor:self.view.topAnchor],
             [self.markdownView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
             [self.markdownView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
             [self.markdownView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor]

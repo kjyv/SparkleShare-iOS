@@ -137,12 +137,16 @@ class MarkdownParser {
         // Convert to Swift AST
         let ast = convertNode(document, ctx: ctx)
 
+        // Post-process: split lists that have empty lines between items
+        let originalLines = markdown.components(separatedBy: "\n")
+        let processedAst = splitLooseLists(ast, ctx: ctx, originalLines: originalLines)
+
         // Cleanup
         cmark_node_free(document)
         cmark_parser_free(parser)
 
         return MarkdownParseResult(
-            ast: ast,
+            ast: processedAst,
             nodeLocations: ctx.nodeLocations,
             originalMarkdown: markdown
         )
@@ -434,6 +438,96 @@ class MarkdownParser {
             child = cmark_node_next(c)
         }
         return children
+    }
+
+    // MARK: - List Splitting
+
+    /// Split lists that have empty lines between items into separate lists.
+    /// cmark-gfm keeps all items in one list node (marking it "loose"),
+    /// but we want visually separate lists when there are blank lines between items.
+    private static func splitLooseLists(_ ast: MarkdownNode, ctx: ParsingContext,
+                                         originalLines: [String]) -> MarkdownNode {
+        guard case .document(let docId, let children) = ast else { return ast }
+        return .document(id: docId, children: splitListsInChildren(children, ctx: ctx, originalLines: originalLines))
+    }
+
+    private static func splitListsInChildren(_ children: [MarkdownNode], ctx: ParsingContext,
+                                               originalLines: [String]) -> [MarkdownNode] {
+        var result: [MarkdownNode] = []
+
+        for child in children {
+            guard case .list(let id, let ordered, let start, _, let items) = child else {
+                result.append(child)
+                continue
+            }
+
+            let groups = groupListItems(items, ctx: ctx, originalLines: originalLines)
+            if groups.count <= 1 {
+                result.append(child)
+                continue
+            }
+
+            // Split into multiple lists
+            var itemOffset = 0
+            for group in groups {
+                let newId = ctx.generateNodeId()
+                let newStart = ordered ? start + itemOffset : start
+                let newList = MarkdownNode.list(id: newId, ordered: ordered, start: newStart,
+                                                 tight: true, children: group)
+                if let firstId = astNodeId(of: group.first!),
+                   let lastId = astNodeId(of: group.last!),
+                   let firstLoc = ctx.nodeLocations[firstId],
+                   let lastLoc = ctx.nodeLocations[lastId] {
+                    ctx.nodeLocations[newId] = (start: firstLoc.start, end: lastLoc.end)
+                }
+                result.append(newList)
+                itemOffset += group.count
+            }
+            ctx.nodeLocations.removeValue(forKey: id)
+        }
+
+        return result
+    }
+
+    /// Group list items by checking for empty line gaps between them.
+    /// cmark-gfm absorbs trailing blank lines into a list item's range,
+    /// so we check the original markdown line immediately before each item's start.
+    private static func groupListItems(_ items: [MarkdownNode], ctx: ParsingContext,
+                                         originalLines: [String]) -> [[MarkdownNode]] {
+        guard !items.isEmpty else { return [[]] }
+
+        var groups: [[MarkdownNode]] = [[items[0]]]
+
+        for i in 1..<items.count {
+            let currId = astNodeId(of: items[i])
+            let currStart = currId.flatMap { ctx.nodeLocations[$0]?.start } ?? 0
+
+            // Check if the line immediately before this item is blank
+            let lineBeforeIdx = currStart - 2  // 0-indexed
+            let hasEmptyGap = lineBeforeIdx >= 0 && lineBeforeIdx < originalLines.count &&
+                originalLines[lineBeforeIdx].trimmingCharacters(in: .whitespaces).isEmpty
+
+            if hasEmptyGap {
+                groups.append([items[i]])
+            } else {
+                groups[groups.count - 1].append(items[i])
+            }
+        }
+
+        return groups
+    }
+
+    /// Extract the node ID from any MarkdownNode
+    private static func astNodeId(of node: MarkdownNode) -> String? {
+        switch node {
+        case .document(let id, _), .heading(let id, _, _), .paragraph(let id, _),
+             .blockquote(let id, _), .list(let id, _, _, _, _), .listItem(let id, _),
+             .taskListItem(let id, _, _, _), .codeBlock(let id, _, _), .htmlBlock(let id, _),
+             .thematicBreak(let id), .table(let id, _, _), .tableRow(let id, _), .tableCell(let id, _):
+            return id
+        default:
+            return nil
+        }
     }
 
     /// Extract plain text content from a cmark node (for inferring line count)
