@@ -208,8 +208,8 @@
 
 #pragma mark - MarkdownViewDelegate
 
-- (void)markdownView:(UIView *)view didToggleCheckboxAtIndex:(NSInteger)index checked:(BOOL)checked {
-    [self toggleCheckboxAtIndex:index toChecked:checked];
+- (void)markdownView:(UIView *)view didToggleCheckboxAtLine:(NSInteger)lineNumber checked:(BOOL)checked {
+    [self toggleCheckboxAtLine:lineNumber toChecked:checked];
 }
 
 - (void)markdownView:(UIView *)view didFinishEditingAtStartLine:(NSInteger)startLine
@@ -433,34 +433,30 @@
     fileChanged = YES;
 }
 
-- (void)toggleCheckboxAtIndex:(NSInteger)index toChecked:(BOOL)checked {
-    NSString *markdown = self.textEditView.text;
-    NSMutableString *result = [NSMutableString string];
+- (void)toggleCheckboxAtLine:(NSInteger)lineNumber toChecked:(BOOL)checked {
+    NSArray *lines = [self.textEditView.text componentsSeparatedByString:@"\n"];
+    NSInteger lineIndex = lineNumber - 1;
+    if (lineIndex < 0 || lineIndex >= (NSInteger)lines.count) return;
 
-    // Find the nth checkbox pattern in the markdown
+    NSString *line = lines[lineIndex];
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"- \\[([ xX])\\]"
                                                                            options:0
                                                                              error:nil];
-    NSArray *matches = [regex matchesInString:markdown options:0 range:NSMakeRange(0, markdown.length)];
+    NSTextCheckingResult *match = [regex firstMatchInString:line options:0 range:NSMakeRange(0, line.length)];
+    if (!match) return;
 
-    if (index < (NSInteger)matches.count) {
-        NSTextCheckingResult *match = matches[index];
-        NSRange checkboxRange = [match rangeAtIndex:1]; // The space or x inside [ ]
+    NSRange checkboxRange = [match rangeAtIndex:1];
+    NSMutableString *newLine = [NSMutableString stringWithString:line];
+    [newLine replaceCharactersInRange:checkboxRange withString:checked ? @"x" : @" "];
 
-        // Build the new string
-        [result appendString:[markdown substringToIndex:checkboxRange.location]];
-        [result appendString:checked ? @"x" : @" "];
-        [result appendString:[markdown substringFromIndex:checkboxRange.location + checkboxRange.length]];
+    NSMutableArray *result = [NSMutableArray arrayWithArray:lines];
+    result[lineIndex] = newLine;
 
-        // Update the text view
-        self.textEditView.text = result;
-        fileChanged = YES;
+    self.textEditView.text = [result componentsJoinedByString:@"\n"];
+    fileChanged = YES;
 
-        [self scheduleSave];
-
-        // Re-render the markdown view
-        [self renderMarkdownToView];
-    }
+    [self scheduleSave];
+    [self renderMarkdownToView];
 }
 
 #pragma mark - keyboard movements

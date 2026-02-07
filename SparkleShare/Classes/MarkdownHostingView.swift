@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 
 @objc protocol MarkdownViewDelegate: AnyObject {
-    func markdownView(_ view: UIView, didToggleCheckboxAtIndex index: Int, checked: Bool)
+    func markdownView(_ view: UIView, didToggleCheckboxAtLine lineNumber: Int, checked: Bool)
     func markdownView(_ view: UIView, didFinishEditingAtStartLine startLine: Int,
                       endLine: Int, newText: String)
     func markdownView(_ view: UIView, didInsertLineAfterStartLine startLine: Int,
@@ -130,9 +130,9 @@ import UIKit
 
     /// Wire up all delegate callbacks on the context (done once)
     private func setupCallbacks() {
-        context.onCheckboxToggle = { [weak self] index, checked in
+        context.onCheckboxToggle = { [weak self] lineNumber, checked in
             guard let self = self else { return }
-            self.delegate?.markdownView(self, didToggleCheckboxAtIndex: index, checked: checked)
+            self.delegate?.markdownView(self, didToggleCheckboxAtLine: lineNumber, checked: checked)
         }
         context.onEditComplete = { [weak self] _, startLine, endLine, newText in
             guard let self = self else { return }

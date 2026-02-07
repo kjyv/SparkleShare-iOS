@@ -262,8 +262,8 @@ struct MarkdownNodeView: View {
                 }
             }
 
-        case .taskListItem(_, let index, let checked, let children):
-            taskListItemView(index: index, checked: checked, children: children)
+        case .taskListItem(let id, _, let checked, let children):
+            taskListItemView(nodeId: id, checked: checked, children: children)
 
         case .codeBlock(let nodeId, _, let literal):
             codeBlockView(nodeId: nodeId, literal: literal)
@@ -495,7 +495,7 @@ struct MarkdownNodeView: View {
     }
 
     @ViewBuilder
-    private func taskListItemView(index: Int, checked: Bool, children: [MarkdownNode]) -> some View {
+    private func taskListItemView(nodeId: String, checked: Bool, children: [MarkdownNode]) -> some View {
         let isEditing = children.contains { isNodeOrChildBeingEdited($0) }
 
         if isEditing {
@@ -507,7 +507,9 @@ struct MarkdownNodeView: View {
         } else {
             HStack(alignment: .top, spacing: 8) {
                 Button(action: {
-                    context.onCheckboxToggle(index, !checked)
+                    if let loc = context.nodeLocations[nodeId] {
+                        context.onCheckboxToggle(loc.start, !checked)
+                    }
                 }) {
                     Image(systemName: checked ? "checkmark.square.fill" : "square")
                         .foregroundColor(checked ? .blue : .gray)
