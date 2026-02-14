@@ -7,13 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <PhotosUI/PhotosUI.h>
 #import "SSFolder.h"
 #import "SSFile.h"
 
 @class SSRecentFile;
 @class RecentFilesHostingView;
 
-@interface FolderViewController : UITableViewController <SSFolderInfoDelegate, SSFolderItemsDelegate, SSFileDelegate, UIDocumentPickerDelegate> {
+@interface FolderViewController : UITableViewController <SSFolderInfoDelegate, SSFolderItemsDelegate, SSFileDelegate, UIDocumentPickerDelegate, PHPickerViewControllerDelegate> {
 }
 
 @property (strong) SSFolder *folder;

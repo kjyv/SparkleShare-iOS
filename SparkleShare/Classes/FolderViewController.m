@@ -26,6 +26,7 @@
 #import "SparkleShare-Swift.h"
 #import <objc/runtime.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <PhotosUI/PhotosUI.h>
 
 @interface FolderViewController () <RecentFilesViewDelegate, SSFolderItemsDelegate>
 @property (nonatomic, strong) NSMutableArray *pendingPathComponents;
@@ -73,9 +74,20 @@
                                                                           action:@selector(settingsPressed)];
         self.navigationItem.rightBarButtonItem = settingsButton;
     } else {
-        UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
-                                                                                  target:self
-                                                                                  action:@selector(addFilePressed)];
+        UIAction *chooseFile = [UIAction actionWithTitle:@"Choose File"
+                                                    image:[UIImage systemImageNamed:@"doc.badge.plus"]
+                                               identifier:nil
+                                                  handler:^(__kindof UIAction * _Nonnull action) {
+            [self addFilePressed];
+        }];
+        UIAction *choosePhoto = [UIAction actionWithTitle:@"Choose Photo"
+                                                    image:[UIImage systemImageNamed:@"photo.on.rectangle"]
+                                               identifier:nil
+                                                  handler:^(__kindof UIAction * _Nonnull action) {
+            [self addPhotoPressed];
+        }];
+        UIMenu *addMenu = [UIMenu menuWithChildren:@[chooseFile, choosePhoto]];
+        UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd menu:addMenu];
         self.navigationItem.rightBarButtonItem = addButton;
     }
 
@@ -693,30 +705,7 @@
 
 #pragma mark - File Upload
 
-- (void)addFilePressed {
-    UIDocumentPickerViewController *picker = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:@[UTTypeItem]];
-    picker.delegate = self;
-    picker.allowsMultipleSelection = NO;
-    [self presentViewController:picker animated:YES completion:nil];
-}
-
-- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
-    NSURL *url = urls.firstObject;
-    if (!url) return;
-
-    BOOL accessing = [url startAccessingSecurityScopedResource];
-    NSData *fileData = [NSData dataWithContentsOfURL:url];
-    if (accessing) {
-        [url stopAccessingSecurityScopedResource];
-    }
-
-    if (!fileData) {
-        [SVProgressHUD dismissWithError:@"Could not read file" afterDelay:2];
-        return;
-    }
-
-    NSString *filename = url.lastPathComponent;
-
+- (void)uploadFileData:(NSData *)data filename:(NSString *)filename {
     // Extract folder path from self.folder.url query parameters
     NSString *folderPath = nil;
     if (self.folder.url) {
@@ -751,12 +740,82 @@
     SSConnection *conn = appDelegate.connection;
 
     [SVProgressHUD showWithStatus:@"Uploading..."];
-    [conn uploadBinaryData:fileData toPath:uploadPath success:^{
+    [conn uploadBinaryData:data toPath:uploadPath success:^{
         [SVProgressHUD dismissWithSuccess:@"Uploaded!"];
         [self reloadFolder];
     } failure:^(NSError *error) {
         NSString *errorMsg = [NSString stringWithFormat:@"Upload failed: %@", error.localizedDescription];
         [SVProgressHUD dismissWithError:errorMsg afterDelay:3];
+    }];
+}
+
+- (void)addFilePressed {
+    UIDocumentPickerViewController *picker = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:@[UTTypeItem]];
+    picker.delegate = self;
+    picker.allowsMultipleSelection = NO;
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
+    NSURL *url = urls.firstObject;
+    if (!url) return;
+
+    BOOL accessing = [url startAccessingSecurityScopedResource];
+    NSData *fileData = [NSData dataWithContentsOfURL:url];
+    if (accessing) {
+        [url stopAccessingSecurityScopedResource];
+    }
+
+    if (!fileData) {
+        [SVProgressHUD dismissWithError:@"Could not read file" afterDelay:2];
+        return;
+    }
+
+    [self uploadFileData:fileData filename:url.lastPathComponent];
+}
+
+#pragma mark - Photo Upload
+
+- (void)addPhotoPressed {
+    PHPickerConfiguration *config = [[PHPickerConfiguration alloc] init];
+    config.selectionLimit = 1;
+    config.filter = [PHPickerFilter anyFilterMatchingSubfilters:@[
+        [PHPickerFilter imagesFilter],
+        [PHPickerFilter videosFilter]
+    ]];
+    PHPickerViewController *picker = [[PHPickerViewController alloc] initWithConfiguration:config];
+    picker.delegate = self;
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+- (void)picker:(PHPickerViewController *)picker didFinishPicking:(NSArray<PHPickerResult *> *)results {
+    [picker dismissViewControllerAnimated:YES completion:nil];
+
+    PHPickerResult *result = results.firstObject;
+    if (!result) return;
+
+    NSItemProvider *provider = result.itemProvider;
+
+    // Use loadFileRepresentationForTypeIdentifier to get a temp file with original filename
+    [provider loadFileRepresentationForTypeIdentifier:UTTypeItem.identifier completionHandler:^(NSURL * _Nullable url, NSError * _Nullable error) {
+        if (!url) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSString *msg = error ? [NSString stringWithFormat:@"Could not load photo: %@", error.localizedDescription] : @"Could not load photo";
+                [SVProgressHUD dismissWithError:msg afterDelay:2];
+            });
+            return;
+        }
+
+        NSData *data = [NSData dataWithContentsOfURL:url];
+        NSString *filename = url.lastPathComponent;
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (!data) {
+                [SVProgressHUD dismissWithError:@"Could not read photo data" afterDelay:2];
+                return;
+            }
+            [self uploadFileData:data filename:filename];
+        });
     }];
 }
 
