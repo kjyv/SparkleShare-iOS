@@ -68,6 +68,8 @@
 	NSUserDefaults *sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.sb.SparkleShare"];
 	if ([sharedDefaults boolForKey:@"SSNeedsRefresh"]) {
 		[sharedDefaults removeObjectForKey:@"SSNeedsRefresh"];
+		BOOL uploadedNewFile = [sharedDefaults boolForKey:@"SSUploadedNewFile"];
+		[sharedDefaults removeObjectForKey:@"SSUploadedNewFile"];
 
 		// Find the FolderViewController directly below the FileViewController
 		NSArray *viewControllers = self.navigationController.viewControllers;
@@ -75,9 +77,15 @@
 		if (viewControllers.count >= 2 && [topVC isKindOfClass:[FileViewController class]]) {
 			UIViewController *parentVC = viewControllers[viewControllers.count - 2];
 			if ([parentVC isKindOfClass:[FolderViewController class]]) {
-				FileViewController *fileVC = (FileViewController *)topVC;
 				FolderViewController *folderVC = (FolderViewController *)parentVC;
-				folderVC.pendingReopenFilename = fileVC.filePreview.filename;
+				if (uploadedNewFile) {
+					// New file: pop to folder and reload
+					[self.navigationController popViewControllerAnimated:NO];
+				} else {
+					// Overwrite: reload folder and reopen the file
+					FileViewController *fileVC = (FileViewController *)topVC;
+					folderVC.pendingReopenFilename = fileVC.filePreview.filename;
+				}
 				[folderVC reloadFolder];
 			}
 		}

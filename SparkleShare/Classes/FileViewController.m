@@ -8,6 +8,7 @@
 
 #import "FileViewController.h"
 #import "FilePreview.h"
+#import "FolderViewController.h"
 #import "UIViewController+AutoPlatformNibName.h"
 
 @implementation FileViewController
@@ -45,6 +46,37 @@
 	// Also write to the App Group shared suite for the Share Extension
 	NSUserDefaults *sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.sb.SparkleShare"];
 	[sharedDefaults setObject:sharedFiles forKey:@"SSSharedFiles"];
+
+	// Store folder context for ShareExtension file picker
+	// Find parent FolderViewController in nav stack
+	FolderViewController *parentFolderVC = nil;
+	NSArray *viewControllers = self.navigationController.viewControllers;
+	for (NSInteger i = viewControllers.count - 1; i >= 0; i--) {
+		if ([viewControllers[i] isKindOfClass:[FolderViewController class]]) {
+			parentFolderVC = viewControllers[i];
+			break;
+		}
+	}
+	if (parentFolderVC) {
+		NSString *folderPath = nil;
+		if (parentFolderVC.folder.url) {
+			NSURLComponents *components = [NSURLComponents componentsWithString:
+				[NSString stringWithFormat:@"http://localhost/?%@", parentFolderVC.folder.url]];
+			for (NSURLQueryItem *item in components.queryItems) {
+				if ([item.name isEqualToString:@"path"]) {
+					folderPath = item.value;
+					break;
+				}
+			}
+		}
+		NSDictionary *folderContext = @{
+			@"projectFolderSSID": projectFolderSSID ?: @"",
+			@"folderURL": parentFolderVC.folder.url ?: @"",
+			@"folderPath": folderPath ?: @"",
+			@"folderName": parentFolderVC.folder.name ?: @""
+		};
+		[sharedDefaults setObject:folderContext forKey:@"SSCurrentFolder"];
+	}
 }
 
 - (void)viewDidUnload {

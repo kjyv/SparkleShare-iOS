@@ -147,10 +147,39 @@
     });
 }
 
+- (void)storeFolderContextForShareExtension {
+    NSUserDefaults *sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.sb.SparkleShare"];
+    if ([self.folder isKindOfClass:[SSRootFolder class]]) {
+        [sharedDefaults removeObjectForKey:@"SSCurrentFolder"];
+    } else {
+        NSString *folderPath = nil;
+        if (self.folder.url) {
+            NSURLComponents *components = [NSURLComponents componentsWithString:
+                [NSString stringWithFormat:@"http://localhost/?%@", self.folder.url]];
+            for (NSURLQueryItem *item in components.queryItems) {
+                if ([item.name isEqualToString:@"path"]) {
+                    folderPath = item.value;
+                    break;
+                }
+            }
+        }
+        NSDictionary *folderContext = @{
+            @"projectFolderSSID": self.folder.projectFolder.ssid ?: @"",
+            @"folderURL": self.folder.url ?: @"",
+            @"folderPath": folderPath ?: @"",
+            @"folderName": self.folder.name ?: @""
+        };
+        [sharedDefaults setObject:folderContext forKey:@"SSCurrentFolder"];
+    }
+    [sharedDefaults synchronize];
+}
+
 - (void)viewWillAppear: (BOOL) animated {
 	[super viewWillAppear: animated];
 	[SVProgressHUD show];
 	[self.folder loadItems];
+
+    [self storeFolderContextForShareExtension];
 }
 
 - (void)viewDidAppear: (BOOL) animated {
@@ -375,6 +404,9 @@
 
     // Track this file as recently opened
     [self trackRecentFile:file];
+
+    // Re-store folder context so ShareExtension can find it even when a file is open
+    [self storeFolderContextForShareExtension];
 
     if ([file.mime hasPrefix:@"text/"]) {
         FileEditController *newFileEditController = [[FileEditController alloc] initWithFile:file];
