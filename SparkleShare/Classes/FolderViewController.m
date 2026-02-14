@@ -81,6 +81,7 @@
                                              selector:@selector(recentFilesDidChange:)
                                                  name:SSRecentFilesDidChangeNotification
                                                object:nil];
+
 }
 
 - (void)settingsPressed {
@@ -257,6 +258,28 @@
 
     [SVProgressHUD dismiss];
     [self.refreshControl endRefreshing];
+
+    // Re-open file if returning from share extension upload
+    if (self.pendingReopenFilename) {
+        NSString *filename = self.pendingReopenFilename;
+        self.pendingReopenFilename = nil;
+
+        // Pop the old FileViewController if it's still on top
+        if ([self.navigationController.topViewController isKindOfClass:[FileViewController class]]) {
+            [self.navigationController popViewControllerAnimated:NO];
+        }
+
+        // Find the file in the reloaded items and open it
+        for (SSFolderItem *item in self.folder.items) {
+            if ([item isKindOfClass:[SSFile class]] && [item.name isEqualToString:filename]) {
+                SSFile *file = (SSFile *)item;
+                file.delegate = self;
+                [SVProgressHUD show];
+                [file loadContent];
+                break;
+            }
+        }
+    }
 }
 
 - (void) reloadOneItem: (SSFolderItem *) item {

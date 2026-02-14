@@ -9,9 +9,11 @@
 #import "SparkleShareAppDelegate.h"
 #import "SelectLoginInputViewController.h"
 #import "FolderViewController.h"
+#import "FileViewController.h"
 
 #import "StartingViewController.h"
 #import "SVProgressHUD.h"
+#import "SSConnection.h"
 
 @implementation SparkleShareAppDelegate
 
@@ -63,9 +65,23 @@
 }
 
 - (void)applicationDidBecomeActive: (UIApplication *) application {
-	/*
-	   Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-	 */
+	NSUserDefaults *sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.sb.SparkleShare"];
+	if ([sharedDefaults boolForKey:@"SSNeedsRefresh"]) {
+		[sharedDefaults removeObjectForKey:@"SSNeedsRefresh"];
+
+		// Find the FolderViewController directly below the FileViewController
+		NSArray *viewControllers = self.navigationController.viewControllers;
+		UIViewController *topVC = viewControllers.lastObject;
+		if (viewControllers.count >= 2 && [topVC isKindOfClass:[FileViewController class]]) {
+			UIViewController *parentVC = viewControllers[viewControllers.count - 2];
+			if ([parentVC isKindOfClass:[FolderViewController class]]) {
+				FileViewController *fileVC = (FileViewController *)topVC;
+				FolderViewController *folderVC = (FolderViewController *)parentVC;
+				folderVC.pendingReopenFilename = fileVC.filePreview.filename;
+				[folderVC reloadFolder];
+			}
+		}
+	}
 }
 
 - (void)applicationWillTerminate: (UIApplication *) application {
@@ -74,6 +90,54 @@
 	   Save data if appropriate.
 	   See also applicationDidEnterBackground:.
 	 */
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    NSData *fileData = [NSData dataWithContentsOfURL:url];
+    if (!fileData) return NO;
+
+    NSString *filename = url.lastPathComponent;
+    NSUserDefaults *sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.sb.SparkleShare"];
+    NSDictionary *sharedFiles = [sharedDefaults dictionaryForKey:@"SSSharedFiles"];
+    NSDictionary *fileInfo = sharedFiles[filename];
+
+    if (!fileInfo) {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Cannot Upload"
+            message:@"This file was not previously shared from SparkleShare."
+            preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+        [self.window.rootViewController presentViewController:alert animated:YES completion:nil];
+        [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+        return NO;
+    }
+
+    NSString *alertMessage = [NSString stringWithFormat:@"Overwrite \"%@\" on the server?", filename];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Upload File"
+        message:alertMessage
+        preferredStyle:UIAlertControllerStyleAlert];
+
+    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+    }]];
+
+    [alert addAction:[UIAlertAction actionWithTitle:@"Overwrite" style:UIAlertActionStyleDestructive handler:^(UIAlertAction *action) {
+        NSString *fileAPIURL = fileInfo[@"fileAPIURL"];
+        NSString *projectFolderSSID = fileInfo[@"projectFolderSSID"];
+        NSString *path = [NSString stringWithFormat:@"/api/putFile/%@?%@", projectFolderSSID, fileAPIURL];
+
+        [SVProgressHUD showWithStatus:@"Uploading..."];
+        [self->connection uploadBinaryData:fileData toPath:path success:^{
+            [SVProgressHUD dismissWithSuccess:@"Uploaded!"];
+            [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+        } failure:^(NSError *error) {
+            NSString *errorMsg = [NSString stringWithFormat:@"Upload failed: %@", error.localizedDescription];
+            [SVProgressHUD dismissWithError:errorMsg afterDelay:5];
+            [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
+        }];
+    }]];
+
+    [self.window.rootViewController presentViewController:alert animated:YES completion:nil];
+    return YES;
 }
 
 - (void)loginInputViewController: (LoginInputViewController *) loginInputViewController

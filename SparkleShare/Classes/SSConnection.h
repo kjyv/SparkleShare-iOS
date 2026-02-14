@@ -43,4 +43,8 @@
 - (NSMutableURLRequest *)requestForPath:(NSString *)path;
 - (void)addOperation:(NSOperation *)operation;
 - (void)linkDeviceWithAddress: (NSURL *) anAddress code: (NSString *) aCode;
+- (void)uploadBinaryData:(NSData *)data
+                  toPath:(NSString *)path
+                 success:(void (^)(void))success
+                 failure:(void (^)(NSError *error))failure;
 @end

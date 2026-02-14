@@ -24,7 +24,27 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	// Do any additional setup after loading the view from its nib.
+	[self recordSharedFile];
+}
+
+- (void)recordSharedFile {
+	NSString *filename = self.filePreview.filename;
+	NSString *fileAPIURL = self.filePreview.fileAPIURL;
+	NSString *projectFolderSSID = self.filePreview.projectFolderSSID;
+	if (!filename || !fileAPIURL || !projectFolderSSID) return;
+
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	NSMutableDictionary *sharedFiles = [[defaults dictionaryForKey:@"SSSharedFiles"] mutableCopy] ?: [NSMutableDictionary dictionary];
+	sharedFiles[filename] = @{
+		@"fileAPIURL": fileAPIURL,
+		@"projectFolderSSID": projectFolderSSID
+	};
+	[defaults setObject:sharedFiles forKey:@"SSSharedFiles"];
+	[defaults synchronize];
+
+	// Also write to the App Group shared suite for the Share Extension
+	NSUserDefaults *sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.sb.SparkleShare"];
+	[sharedDefaults setObject:sharedFiles forKey:@"SSSharedFiles"];
 }
 
 - (void)viewDidUnload {

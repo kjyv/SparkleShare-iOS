@@ -8,6 +8,7 @@
 
 #import "FilePreview.h"
 #import "SSFile.h"
+#import "SSFolder.h"
 #import "NSString+Hashing.h"
 
 @implementation FilePreview
@@ -24,6 +25,8 @@
 - (id) initWithFile: (SSFile *) file {
 	if (self = [super init]) {
 		self.filename = file.name;
+		self.fileAPIURL = file.url;
+		self.projectFolderSSID = file.projectFolder.ssid;
 		NSString *path = [NSTemporaryDirectory () stringByAppendingPathComponent: [file.url sha1]];
 		NSError *error;
 		if (![[NSFileManager defaultManager] fileExistsAtPath: path]) { //Does directory already exist?

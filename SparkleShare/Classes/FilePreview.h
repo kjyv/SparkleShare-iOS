@@ -14,5 +14,7 @@
 - (id)initWithURL:(NSURL *)url filename:(NSString *)filename;
 @property (copy) NSString *filename;
 @property (copy) NSURL *localURL;
+@property (copy) NSString *fileAPIURL;
+@property (copy) NSString *projectFolderSSID;
 
 @end

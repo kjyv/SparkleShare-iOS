@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1975,7 +1975,9 @@
 		F8DB21122F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210D2F2CFA4800A8D5BE /* SSRecentFilesManager.m */; };
 		F8DB21132F2CFA4800A8D5BE /* SSRecentFile.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */; };
 		F8DB21142F2CFA4800A8D5BE /* RecentFilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21092F2CFA4800A8D5BE /* RecentFilesView.swift */; };
-F8DB21712F3F000100A8D5BE /* MarkdownParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */; };
+		F8DB21152F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210D2F2CFA4800A8D5BE /* SSRecentFilesManager.m */; };
+		F8DB21162F2CFA4800A8D5BE /* SSRecentFile.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */; };
+		F8DB21712F3F000100A8D5BE /* MarkdownParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */; };
 		F8DB21722F3F000100A8D5BE /* MarkdownParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */; };
 		F8DB21732F3F000100A8D5BE /* MarkdownParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */; };
 		F8DB21752F3F000200A8D5BE /* MarkdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB21742F3F000200A8D5BE /* MarkdownView.swift */; };
@@ -1987,8 +1989,7 @@ F8DB21712F3F000100A8D5BE /* MarkdownParser.swift in Sources */ = {isa = PBXBuild
 		F8DB217C2F3F000400A8D5BE /* MarkdownTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB217D2F3F000400A8D5BE /* MarkdownTextEditor.swift */; };
 		F8DB217E2F3F000400A8D5BE /* MarkdownTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB217D2F3F000400A8D5BE /* MarkdownTextEditor.swift */; };
 		F8DB217F2F3F000400A8D5BE /* MarkdownTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8DB217D2F3F000400A8D5BE /* MarkdownTextEditor.swift */; };
-		F8DB21152F2CFA4800A8D5BE /* SSRecentFilesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210D2F2CFA4800A8D5BE /* SSRecentFilesManager.m */; };
-		F8DB21162F2CFA4800A8D5BE /* SSRecentFile.m in Sources */ = {isa = PBXBuildFile; fileRef = F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */; };
+		F8FAD0A82F40131D0063F23C /* ShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F8FAD09E2F40131D0063F23C /* ShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1998,6 +1999,13 @@ F8DB21712F3F000100A8D5BE /* MarkdownParser.swift in Sources */ = {isa = PBXBuild
 			proxyType = 1;
 			remoteGlobalIDString = 579F9AA314678A4E00709C70;
 			remoteInfo = SparkleShare;
+		};
+		F8FAD0A62F40131D0063F23C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 579F9A9B14678A4D00709C70 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F8FAD09D2F40131D0063F23C;
+			remoteInfo = ShareExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -2010,6 +2018,17 @@ F8DB21712F3F000100A8D5BE /* MarkdownParser.swift in Sources */ = {isa = PBXBuild
 			files = (
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8FAD0A92F40131D0063F23C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				F8FAD0A82F40131D0063F23C /* ShareExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -2736,15 +2755,31 @@ F8DB21712F3F000100A8D5BE /* MarkdownParser.swift in Sources */ = {isa = PBXBuild
 		F8B9C88B1C8EFC16008ADE9A /* SparkleShare-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "SparkleShare-Prefix.pch"; path = "SparkleShare/SparkleShare-Prefix.pch"; sourceTree = "<group>"; };
 		F8CF9D6B20B0342500865861 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		F8DB21092F2CFA4800A8D5BE /* RecentFilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentFilesView.swift; sourceTree = "<group>"; };
-F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownParser.swift; sourceTree = "<group>"; };
-		F8DB21742F3F000200A8D5BE /* MarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownView.swift; sourceTree = "<group>"; };
-		F8DB21782F3F000300A8D5BE /* MarkdownHostingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownHostingView.swift; sourceTree = "<group>"; };
-		F8DB217D2F3F000400A8D5BE /* MarkdownTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextEditor.swift; sourceTree = "<group>"; };
 		F8DB210A2F2CFA4800A8D5BE /* SSRecentFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSRecentFile.h; sourceTree = "<group>"; };
 		F8DB210B2F2CFA4800A8D5BE /* SSRecentFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSRecentFile.m; sourceTree = "<group>"; };
 		F8DB210C2F2CFA4800A8D5BE /* SSRecentFilesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSRecentFilesManager.h; sourceTree = "<group>"; };
 		F8DB210D2F2CFA4800A8D5BE /* SSRecentFilesManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSRecentFilesManager.m; sourceTree = "<group>"; };
+		F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownParser.swift; sourceTree = "<group>"; };
+		F8DB21742F3F000200A8D5BE /* MarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownView.swift; sourceTree = "<group>"; };
+		F8DB21782F3F000300A8D5BE /* MarkdownHostingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownHostingView.swift; sourceTree = "<group>"; };
+		F8DB217D2F3F000400A8D5BE /* MarkdownTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextEditor.swift; sourceTree = "<group>"; };
+		F8FAD09E2F40131D0063F23C /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8FAD0B22F40191D0063F23C /* SparkleShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SparkleShare.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F8FAD0AC2F40131D0063F23C /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F8FAD09D2F40131D0063F23C /* ShareExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		F8FAD09F2F40131D0063F23C /* ShareExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (F8FAD0AC2F40131D0063F23C /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ShareExtension; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		578528BB14B1AC59003A1FFC /* Frameworks */ = {
@@ -2810,6 +2845,13 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */ = {isa = PBXFileReference; l
 			files = (
 				579F9AD414678A4E00709C70 /* UIKit.framework in Frameworks */,
 				579F9AD514678A4E00709C70 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8FAD09B2F40131D0063F23C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2915,6 +2957,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */ = {isa = PBXFileReference; l
 				F8B9C88B1C8EFC16008ADE9A /* SparkleShare-Prefix.pch */,
 				579F9AAE14678A4E00709C70 /* SparkleShare */,
 				579F9AD814678A4E00709C70 /* SparkleShareTests */,
+				F8FAD09F2F40131D0063F23C /* ShareExtension */,
 				579F9AA714678A4E00709C70 /* Frameworks */,
 				579BC0A81470CD4100BB8233 /* libs */,
 				579F9AA514678A4E00709C70 /* Products */,
@@ -2929,6 +2972,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */ = {isa = PBXFileReference; l
 				579F9AD114678A4E00709C70 /* SparkleShareTests.octest */,
 				57852B3414B1AC59003A1FFC /* SparkleShareDonate.app */,
 				57852DDD14B1B582003A1FFC /* SparkleShare.app */,
+				F8FAD09E2F40131D0063F23C /* ShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2962,6 +3006,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */ = {isa = PBXFileReference; l
 		579F9AAE14678A4E00709C70 /* SparkleShare */ = {
 			isa = PBXGroup;
 			children = (
+				F8FAD0B22F40191D0063F23C /* SparkleShare.entitlements */,
 				57A9758F147203430043B4B3 /* Classes */,
 				57A975B8147203430043B4B3 /* Resources */,
 				57A975CE147203430043B4B3 /* Supporting */,
@@ -2992,7 +3037,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */ = {isa = PBXFileReference; l
 			isa = PBXGroup;
 			children = (
 				F8DB21092F2CFA4800A8D5BE /* RecentFilesView.swift */,
-F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
+				F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 				F8DB21742F3F000200A8D5BE /* MarkdownView.swift */,
 				F8DB21782F3F000300A8D5BE /* MarkdownHostingView.swift */,
 				F8DB217D2F3F000400A8D5BE /* MarkdownTextEditor.swift */,
@@ -3771,10 +3816,12 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 				579F9AA114678A4E00709C70 /* Frameworks */,
 				579F9AA214678A4E00709C70 /* Resources */,
 				F8C8B5732090E35B002F8750 /* Embed Frameworks */,
+				F8FAD0A92F40131D0063F23C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F8FAD0A72F40131D0063F23C /* PBXTargetDependency */,
 			);
 			name = SparkleShare;
 			productName = SparkleShare;
@@ -3800,6 +3847,28 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 			productReference = 579F9AD114678A4E00709C70 /* SparkleShareTests.octest */;
 			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
+		F8FAD09D2F40131D0063F23C /* ShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8FAD0AD2F40131D0063F23C /* Build configuration list for PBXNativeTarget "ShareExtension" */;
+			buildPhases = (
+				F8FAD09A2F40131D0063F23C /* Sources */,
+				F8FAD09B2F40131D0063F23C /* Frameworks */,
+				F8FAD09C2F40131D0063F23C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F8FAD09F2F40131D0063F23C /* ShareExtension */,
+			);
+			name = ShareExtension;
+			packageProductDependencies = (
+			);
+			productName = ShareExtension;
+			productReference = F8FAD09E2F40131D0063F23C /* ShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -3807,6 +3876,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2620;
 				LastTestingUpgradeCheck = 0720;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
@@ -3818,6 +3888,9 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 					};
 					579F9AA314678A4E00709C70 = {
 						LastSwiftMigration = 1640;
+					};
+					F8FAD09D2F40131D0063F23C = {
+						CreatedOnToolsVersion = 26.2;
 					};
 				};
 			};
@@ -3839,6 +3912,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 				579F9AD014678A4E00709C70 /* SparkleShareTests */,
 				5785288E14B1AC59003A1FFC /* SparkleShare Donate AppStore */,
 				57852B3714B1B582003A1FFC /* SparkleShare AppStore */,
+				F8FAD09D2F40131D0063F23C /* ShareExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -5704,6 +5778,13 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F8FAD09C2F40131D0063F23C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -5885,6 +5966,13 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F8FAD09A2F40131D0063F23C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -5892,6 +5980,11 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 			isa = PBXTargetDependency;
 			target = 579F9AA314678A4E00709C70 /* SparkleShare */;
 			targetProxy = 579F9AD614678A4E00709C70 /* PBXContainerItemProxy */;
+		};
+		F8FAD0A72F40131D0063F23C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F8FAD09D2F40131D0063F23C /* ShareExtension */;
+			targetProxy = F8FAD0A62F40131D0063F23C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -6123,6 +6216,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 			baseConfigurationReference = 99186C2427BD608525110FE7 /* Pods-SparkleShare.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SparkleShare/SparkleShare.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -6164,6 +6258,7 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 			baseConfigurationReference = 72DBA7A10A372B9D53EB28B0 /* Pods-SparkleShare.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SparkleShare/SparkleShare.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -6243,6 +6338,108 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 			};
 			name = Release;
 		};
+		F8FAD0AA2F40131D0063F23C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = F229TX233T;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sb.SparkleShare.ShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F8FAD0AB2F40131D0063F23C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = F229TX233T;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sb.SparkleShare.ShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -6287,6 +6484,15 @@ F8DB21702F3F000100A8D5BE /* MarkdownParser.swift */,
 			buildConfigurations = (
 				579F9AE714678A4F00709C70 /* Debug */,
 				579F9AE814678A4F00709C70 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8FAD0AD2F40131D0063F23C /* Build configuration list for PBXNativeTarget "ShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8FAD0AA2F40131D0063F23C /* Debug */,
+				F8FAD0AB2F40131D0063F23C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

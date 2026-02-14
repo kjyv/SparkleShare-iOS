@@ -19,6 +19,7 @@
 @property (strong) SSFolder *folder;
 @property int iconSize;
 @property (strong) RecentFilesHostingView *recentFilesView;
+@property (nonatomic, copy) NSString *pendingReopenFilename;
 
 - (id)initWithFolder: (SSFolder *) folder;
 - (void)reloadFolder;

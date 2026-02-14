@@ -202,12 +202,59 @@
     [queue addOperation: operation];
 }
 
+- (void)uploadBinaryData:(NSData *)data
+                  toPath:(NSString *)path
+                 success:(void (^)(void))success
+                 failure:(void (^)(NSError *error))failure {
+    NSString *baseString = [address absoluteString];
+    while ([baseString hasSuffix:@"/"]) {
+        baseString = [baseString substringToIndex:baseString.length - 1];
+    }
+    while ([path hasPrefix:@"/"]) {
+        path = [path substringFromIndex:1];
+    }
+    NSString *urlString = [NSString stringWithFormat:@"%@/%@", baseString, path];
+    NSURL *requestURL = [NSURL URLWithString:urlString];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:requestURL];
+    [request setHTTPMethod:@"POST"];
+    [request setValue:identCode forHTTPHeaderField:@"X-SPARKLE-IDENT"];
+    [request setValue:authCode forHTTPHeaderField:@"X-SPARKLE-AUTH"];
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    [request setHTTPBody:data];
+    [request setTimeoutInterval:120];
+
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"allowSelfSignedCertificates"]) {
+        AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
+        securityPolicy.allowInvalidCertificates = YES;
+        securityPolicy.validatesDomainName = NO;
+        operation.securityPolicy = securityPolicy;
+    }
+
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        success();
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        failure(error);
+    }];
+
+    [queue addOperation:operation];
+}
+
 - (void) testConnection {
 	[self sendRequestWithString: @"/api/ping"
 	 success:
 	 ^(NSURLRequest * request, NSURLResponse * response, id JSON) {
          if ([@"pong" isEqual: JSON]) {
              self.rootFolder = [[SSRootFolder alloc] initWithConnection: self];
+
+             // Mirror credentials to the App Group shared suite for the Share Extension
+             NSUserDefaults *sharedDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.com.sb.SparkleShare"];
+             [sharedDefaults setObject:[self->address absoluteString] forKey:@"linkString"];
+             [sharedDefaults setObject:self->identCode forKey:@"identCode"];
+             [sharedDefaults setObject:self->authCode forKey:@"authCode"];
+             [sharedDefaults setBool:[[NSUserDefaults standardUserDefaults] boolForKey:@"allowSelfSignedCertificates"] forKey:@"allowSelfSignedCertificates"];
+
              [self.delegate connectionEstablishingSuccess: self];
 		 } else {
              [self.delegate connectionEstablishingFailed: self];
