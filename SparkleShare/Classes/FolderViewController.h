@@ -13,7 +13,7 @@
 @class SSRecentFile;
 @class RecentFilesHostingView;
 
-@interface FolderViewController : UITableViewController <SSFolderInfoDelegate, SSFolderItemsDelegate, SSFileDelegate> {
+@interface FolderViewController : UITableViewController <SSFolderInfoDelegate, SSFolderItemsDelegate, SSFileDelegate, UIDocumentPickerDelegate> {
 }
 
 @property (strong) SSFolder *folder;

@@ -25,6 +25,7 @@
 #import "SettingsViewController.h"
 #import "SparkleShare-Swift.h"
 #import <objc/runtime.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 @interface FolderViewController () <RecentFilesViewDelegate, SSFolderItemsDelegate>
 @property (nonatomic, strong) NSMutableArray *pendingPathComponents;
@@ -64,13 +65,18 @@
 
     self.restorationIdentifier = @"folderViewID";
 
-    // Add settings button for root folder
+    // Add settings button for root folder, upload button for all other folders
     if ([self.folder isKindOfClass:[SSRootFolder class]]) {
         UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"gearshape"]
                                                                            style:UIBarButtonItemStylePlain
                                                                           target:self
                                                                           action:@selector(settingsPressed)];
         self.navigationItem.rightBarButtonItem = settingsButton;
+    } else {
+        UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
+                                                                                  target:self
+                                                                                  action:@selector(addFilePressed)];
+        self.navigationItem.rightBarButtonItem = addButton;
     }
 
     // Setup recent files view for root folder
@@ -683,6 +689,75 @@
     self.recentFilePathFolders = nil;
     self.pendingPathComponents = nil;
     self.currentlyLoadingFolder = nil;
+}
+
+#pragma mark - File Upload
+
+- (void)addFilePressed {
+    UIDocumentPickerViewController *picker = [[UIDocumentPickerViewController alloc] initForOpeningContentTypes:@[UTTypeItem]];
+    picker.delegate = self;
+    picker.allowsMultipleSelection = NO;
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
+    NSURL *url = urls.firstObject;
+    if (!url) return;
+
+    BOOL accessing = [url startAccessingSecurityScopedResource];
+    NSData *fileData = [NSData dataWithContentsOfURL:url];
+    if (accessing) {
+        [url stopAccessingSecurityScopedResource];
+    }
+
+    if (!fileData) {
+        [SVProgressHUD dismissWithError:@"Could not read file" afterDelay:2];
+        return;
+    }
+
+    NSString *filename = url.lastPathComponent;
+
+    // Extract folder path from self.folder.url query parameters
+    NSString *folderPath = nil;
+    if (self.folder.url) {
+        NSURLComponents *components = [NSURLComponents componentsWithString:
+            [NSString stringWithFormat:@"http://localhost/?%@", self.folder.url]];
+        for (NSURLQueryItem *item in components.queryItems) {
+            if ([item.name isEqualToString:@"path"]) {
+                folderPath = item.value;
+                break;
+            }
+        }
+    }
+
+    // Build the new file path
+    NSString *newFilePath;
+    if (folderPath) {
+        newFilePath = [NSString stringWithFormat:@"%@/%@", folderPath, filename];
+    } else {
+        newFilePath = filename;
+    }
+
+    // Encode for query string values (/ must become %2F)
+    NSMutableCharacterSet *valueChars = [[NSCharacterSet URLQueryAllowedCharacterSet] mutableCopy];
+    [valueChars removeCharactersInString:@"/?&=+"];
+    NSString *encodedPath = [newFilePath stringByAddingPercentEncodingWithAllowedCharacters:valueChars];
+    NSString *encodedName = [filename stringByAddingPercentEncodingWithAllowedCharacters:valueChars];
+
+    NSString *uploadPath = [NSString stringWithFormat:@"/api/postFile/%@?path=%@&name=%@",
+        self.folder.projectFolder.ssid, encodedPath, encodedName];
+
+    SparkleShareAppDelegate *appDelegate = (SparkleShareAppDelegate *)[[UIApplication sharedApplication] delegate];
+    SSConnection *conn = appDelegate.connection;
+
+    [SVProgressHUD showWithStatus:@"Uploading..."];
+    [conn uploadBinaryData:fileData toPath:uploadPath success:^{
+        [SVProgressHUD dismissWithSuccess:@"Uploaded!"];
+        [self reloadFolder];
+    } failure:^(NSError *error) {
+        NSString *errorMsg = [NSString stringWithFormat:@"Upload failed: %@", error.localizedDescription];
+        [SVProgressHUD dismissWithError:errorMsg afterDelay:3];
+    }];
 }
 
 @end
