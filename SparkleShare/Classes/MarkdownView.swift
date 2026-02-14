@@ -15,6 +15,9 @@ class MarkdownEditingContext: ObservableObject {
     // AST (published to trigger re-renders)
     @Published var ast: MarkdownNode = .document(id: "empty", children: [])
 
+    // Display-only filename shown as title (not part of the markdown content)
+    @Published var filename: String?
+
     // Editing state
     @Published var editingNodeId: String?
     @Published var editingText: String = ""
@@ -101,6 +104,14 @@ struct MarkdownView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
+                if let filename = context.filename,
+                   case .document(_, let children) = context.ast, !children.isEmpty {
+                    Text(filename)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding(.top, 8)
+                        .padding(.bottom, 4)
+                }
                 MarkdownNodeView(node: context.ast)
             }
             .padding(.horizontal, 16)

@@ -30,6 +30,11 @@ import UIKit
 @objc class MarkdownHostingView: UIView {
     @objc weak var delegate: MarkdownViewDelegate?
 
+    /// Display-only filename shown as a title header (not part of the markdown content)
+    @objc var filename: String? {
+        didSet { context.filename = filename }
+    }
+
     private var hostingController: UIHostingController<AnyView>?
     private var context = MarkdownEditingContext()
     private var originalMarkdown: String = ""

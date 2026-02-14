@@ -77,7 +77,7 @@ Credentials and recent files are stored in NSUserDefaults.
 - Hierarchical folder navigation with git revision tracking
 - Pull-to-refresh for content reloading
 - QuickLook preview for 100+ file types
-- SwiftUI markdown preview
+- SwiftUI markdown viewer and editor
 - Text file editing
 - QR code-based device linking
 - Recent files list for easy access (last 20 accessed files)

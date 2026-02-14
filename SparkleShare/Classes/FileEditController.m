@@ -80,6 +80,12 @@
         self.markdownView = [[MarkdownHostingView alloc] initWithFrame:CGRectZero];
         self.markdownView.translatesAutoresizingMaskIntoConstraints = NO;
         self.markdownView.delegate = self;
+
+        // Show filename as title: strip extension and replace underscores with spaces
+        NSString *displayName = [_file.name stringByDeletingPathExtension];
+        displayName = [displayName stringByReplacingOccurrencesOfString:@"_" withString:@" "];
+        self.markdownView.filename = displayName;
+
         [self.view addSubview:self.markdownView];
         [self.view sendSubviewToBack:self.markdownView];
 
@@ -97,9 +103,10 @@
         self.markdownView.hidden = NO;
         // Render will happen in viewDidAppear after layout is complete
     } else {
-        // For non-markdown files, always show textEditView
+        // For non-markdown files, show textEditView read-only until Edit is pressed
         _isPreviewMode = NO;
         self.textEditView.hidden = NO;
+        [textEditView setEditable:NO];
     }
 
     // Save spinner in nav bar center
