@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import libcmark_gfm
 
 // MARK: - Parse Result
 
